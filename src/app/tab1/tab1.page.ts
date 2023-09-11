@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {DataServiceAPIService} from "../services/data-service-api.service";
 import {LoadingController, ToastController} from '@ionic/angular';
+import { Clipboard } from '@capacitor/clipboard';
 
 @Component({
   selector: 'app-tab1',
@@ -31,7 +32,11 @@ export class Tab1Page {
   }
 
   public async copy() {
-    navigator.clipboard.writeText(this.sim_id);
+    const writeToClipboard = async () => {
+      await Clipboard.write({
+        string: this.sim_id
+      });
+    };
     const toast = await this.toastController.create({
       message: 'Sim ID has been copied.',
       duration: 2500,
