@@ -16,7 +16,25 @@ export class Tab1Page {
 
   private sim_id = "";
 
-  constructor(private toastController: ToastController, public dataServiceAPIService: DataServiceAPIService, private loadingCtrl: LoadingController) {}
+  constructor(private toastController: ToastController, public dataServiceAPIService: DataServiceAPIService, private loadingCtrl: LoadingController) {
+
+    // @ts-ignore
+    this.sim_id = localStorage.getItem("sim_id");
+
+    if(this.sim_id === null) {
+
+      let id = prompt("Please enter your subscription ID");
+      let text;
+      if (id == null || id == "") {
+        //text = "User cancelled the prompt.";
+      } else {
+        localStorage.setItem("sim_id", id);
+        this.sim_id = id;
+      }
+
+    }
+
+  }
 
   handleRefresh(event: any) {
     this.getData();
@@ -27,7 +45,6 @@ export class Tab1Page {
   }
 
   ionViewWillEnter() {
-    this.sim_id = "9a1c1454-bd6d-4d1d-bc7d-44932ab2c146";
     this.getData();
   }
 
