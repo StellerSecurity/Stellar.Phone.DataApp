@@ -19,8 +19,15 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'sim-input',
+    loadChildren: () =>
+      import('../sim-input/sim-input.module').then(
+        (m) => m.SimInputPageModule
+      ),
+  },
+  {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: localStorage.getItem('sim_id') ? '/tabs/tab1' : 'sim-input',
     pathMatch: 'full'
   }
 ];
