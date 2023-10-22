@@ -50,6 +50,11 @@ export class Tab1Page {
     await toast.present();
   }
 
+  public upgradePlan() {
+    const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
+    window.open(url, '_blank');
+  }
+
   private async getData() {
 
     let loading: HTMLIonLoadingElement | null = null;
