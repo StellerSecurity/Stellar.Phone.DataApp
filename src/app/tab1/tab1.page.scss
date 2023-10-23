@@ -57,13 +57,29 @@ ion-item {
   margin-bottom: 0.5rem;
 }
 
-.rectangle .data-details .box .details-box {
+.rectangle .data-details .box .details-box-1 {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   width: 6.5rem;
-  height: 36px;
+  height: 2.5rem;
+  margin: 0 auto;
+  padding-left: 0.5rem;
+  padding-right: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 30px;
+  border: 1px solid;
+  border-color: #ffffff;
+}
+
+.rectangle .data-details .box .details-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 6.5rem;
+  height: 2.5rem;
   margin: 0 auto;
   margin-bottom: 0.5rem;
   border-radius: 30px;
@@ -71,18 +87,16 @@ ion-item {
   border-color: #ffffff;
 }
 
-.rectangle .data-details .box .details-box .box-text {
+.rectangle .data-details .box .box-text {
   font-family: "Poppins", Helvetica;
   font-weight: 400;
   color: #ffffff;
   font-size: 15px;
   letter-spacing: 0;
-  line-height: normal;
-  margin-left: 0.5rem;
+  line-height: normal; 
 }
 
 .rectangle .data-details .box .details-box .vector-container {
-  margin-right: 0.5rem;
 }
 
 .rectangle .data-details .box .details-box .vector {
