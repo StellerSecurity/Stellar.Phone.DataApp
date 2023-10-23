@@ -1,0 +1,10 @@
+<ion-content class="background">
+  <div class="center-content">
+    <img src="assets/logo_main.svg" class="logo" alt="Logo">
+    <ion-label class="label">Enter your SIM ID</ion-label>
+    <div class="rounded-input-container">
+      <ion-input [(ngModel)]="userInput" type="text" class="rounded-input"></ion-input>
+    </div>
+    <ion-button expand="full" (click)="saveInput()" class="rounded-button">OK</ion-button>
+  </div>
+</ion-content>

@@ -5,6 +5,7 @@
 *.sw[mnpcod]
 .tmp
 *.tmp
+.idea
 *.tmp.*
 UserInterfaceState.xcuserstate
 $RECYCLE.BIN/

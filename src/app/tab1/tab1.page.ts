@@ -21,19 +21,6 @@ export class Tab1Page {
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
 
-    if(this.sim_id === null) {
-
-      let id = prompt("Please enter your subscription ID");
-      let text;
-      if (id == null || id == "") {
-        //text = "User cancelled the prompt.";
-      } else {
-        localStorage.setItem("sim_id", id);
-        this.sim_id = id;
-      }
-
-    }
-
   }
 
   handleRefresh(event: any) {
@@ -61,6 +48,12 @@ export class Tab1Page {
     });
 
     await toast.present();
+  }
+
+  public upgradePlan() {
+    //const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
+    const url = 'https://stellarsecurity.com/contact-us';
+    window.open(url, '_blank');
   }
 
   private async getData() {

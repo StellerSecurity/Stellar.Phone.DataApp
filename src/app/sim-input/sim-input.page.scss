@@ -1,0 +1,47 @@
+ion-content.background {
+  --background: url(../../assets/background.png) 0 0/100% 100% no-repeat;
+}
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.logo {
+  width: 10rem;
+  height: 10rem;
+  margin-bottom: 20px;
+}
+
+.rounded-input-container {
+    background-color: #f7f6fc;
+  border-radius: 0.5rem;
+  border: 1px solid #4364fa;
+  width: 100%;
+  max-width: 300px;
+  position: relative;
+  padding: 0 1rem
+}
+
+.label {
+  color: #000;
+  background-color: transparent; /* No background color */
+  margin-bottom: 0.5rem;
+}
+
+.rounded-input {
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: #f7f6fc;
+  color: #000; /* Input text color (black) */
+  outline: none; /* Remove the default focus outline */
+}
+
+.rounded-button {
+  background-color: #007bff;
+  color: #fff;
+  margin-top: 20px;
+}
+
