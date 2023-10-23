@@ -51,7 +51,8 @@ export class Tab1Page {
   }
 
   public upgradePlan() {
-    const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
+    //const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
+    const url = 'https://stellarsecurity.com/contact-us';
     window.open(url, '_blank');
   }
 
