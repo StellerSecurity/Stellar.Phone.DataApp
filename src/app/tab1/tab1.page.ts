@@ -19,9 +19,7 @@ export class Tab1Page {
   constructor(private toastController: ToastController, public dataServiceAPIService: DataServiceAPIService, private loadingCtrl: LoadingController) {
 
     // @ts-ignore
-    //this.sim_id = localStorage.getItem("sim_id");
-
-    this.sim_id = "9877s";
+    this.sim_id = localStorage.getItem("sim_id");
 
   }
 
