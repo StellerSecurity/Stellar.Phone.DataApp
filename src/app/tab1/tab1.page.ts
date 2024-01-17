@@ -89,10 +89,10 @@ export class Tab1Page {
         if(loading !== null) {
           loading.dismiss();
         }
-        alert('Check your internet connection..');
+        //alert('Check your internet connection..');
         setTimeout(() => {
           this.getData();
-        }, 2000);
+        }, 10000);
       }
     });
   }
