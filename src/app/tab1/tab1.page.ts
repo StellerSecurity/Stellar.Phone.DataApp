@@ -19,7 +19,9 @@ export class Tab1Page {
   constructor(private toastController: ToastController, public dataServiceAPIService: DataServiceAPIService, private loadingCtrl: LoadingController) {
 
     // @ts-ignore
-    this.sim_id = localStorage.getItem("sim_id");
+    //this.sim_id = localStorage.getItem("sim_id");
+
+    this.sim_id = "9877s";
 
   }
 
@@ -58,6 +60,13 @@ export class Tab1Page {
 
   private async getData() {
 
+    let stored_data = localStorage.getItem("stored_data");
+
+    if(stored_data !== null) {
+      this.format(JSON.parse(stored_data));
+      this.data = JSON.parse(stored_data);
+    }
+
     let loading: HTMLIonLoadingElement | null = null;
     if (this.data === null) {
       loading = await this.loadingCtrl.create({
@@ -72,11 +81,10 @@ export class Tab1Page {
           loading.dismiss();
         }
         this.data = response;
+        localStorage.setItem("stored_data",  JSON.stringify(response));
 
-        console.log(response);
+        this.format(this.data);
 
-        response.location = response.location.toLowerCase();
-        this.locations = response.location.split(",");
 
       },
       error: (error) => {
@@ -89,6 +97,11 @@ export class Tab1Page {
         }, 2000);
       }
     });
+  }
+
+  public format(response: any) {
+    response.location = response.location.toLowerCase();
+    this.locations = response.location.split(",");
   }
 
 }
