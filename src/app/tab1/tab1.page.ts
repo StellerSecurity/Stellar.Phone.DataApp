@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {DataServiceAPIService} from "../services/data-service-api.service";
 import {LoadingController, ToastController} from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 @Component({
   selector: 'app-tab1',
@@ -14,13 +15,45 @@ export class Tab1Page {
 
   public locations: any = null;
 
-  private sim_id = "";
+  private readonly sim_id = "";
 
-  constructor(private toastController: ToastController, public dataServiceAPIService: DataServiceAPIService, private loadingCtrl: LoadingController) {
+  constructor(private toastController: ToastController,
+              public dataServiceAPIService: DataServiceAPIService,
+              private loadingCtrl: LoadingController) {
+
+    this.localNotifications();
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
 
+
+
+  }
+
+  private async localNotifications() {
+    const permissions = await LocalNotifications.checkPermissions();
+    console.log('checkPermissions result:', permissions);
+    if (permissions.display !== 'granted') {
+      const newPermissions = await LocalNotifications.requestPermissions();
+      console.log('requestPermissions result:', newPermissions);
+      if (newPermissions.display === 'denied') {
+        // Always ends up here, without showing any notification permission prompt
+        throw new Error(`No permission to show notifications`);
+      }
+    }
+
+    /*let notifs = await LocalNotifications.schedule({
+      notifications: [
+        {
+          title: 'Stellar Data',
+          body: 'You have 1 GB remaining',
+          id: 1,
+          schedule: { at: new Date(Date.now() + 1000 * 5) },
+          actionTypeId: '',
+          extra: null,
+        },
+      ],
+    });*/
   }
 
   handleRefresh(event: any) {
@@ -32,7 +65,7 @@ export class Tab1Page {
   }
 
   ionViewWillEnter() {
-    this.getData();
+    this.getData().then(r => {});
   }
 
   public async copy() {
