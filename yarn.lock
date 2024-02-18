@@ -1345,6 +1345,11 @@
     tslib "^2.0.3"
     yargs "^17.3.1"
 
+"@capacitor/background-runner@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@capacitor/background-runner/-/background-runner-1.0.5.tgz"
+  integrity sha512-8WCPkhO42p3O5ENjf8FqvnbwMjNEPcFVxIwsp/Gi+CGWQlgGm7MbxlJAtGmGcNrglD1OqpYWWB0tvJzX2+I+sA==
+
 "@capacitor/cli@^3.2.5":
   version "3.9.0"
   resolved "https://registry.npmjs.org/@capacitor/cli/-/cli-3.9.0.tgz"
@@ -1894,6 +1899,11 @@
   version "2.0.0"
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
+
+"@transistorsoft/capacitor-background-fetch@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.npmjs.org/@transistorsoft/capacitor-background-fetch/-/capacitor-background-fetch-5.1.1.tgz"
+  integrity sha512-TwDVxFgnegCq5fPWG7Qy5Ws87enbBiZtnKI5Y96OpMn/BzUWyL4J6bRfx85OTNDO0MIk07u0YFHxYrzPETrWJA==
 
 "@trapezedev/gradle-parse@5.0.10":
   version "5.0.10"
@@ -3703,6 +3713,11 @@ copy-webpack-plugin@11.0.0:
     normalize-path "^3.0.0"
     schema-utils "^4.0.0"
     serialize-javascript "^6.0.0"
+
+cordova-plugin-background-fetch@^7.2.1:
+  version "7.2.1"
+  resolved "https://registry.npmjs.org/cordova-plugin-background-fetch/-/cordova-plugin-background-fetch-7.2.1.tgz"
+  integrity sha512-7ezklFfjz/8g21mw2Tg4Mu1gC/8XDvrlQ18HtBiG53UALc8Ii+9UTJnBgkbMrklfSIvRgx348FekwK3I8Dzg8w==
 
 core-js-compat@^3.31.0:
   version "3.32.2"

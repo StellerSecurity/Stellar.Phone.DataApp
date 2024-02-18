@@ -1,9 +1,20 @@
 {
   "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    },
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon_config_sample",
       "iconColor": "#488AFF",
       "sound": "beep.wav"
+    },
+    "BackgroundRunner": {
+      "label": "com.capacitor.background.check",
+      "src": "runners/runner.js",
+      "event": "checkIn",
+      "repeat": true,
+      "interval": 30,
+      "autoStart": true
     }
   }
 }
