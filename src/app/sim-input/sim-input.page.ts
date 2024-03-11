@@ -28,6 +28,9 @@ export class SimInputPage implements OnInit {
       this.navCtrl.navigateForward('/tabs/tab1');
     }
   }
-
+  floatLabel(labelValue:any) {debugger
+    const label = document.querySelector('.custom-label');
+    labelValue?.classList.add('float-label');
+  }
   ngOnInit() {}
 }

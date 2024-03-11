@@ -1,10 +1,26 @@
-<ion-content class="background">
-  <div class="center-content">
-    <img src="assets/logo_main.svg" class="logo" alt="Logo">
-    <ion-label class="label">Enter your SIM ID</ion-label>
-    <div class="rounded-input-container">
-      <ion-input [(ngModel)]="userInput" type="text" class="rounded-input"></ion-input>
+<ion-content class="background ">
+  <div class="main-content">
+    <div class="stellar_display">
+      <div class="main_logo">
+        <img src="assets/stellar-data-Logo.svg" class="logo" alt="Logo">
+      </div>
+      <div class="info_logo">
+        <img src="assets/stellar-powered-logo.svg" class="logo" alt="Logo">
+      </div>
     </div>
-    <ion-button expand="full" (click)="saveInput()" class="rounded-button">OK</ion-button>
+    <div class="stellar_action">
+      <h2>Welcome to Stellar Data</h2>
+      <p>Please Enter your SIM ID</p>
+      <!-- <ion-label class="label">Enter your SIM ID</ion-label> -->
+    <ion-item class="rounded-input-container">
+      <ion-label class="gray-color" position="floating">Your SIM ID</ion-label>
+      <ion-input [(ngModel)]="userInput" type="text" class="rounded-input"></ion-input>
+    </ion-item>
+    <ion-button expand="full" (click)="saveInput()" class="rounded-button">Login</ion-button>
+    <div class="help_support">
+      Need some help? <a href="#" class="primary-color">Contact Us</a>
+    </div>
+    </div>
   </div>
+ 
 </ion-content>
