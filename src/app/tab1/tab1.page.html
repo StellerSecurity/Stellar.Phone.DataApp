@@ -2,16 +2,16 @@
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
-  <div class="top-container">
+  <div class="top-container pd-x-20">
     <div class="rectangle">
       <div class="heading">
-        <p class="heading-text">Stellar Data</p>
+        <img class="logo" width="126" src="assets/stellar-data-Logo.svg" alt="logo"/>
+        <img class="logo" src="assets/tabler-icon-logout.svg" alt="logo"/>
       </div>
       <div class="data-details">
         <div class="box">
-          <h2 class="box-heading">Sim ID</h2>
-          <div class="details-box-1">
+          <h2 class="box-heading">Sim ID: </h2>
+          <div class="details-box">
             <ion-label class="box-text"> {{data.id}} </ion-label>
             <div class="vector-container" (click)="copy()">
               <img
@@ -19,72 +19,58 @@
                 src="assets/icon/copy_icon.svg"
                 alt="Vector"
               />
-              <p class="box-text-small">copy</p>
             </div>
           </div>
         </div>
         <div class="box">
-          <h2 class="box-heading">Expires</h2>
+          <h2 class="box-heading">Expires on: </h2>
           <div class="details-box">
             <p class="box-text">{{data.expires_at}}</p>
           </div>
-          <p class="box-text-small">{{data.days_until_expire}} Days</p>
+          <!-- <p class="box-text-small">{{data.days_until_expire}} Days</p> -->
         </div>
       </div>
-      <div class="data-usage-p">
-        <p>You have currently {{data.usage}} Data Usage</p>
-      </div>
+      
     </div>
 
     <div class="usage-container">
-      <div class="usage-details">
-        <div class="usage-details-row">
-          <div class="usage-details-box">
-            <h2 class="usage-details-text">Current Usage</h2>
-            <p class="usage-details-GB">
-              <span class="usage-details-span">{{data.total_usage}}</span>
-              <span class="usage-details-text-2">GB</span>
-            </p>
-          </div>
-          <div class="vertical-divider"></div>
-          <div class="usage-details-box">
-            <h2 class="usage-details-text">Remaining Usage</h2>
-            <p class="usage-details-GB">
-              <span class="usage-details-span"
-                >{{data.total_data - data.total_usage}}</span
-              >
-              <span class="usage-details-text-2">GB</span>
-            </p>
-          </div>
+      <div class="single-chart">
+        <svg viewBox="0 0 36 36" class="circular-chart green">
+          <path class="circle-bg"
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <path class="circle"
+            [attr.stroke-dasharray]="strokes"
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <text x="18" y="18.35" class="usage_data">{{data.total_usage}} GB</text>
+          <text x="18" y="22.35" class="total_data">Used from {{data.total_data}} GB</text>
+        </svg>
         </div>
-        <div class="horizontal-divider"></div>
+        <div class="data-usage-p">
+          <span>Available to use:</span><p>{{data.total_data - data.total_usage}}</p>
+        </div>
         <div class="upgrade-btn" (click)="upgradePlan()">
           <p class="upgrade-text">Upgrade Your Plan</p>
         </div>
-      </div>
+   
     </div>
   </div>
 
   <div class="flags-content">
-    <p class="flags-p">Your simcard works in these countries</p>
+    
     <div class="flags-list">
-      <span *ngFor="let item of locations">
+      <!-- <span *ngFor="let item of locations">
+        <img src="assets/flags/{{item}}.svg" class="flag" />
+      </span> -->
+      <span *ngFor="let item of locations.slice(0, 3)">
         <img src="assets/flags/{{item}}.svg" class="flag" />
       </span>
+      <p class="flags-p">Available in {{locations.length}} Countries</p>
     </div>
-  </div>
-
-  <div class="footer-content">
-    <p class="footer-text">
-      <span class="footer-text-span-1"
-        >To add more data to your plan. please contact<br />us on Signal, on
-        info@stellarsecurity.com or on <br />our website
-      </span>
-      <a href="https://stellarsecurity.com" target="_blank"
-        ><span class="footer-text-span-2">StellarSecurity.com</span></a
-      >
-      <span class="footer-text-span-1">.</span>
-    </p>
-    <img class="footer-image" src="assets/Logo_Steller_Security_RGB.svg" /><br>
   </div>
 </ion-content>

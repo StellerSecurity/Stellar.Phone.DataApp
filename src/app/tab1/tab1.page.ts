@@ -25,11 +25,34 @@ export class Tab1Page {
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
-
+    
 
 
   }
 
+  
+  cssprop = 'circular-chart nill';
+  strokes = '0 ,100';
+  value = 100;
+ getPercentOfData(){
+  this.value = (this.data?.total_usage/ this.data?.total_data) * 100
+  if (Number(this.value) > 0 && Number(this.value) <= 50) {
+    this.cssprop = 'circular-chart green';
+    this.strokes =  this.value +' ,'+100;
+  }
+  else if(Number(this.value) > 50 && Number(this.value) < 80) {
+    this.cssprop = 'circular-chart yellow';
+    this.strokes =  this.value +' ,'+100;
+  }
+  else if(Number(this.value) > 80 && Number(this.value) < 100) {
+    this.cssprop = 'circular-chart red';
+    this.strokes =  this.value +' ,'+100;
+  }  
+
+  console.log('value is',this.value)
+
+  
+ }
   private async localNotifications() {
     const permissions = await LocalNotifications.checkPermissions();
     console.log('checkPermissions result:', permissions);
@@ -115,7 +138,8 @@ export class Tab1Page {
         localStorage.setItem("stored_data",  JSON.stringify(response));
 
         this.format(this.data);
-
+        this.getPercentOfData()
+       
 
       },
       error: (error) => {
@@ -125,6 +149,7 @@ export class Tab1Page {
         //alert('Check your internet connection..');
         setTimeout(() => {
           this.getData();
+          
         }, 10000);
       }
     });
