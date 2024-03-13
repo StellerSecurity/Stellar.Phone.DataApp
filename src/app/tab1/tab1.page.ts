@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import {DataServiceAPIService} from "../services/data-service-api.service";
-import {LoadingController, ToastController} from '@ionic/angular';
+import {AlertController, LoadingController, NavController, ToastController} from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
 import { LocalNotifications } from '@capacitor/local-notifications';
-
+import { COUNTRY_CODES } from '../data/country-code';
+import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -19,13 +20,12 @@ export class Tab1Page {
 
   constructor(private toastController: ToastController,
               public dataServiceAPIService: DataServiceAPIService,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController,public alertController: AlertController,private navCtrl: NavController) {
 
     this.localNotifications();
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
-    
 
 
   }
@@ -49,9 +49,7 @@ export class Tab1Page {
     this.strokes =  this.value +' ,'+100;
   }  
 
-  console.log('value is',this.value)
 
-  
  }
   private async localNotifications() {
     const permissions = await LocalNotifications.checkPermissions();
@@ -105,6 +103,19 @@ export class Tab1Page {
 
     await toast.present();
   }
+  // filterItems() {
+  //   this.filteredItems = this.items.filter(item =>
+  //     item.name.toLowerCase().includes(this.searchText.toLowerCase())
+  //   );
+  // }
+
+  getCountryFullName(countryCode: string): string {
+    return COUNTRY_CODES[countryCode.toLowerCase()] || 'Unknown';
+  }
+  showModal = false;
+  toggleModal() {
+    this.showModal = !this.showModal;
+  }
 
   public upgradePlan() {
     //const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
@@ -124,7 +135,8 @@ export class Tab1Page {
     let loading: HTMLIonLoadingElement | null = null;
     if (this.data === null) {
       loading = await this.loadingCtrl.create({
-        message: 'Getting data info...',
+        message: 'Getting Data info',
+        cssClass: 'loader-popup',
       });
       await loading.present();
     }
@@ -154,10 +166,50 @@ export class Tab1Page {
       }
     });
   }
-
+  filteredLocations:any
   public format(response: any) {
     response.location = response.location.toLowerCase();
     this.locations = response.location.split(",");
+    this.filteredLocations = this.locations;
   }
 
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: 'Log out',
+      message: 'Are you sure you want to log out',
+      cssClass: 'logout-popup general-popup',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }, {
+          text: 'Logout',
+          handler: (data) => {
+            console.log('OK clicked', data);
+            // Call your function here passing the data if needed
+            this.logout();
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+logout(){
+  localStorage.removeItem('sim_id');
+  localStorage.removeItem('stored_data');
+  setTimeout(() => {
+    this.navCtrl.navigateForward('/');
+  }, 20);
+  
+}
+searchText = '';
+filterLocations() {
+  this.filteredLocations = this.locations.filter((countryCode:any) =>
+    this.getCountryFullName(countryCode).toLowerCase().includes(this.searchText.toLowerCase())
+  );
+}
 }

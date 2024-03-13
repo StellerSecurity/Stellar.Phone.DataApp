@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" *ngIf="data !== null">
+<ion-content [fullscreen]="true" >
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -6,9 +6,9 @@
     <div class="rectangle">
       <div class="heading">
         <img class="logo" width="126" src="assets/stellar-data-Logo.svg" alt="logo"/>
-        <img class="logo" src="assets/tabler-icon-logout.svg" alt="logo"/>
+        <img (click)="presentAlert()" class="logo" src="assets/tabler-icon-logout.svg" alt="logo"/>
       </div>
-      <div class="data-details">
+      <div class="data-details" *ngIf="data !== null">
         <div class="box">
           <h2 class="box-heading">Sim ID: </h2>
           <div class="details-box">
@@ -33,7 +33,7 @@
       
     </div>
 
-    <div class="usage-container">
+    <div class="usage-container" *ngIf="data !== null">
       <div class="single-chart">
         <svg viewBox="0 0 36 36" class="circular-chart green">
           <path class="circle-bg"
@@ -52,7 +52,7 @@
         </svg>
         </div>
         <div class="data-usage-p">
-          <span>Available to use:</span><p>{{data.total_data - data.total_usage}}</p>
+          <span>Available to use:</span><p>{{data.remaining}}</p>
         </div>
         <div class="upgrade-btn" (click)="upgradePlan()">
           <p class="upgrade-text">Upgrade Your Plan</p>
@@ -60,17 +60,52 @@
    
     </div>
   </div>
-
-  <div class="flags-content">
+  <div class="flags-content" *ngIf="data !== null">
     
-    <div class="flags-list">
+    <div class="flags-list" (click)="toggleModal()">
       <!-- <span *ngFor="let item of locations">
         <img src="assets/flags/{{item}}.svg" class="flag" />
       </span> -->
       <span *ngFor="let item of locations.slice(0, 3)">
         <img src="assets/flags/{{item}}.svg" class="flag" />
+        <span>{{ getCountryFullName(item) }}</span>
       </span>
       <p class="flags-p">Available in {{locations.length}} Countries</p>
+      
+      <img src="assets/icon/right-arrow.svg" alt="arrow">
     </div>
   </div>
+  
 </ion-content>
+
+<div class="modal-container" *ngIf="showModal" [ngClass]="{'slide-in-from-bottom': showModal}">
+  <div class="modal-content">
+    <div class="modal-header">
+      <ion-toolbar>
+        <div class="d-flex">
+          <ion-title>
+            Supported Countries
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="toggleModal()">Close</ion-button>
+          </ion-buttons>
+        </div>
+        
+        <div class="contry_search">
+          <img src="assets/icon/tabler-icon-search.svg" alt="search">
+          <input type="text" placeholder="Search for country" [(ngModel)]="searchText" (input)="filterLocations()"/>
+        </div>
+        
+      </ion-toolbar>
+    </div>
+    
+   <div class="modal-body">
+      <div class="country-list">
+        <div *ngFor="let item of filteredLocations" class="country-item">
+          <img src="assets/flags/{{item}}.svg" class="flag" />
+          <span>{{ getCountryFullName(item) }}</span>
+        </div>
+      </div>
+   </div>
+  </div>
+</div>
