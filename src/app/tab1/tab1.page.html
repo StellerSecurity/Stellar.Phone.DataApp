@@ -30,7 +30,7 @@
           <!-- <p class="box-text-small">{{data.days_until_expire}} Days</p> -->
         </div>
       </div>
-      
+
     </div>
 
     <div class="usage-container">
@@ -52,17 +52,17 @@
         </svg>
         </div>
         <div class="data-usage-p">
-          <span>Available to use:</span><p>{{data.total_data - data.total_usage}}</p>
+          <span>Available to use:</span><p>{{data.remaining}}</p>
         </div>
         <div class="upgrade-btn" (click)="upgradePlan()">
           <p class="upgrade-text">Upgrade Your Plan</p>
         </div>
-   
+
     </div>
   </div>
 
   <div class="flags-content">
-    
+
     <div class="flags-list">
       <!-- <span *ngFor="let item of locations">
         <img src="assets/flags/{{item}}.svg" class="flag" />
