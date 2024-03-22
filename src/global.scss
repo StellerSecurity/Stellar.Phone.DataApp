@@ -25,3 +25,66 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+
+ion-content{
+    background-color: #2152D4;
+    --background: #2152D4;
+    --color: #0B0C19;
+    font-family: "Poppins", sans-serif;
+}
+.pd-x-20{
+    padding: 0 20px;
+}
+.general-popup{
+    .alert-wrapper{
+        border-radius: 24px;
+        padding: 16px;
+        min-width: 318px;
+        /* font-family: 'Poppins'; */
+        font-family: "Poppins", sans-serif;
+      .alert-head{
+        text-align: center;
+        padding: 6px;
+        font-size: 20px;
+        h2{
+    font-weight: 700;
+        }
+      }
+      .alert-message{
+        font-size: 14px;
+        text-align: center;
+      }
+      .alert-button-group{
+        border-top: 1px solid gainsboro;
+        margin-top: 5px;
+        .alert-button{
+            font-size: 14px;
+            text-transform: capitalize;
+            color: #2761FC;
+            font-weight: 600;
+            &.secondary{
+                color: #62626A;
+            }
+        }
+      }
+    }
+  }
+  .loader-popup{
+    .loading-wrapper {
+        flex-direction: column;
+        border-radius: 24px !important;
+        min-width: 318px !important;
+        min-height: 165px !important;
+        gap: 20px;
+       
+        .loading-content {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        ion-spinner{
+            --width: 36px;
+            --height: 36px;
+        }
+    }
+  }
+ 

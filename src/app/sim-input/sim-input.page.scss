@@ -1,28 +1,26 @@
-ion-content.background {
-  --background: url(../../assets/background.png) 0 0/100% 100% no-repeat;
-}
-.center-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.logo {
-  width: 10rem;
-  height: 10rem;
-  margin-bottom: 20px;
-}
 
 .rounded-input-container {
-    background-color: #f7f6fc;
-  border-radius: 0.5rem;
-  border: 1px solid #4364fa;
+    background-color: #EAEAF0;
+    --background:transparent;
+  border-radius: 24px;
+  --border: 1px solid red;
+  --border-width:0;
+  --min-height: 55px;
   width: 100%;
-  max-width: 300px;
+  max-width: 320px;
   position: relative;
-  padding: 0 1rem
+  padding: 0 1rem;
+  ion-label{
+    margin: 0;
+    transform: translateY(96%);
+    
+  }
+  &.item-has-focus,&.item-has-value{
+    .label-floating{
+      -webkit-transform: translateY(50%) scale(0.75);
+      transform: translateY(50%) scale(0.75) !important;
+    }
+  }
 }
 
 .label {
@@ -33,8 +31,8 @@ ion-content.background {
 
 .rounded-input {
   border: 0;
-  border-radius: 0.5rem;
-  background-color: #f7f6fc;
+  // border-radius: 0.5rem;
+  background-color: transparent;
   color: #000; /* Input text color (black) */
   outline: none; /* Remove the default focus outline */
 }
@@ -42,6 +40,82 @@ ion-content.background {
 .rounded-button {
   background-color: #007bff;
   color: #fff;
+  width: 100%;
   margin-top: 20px;
+  max-width: 320px;
+  padding: 6px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  --box-shadow: unset;
+  --background: transparent;
+
 }
 
+.custom-input:focus + .custom-label {
+  top: -12px;
+  font-size: 12px;
+}
+.main-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  .stellar_display {
+    height: calc(100% - 390px);
+    flex: 1 1 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // padding-bottom: 328px;
+    .main_logo{
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+    }
+    .info_logo {
+      padding-bottom: 24px;
+  }
+}
+.stellar_action{
+  min-height:328px;
+    width: 100%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 24px 24px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    bottom: 0;
+    h2{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    p{
+      margin-top: 4px;
+    font-size: 14px;
+    color: #62626A;
+    margin-bottom: 20px;
+    }
+    .help_support {
+      padding: 33px 0;
+      font-weight: 600;
+      font-size: 14px;
+      a{
+        text-decoration: none;
+        color: #007bff;
+      }
+  }
+  
+  
+}
+}
+.gray-color{
+  color: #62626A;
+}

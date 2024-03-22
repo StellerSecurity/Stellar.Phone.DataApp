@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import {DataServiceAPIService} from "../services/data-service-api.service";
-import {LoadingController, ToastController} from '@ionic/angular';
+import {AlertController, LoadingController, NavController, ToastController} from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import {BackgroundFetch} from '@transistorsoft/capacitor-background-fetch';
-import {BackgroundRunner} from "@capacitor/background-runner";
-
+import { COUNTRY_CODES } from '../data/country-code';
+import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -21,88 +20,62 @@ export class Tab1Page {
 
   constructor(private toastController: ToastController,
               public dataServiceAPIService: DataServiceAPIService,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController,public alertController: AlertController,private navCtrl: NavController) {
 
+    this.localNotifications();
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
 
-    this.init().then(r => {});
-
 
   }
 
-  ngAfterContentInit() {
-    this.initBackgroundFetch();
+  
+  cssprop = 'circular-chart nill';
+  strokes = '0 ,100';
+  value = 100;
+ getPercentOfData(){
+  this.value = (this.data?.total_usage/ this.data?.total_data) * 100
+  if (Number(this.value) > 0 && Number(this.value) <= 50) {
+    this.cssprop = 'circular-chart green';
+    this.strokes =  this.value +' ,'+100;
   }
+  else if(Number(this.value) > 50 && Number(this.value) < 80) {
+    this.cssprop = 'circular-chart yellow';
+    this.strokes =  this.value +' ,'+100;
+  }
+  else if(Number(this.value) > 80 && Number(this.value) < 100) {
+    this.cssprop = 'circular-chart red';
+    this.strokes =  this.value +' ,'+100;
+  }  
 
-  async initBackgroundFetch() {
 
-    console.log("KAR12345");
-
-    const status = await BackgroundFetch.configure({
-      minimumFetchInterval: 15
-    }, async (taskId) => {  // <---------------- Event handler.
-      console.log('[BackgroundFetch] EVENT:', taskId);
-      // Perform your work in an awaited Promise
-      const result = await this.performYourWorkHere();
-      console.log('[BackgroundFetch] work complete:', result);
-      // [REQUIRED] Signal to the OS that your work is complete.
-      await BackgroundFetch.finish(taskId);
-    }, async (taskId) => {  // <---------------- Event timeout handler
-      // The OS has signalled that your remaining background-time has expired.
-      // You must immediately complete your work and signal #finish.
-      console.log('[BackgroundFetch] TIMEOUT:', taskId);
-      // [REQUIRED] Signal to the OS that your work is complete.
-      await BackgroundFetch.finish(taskId);
-      console.log("KAR1234");
-    });
-
-    // Checking BackgroundFetch status:
-    if (status !== BackgroundFetch.STATUS_AVAILABLE) {
-      // Uh-oh:  we have a problem:
-      if (status === BackgroundFetch.STATUS_DENIED) {
-        alert('The user explicitly disabled background behavior for this app or for the whole system.');
-      } else if (status === BackgroundFetch.STATUS_RESTRICTED) {
-        alert('Background updates are unavailable and the user cannot enable them again.')
+ }
+  private async localNotifications() {
+    const permissions = await LocalNotifications.checkPermissions();
+    console.log('checkPermissions result:', permissions);
+    if (permissions.display !== 'granted') {
+      const newPermissions = await LocalNotifications.requestPermissions();
+      console.log('requestPermissions result:', newPermissions);
+      if (newPermissions.display === 'denied') {
+        // Always ends up here, without showing any notification permission prompt
+        throw new Error(`No permission to show notifications`);
       }
     }
+
+    /*let notifs = await LocalNotifications.schedule({
+      notifications: [
+        {
+          title: 'Stellar Data',
+          body: 'You have 1 GB remaining',
+          id: 1,
+          schedule: { at: new Date(Date.now() + 1000 * 5) },
+          actionTypeId: '',
+          extra: null,
+        },
+      ],
+    });*/
   }
-
-  // Simulate a long-running task (eg:  an HTTP request)
-  async performYourWorkHere() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("KAR1234");
-        resolve(true);
-      }, 5000);
-    });
-  }
-
-
-  async testLoad() {
-    const result = await BackgroundRunner.dispatchEvent({
-      label: 'com.capacitor.background.check',
-      event: 'testLoad',
-      details: {},
-    });
-    console.log('load result', result);
-  }
-
-
-  async init() {
-    await this.testLoad().then(r => {});
-    try {
-      const permissions = await BackgroundRunner.requestPermissions({
-        apis: ['notifications'],
-      });
-      console.log('permissions', permissions);
-    } catch (err) {
-      console.log(`ERROR: ${err}`);
-    }
-  }
-
-
 
   handleRefresh(event: any) {
     this.getData();
@@ -130,6 +103,19 @@ export class Tab1Page {
 
     await toast.present();
   }
+  // filterItems() {
+  //   this.filteredItems = this.items.filter(item =>
+  //     item.name.toLowerCase().includes(this.searchText.toLowerCase())
+  //   );
+  // }
+
+  getCountryFullName(countryCode: string): string {
+    return COUNTRY_CODES[countryCode.toLowerCase()] || 'Unknown';
+  }
+  showModal = false;
+  toggleModal() {
+    this.showModal = !this.showModal;
+  }
 
   public upgradePlan() {
     //const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
@@ -149,7 +135,8 @@ export class Tab1Page {
     let loading: HTMLIonLoadingElement | null = null;
     if (this.data === null) {
       loading = await this.loadingCtrl.create({
-        message: 'Getting data info...',
+        message: 'Getting Data info',
+        cssClass: 'loader-popup',
       });
       await loading.present();
     }
@@ -163,10 +150,8 @@ export class Tab1Page {
         localStorage.setItem("stored_data",  JSON.stringify(response));
 
         this.format(this.data);
-
-
-        // recall it self in the bg, every 30 minutes.
-        setTimeout(() => { this.getData(); }, 1000 * 30);
+        this.getPercentOfData()
+       
 
       },
       error: (error) => {
@@ -176,14 +161,55 @@ export class Tab1Page {
         //alert('Check your internet connection..');
         setTimeout(() => {
           this.getData();
-        }, 8000);
+          
+        }, 10000);
       }
     });
   }
-
+  filteredLocations:any
   public format(response: any) {
     response.location = response.location.toLowerCase();
     this.locations = response.location.split(",");
+    this.filteredLocations = this.locations;
   }
 
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: 'Log out',
+      message: 'Are you sure you want to log out',
+      cssClass: 'logout-popup general-popup',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }, {
+          text: 'Logout',
+          handler: (data) => {
+            console.log('OK clicked', data);
+            // Call your function here passing the data if needed
+            this.logout();
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+logout(){
+  localStorage.removeItem('sim_id');
+  localStorage.removeItem('stored_data');
+  setTimeout(() => {
+    this.navCtrl.navigateForward('/');
+  }, 20);
+  
+}
+searchText = '';
+filterLocations() {
+  this.filteredLocations = this.locations.filter((countryCode:any) =>
+    this.getCountryFullName(countryCode).toLowerCase().includes(this.searchText.toLowerCase())
+  );
+}
 }

@@ -11,23 +11,29 @@ export class SimInputPage implements OnInit {
   private sim_id: string | null = '';
   constructor(public alertController: AlertController, private navCtrl: NavController) {}
 
-  async saveInput() {
+  async saveInput() {debugger
     const alert = await this.alertController.create({
       header: 'Enter SIM ID',
       message: 'Please enter your sim id.',
       buttons: ['OK'],
+      cssClass: 'general-popup',
     });
     this.sim_id = localStorage.getItem('sim_id');
 
     if (this.userInput.trim() === '') {
       await alert.present();
+      return
     }
     if (this.sim_id === null) {
       localStorage.setItem('sim_id', this.userInput);
       this.sim_id = this.userInput;
-      this.navCtrl.navigateForward('/tabs/tab1');
+      
     }
+    this.navCtrl.navigateForward('/tabs/tab1');
   }
-
+  floatLabel(labelValue:any) {debugger
+    const label = document.querySelector('.custom-label');
+    labelValue?.classList.add('float-label');
+  }
   ngOnInit() {}
 }
