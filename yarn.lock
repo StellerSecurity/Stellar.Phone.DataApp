@@ -1345,11 +1345,6 @@
     tslib "^2.0.3"
     yargs "^17.3.1"
 
-"@capacitor/background-runner@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.npmjs.org/@capacitor/background-runner/-/background-runner-1.0.5.tgz"
-  integrity sha512-8WCPkhO42p3O5ENjf8FqvnbwMjNEPcFVxIwsp/Gi+CGWQlgGm7MbxlJAtGmGcNrglD1OqpYWWB0tvJzX2+I+sA==
-
 "@capacitor/cli@^3.2.5":
   version "3.9.0"
   resolved "https://registry.npmjs.org/@capacitor/cli/-/cli-3.9.0.tgz"

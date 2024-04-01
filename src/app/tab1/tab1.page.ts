@@ -210,11 +210,10 @@ export class Tab1Page {
     alert.present();
   }
 logout(){
-  localStorage.removeItem('sim_id');
-  localStorage.removeItem('stored_data');
-  setTimeout(() => {
-    this.navCtrl.navigateForward('/');
-  }, 20);
+  localStorage.clear();
+  setTimeout(async () => {
+    await this.navCtrl.navigateForward('/');
+  }, 200);
 
 }
   searchText = '';
