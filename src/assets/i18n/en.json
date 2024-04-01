@@ -1,9 +1,20 @@
 {
-  "HOME": "Home",
-  "CONTENT": "Content",
-  "ABOUT": "About",
-  "HELLO": "Hello",
-  "WELCOME": "Welcome to the multilanguage Ionic app",
-  "SIMPLE_APP": "This is just a simple app",
-  "MY_NAME": "My name is Bill Musk"
+
+  "HOME_WELCOME": "Welcome to Stellar Data",
+  "HOME_ENTER_SIM_ID": "Please Enter your SIM ID",
+  "HOME_INPUT": "Your SIM ID",
+  "HOME_BUTTON_LOGIN": "Login",
+  "HOME_HELP": "Need some help?",
+  "HOME_HELP_CONTACT_LINK": "CONTACT US",
+
+  "SIM_ID_COPIED": "Sim-id has been copied",
+  "EXPIRES_AT": "Expires on:",
+  "AVAILABLE_TO_USE": "Available to use:",
+  "SUPPORTED_COUNTRIES": "Supported Countries",
+  "SEARCH_FOR_COUNTRY": "Search For Country",
+  "SEARCH_CLOSE": "Close",
+  "UPGRADE_YOUR_PLAN": "Upgrade Your Plan",
+  "LOGOUT": "Log Out",
+  "LOGOUT_SURE": "Are you sure you want to log out?",
+  "AVAILABLE_IN_COUNTRIES": "Available in {{number}} Countries"
 }

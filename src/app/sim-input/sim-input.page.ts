@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-sim-input',
@@ -9,7 +10,18 @@ import { AlertController, NavController } from '@ionic/angular';
 export class SimInputPage implements OnInit {
   public userInput: string = '';
   private sim_id: string | null = '';
-  constructor(public alertController: AlertController, private navCtrl: NavController) {}
+
+
+  public HOME_WELCOME = "";
+  public HOME_ENTER_SIM_ID = "";
+  public HOME_INPUT = "";
+  public HOME_BUTTON_LOGIN = "";
+  public HOME_HELP = "";
+  public HOME_HELP_CONTACT_LINK = "";
+
+  constructor(public alertController: AlertController, private navCtrl: NavController, public _translate: TranslateService) {
+    this._language();
+  }
 
   async saveInput() {debugger
     const alert = await this.alertController.create({
@@ -27,7 +39,7 @@ export class SimInputPage implements OnInit {
     if (this.sim_id === null) {
       localStorage.setItem('sim_id', this.userInput);
       this.sim_id = this.userInput;
-      
+
     }
     this.navCtrl.navigateForward('/tabs/tab1');
   }
@@ -36,4 +48,33 @@ export class SimInputPage implements OnInit {
     labelValue?.classList.add('float-label');
   }
   ngOnInit() {}
+
+  _language() {
+
+
+
+
+    this._translate.get('HOME_WELCOME').subscribe((res: string) => {
+      this.HOME_WELCOME = res;
+    });
+    this._translate.get('HOME_ENTER_SIM_ID').subscribe((res: string) => {
+      this.HOME_ENTER_SIM_ID = res;
+    });
+
+    this._translate.get('HOME_INPUT').subscribe((res: string) => {
+      this.HOME_INPUT = res;
+    });
+
+    this._translate.get('HOME_HELP').subscribe((res: string) => {
+      this.HOME_HELP = res;
+    });
+
+    this._translate.get('HOME_BUTTON_LOGIN').subscribe((res: string) => {
+      this.HOME_BUTTON_LOGIN = res;
+    });
+
+    this._translate.get('HOME_HELP_CONTACT_LINK').subscribe((res: string) => {
+      this.HOME_HELP_CONTACT_LINK = res;
+    });
+  }
 }

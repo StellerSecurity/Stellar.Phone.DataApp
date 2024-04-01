@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="box">
-          <h2 class="box-heading">Expires on: </h2>
+          <h2 class="box-heading">{{EXPIRES_AT}}</h2>
           <div class="details-box">
             <p class="box-text">{{data.expires_at}}</p>
           </div>
@@ -55,13 +55,13 @@
           <span>Available to use:</span><p>{{data.remaining}}</p>
         </div>
         <div class="upgrade-btn" (click)="upgradePlan()">
-          <p class="upgrade-text">Upgrade Your Plan</p>
+          <p class="upgrade-text">{{UPGRADE_YOUR_PLAN}}</p>
         </div>
 
     </div>
   </div>
   <div class="flags-content" *ngIf="data !== null">
-    
+
     <div class="flags-list" (click)="toggleModal()">
       <!-- <span *ngFor="let item of locations">
         <img src="assets/flags/{{item}}.svg" class="flag" />
@@ -70,12 +70,12 @@
         <img src="assets/flags/{{item}}.svg" class="flag" />
         <span>{{ getCountryFullName(item) }}</span>
       </span>
-      <p class="flags-p">Available in {{locations.length}} Countries</p>
-      
+      <p class="flags-p">{{AVAILABLE_IN_COUNTRIES}}</p>
+
       <img src="assets/icon/right-arrow.svg" alt="arrow">
     </div>
   </div>
-  
+
 </ion-content>
 
 <div class="modal-container" *ngIf="showModal" [ngClass]="{'slide-in-from-bottom': showModal}">
@@ -84,21 +84,21 @@
       <ion-toolbar>
         <div class="d-flex">
           <ion-title>
-            Supported Countries
+            {{SUPPORTED_COUNTRIES}}
           </ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="toggleModal()">Close</ion-button>
+            <ion-button (click)="toggleModal()">{{SEARCH_CLOSE}}</ion-button>
           </ion-buttons>
         </div>
-        
+
         <div class="contry_search">
           <img src="assets/icon/tabler-icon-search.svg" alt="search">
-          <input type="text" placeholder="Search for country" [(ngModel)]="searchText" (input)="filterLocations()"/>
+          <input type="text" placeholder="{{SEARCH_FOR_COUNTRY}}" [(ngModel)]="searchText" (input)="filterLocations()"/>
         </div>
-        
+
       </ion-toolbar>
     </div>
-    
+
    <div class="modal-body">
       <div class="country-list">
         <div *ngFor="let item of filteredLocations" class="country-item">

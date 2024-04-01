@@ -9,18 +9,18 @@
       </div>
     </div>
     <div class="stellar_action">
-      <h2>Welcome to Stellar Data</h2>
-      <p>Please Enter your SIM ID</p>
+      <h2>{{HOME_WELCOME}}</h2>
+      <p>{{HOME_ENTER_SIM_ID}}</p>
       <!-- <ion-label class="label">Enter your SIM ID</ion-label> -->
     <ion-item class="rounded-input-container">
-      <ion-label class="gray-color" position="floating">Your SIM ID</ion-label>
+      <ion-label class="gray-color" position="floating">{{HOME_INPUT}}</ion-label>
       <ion-input [(ngModel)]="userInput" type="text" class="rounded-input"></ion-input>
     </ion-item>
     <ion-button expand="full" (click)="saveInput()" class="rounded-button">Login</ion-button>
     <div class="help_support">
-      Need some help? <a href="https://stellarsecurity.com/contact-us" target="_blank" class="primary-color">Contact Us</a>
+      {{HOME_HELP}} <a href="https://stellarsecurity.com/contact-us" target="_blank" class="primary-color">{{HOME_HELP_CONTACT_LINK}}</a>
     </div>
     </div>
   </div>
- 
+
 </ion-content>

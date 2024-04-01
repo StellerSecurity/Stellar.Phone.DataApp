@@ -3,8 +3,10 @@ import {DataServiceAPIService} from "../services/data-service-api.service";
 import {AlertController, LoadingController, NavController, ToastController} from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { COUNTRY_CODES } from '../data/country-code';
-import { ModalController } from '@ionic/angular';
+import {COUNTRY_CODES} from "../data/country-code";
+import {TranslateService} from "@ngx-translate/core";
+
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -18,19 +20,29 @@ export class Tab1Page {
 
   private readonly sim_id = "";
 
+  public SIM_ID_COPIED = "";
+  public EXPIRES_AT = "";
+  public AVAILABLE_TO_USE = "";
+  public SUPPORTED_COUNTRIES = "";
+  public SEARCH_FOR_COUNTRY = "";
+  public SEARCH_CLOSE = "";
+  public UPGRADE_YOUR_PLAN = "";
+  public LOGOUT = "";
+  public LOGOUT_SURE = "";
+  public AVAILABLE_IN_COUNTRIES = "";
+
   constructor(private toastController: ToastController,
               public dataServiceAPIService: DataServiceAPIService,
-              private loadingCtrl: LoadingController,public alertController: AlertController,private navCtrl: NavController) {
+              private loadingCtrl: LoadingController,public alertController: AlertController,private navCtrl: NavController, public _translate: TranslateService) {
 
     this.localNotifications();
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
-
-
+    this._language();
   }
 
-  
+
   cssprop = 'circular-chart nill';
   strokes = '0 ,100';
   value = 100;
@@ -47,7 +59,7 @@ export class Tab1Page {
   else if(Number(this.value) > 80 && Number(this.value) < 100) {
     this.cssprop = 'circular-chart red';
     this.strokes =  this.value +' ,'+100;
-  }  
+  }
 
 
  }
@@ -96,18 +108,13 @@ export class Tab1Page {
       });
     };
     const toast = await this.toastController.create({
-      message: 'Sim ID has been copied.',
+      message: this.SIM_ID_COPIED,
       duration: 2500,
       position: 'bottom',
     });
 
     await toast.present();
   }
-  // filterItems() {
-  //   this.filteredItems = this.items.filter(item =>
-  //     item.name.toLowerCase().includes(this.searchText.toLowerCase())
-  //   );
-  // }
 
   getCountryFullName(countryCode: string): string {
     return COUNTRY_CODES[countryCode.toLowerCase()] || 'Unknown';
@@ -135,7 +142,6 @@ export class Tab1Page {
     let loading: HTMLIonLoadingElement | null = null;
     if (this.data === null) {
       loading = await this.loadingCtrl.create({
-        message: 'Getting Data info',
         cssClass: 'loader-popup',
       });
       await loading.present();
@@ -151,7 +157,8 @@ export class Tab1Page {
 
         this.format(this.data);
         this.getPercentOfData()
-       
+
+
 
       },
       error: (error) => {
@@ -161,7 +168,7 @@ export class Tab1Page {
         //alert('Check your internet connection..');
         setTimeout(() => {
           this.getData();
-          
+
         }, 10000);
       }
     });
@@ -171,6 +178,10 @@ export class Tab1Page {
     response.location = response.location.toLowerCase();
     this.locations = response.location.split(",");
     this.filteredLocations = this.locations;
+
+    this._translate.get('AVAILABLE_IN_COUNTRIES', { number: this.locations.length }).subscribe((res: string) => {
+      this.AVAILABLE_IN_COUNTRIES = res;
+    });
   }
 
   async presentAlert() {
@@ -204,12 +215,53 @@ logout(){
   setTimeout(() => {
     this.navCtrl.navigateForward('/');
   }, 20);
-  
+
 }
-searchText = '';
-filterLocations() {
-  this.filteredLocations = this.locations.filter((countryCode:any) =>
-    this.getCountryFullName(countryCode).toLowerCase().includes(this.searchText.toLowerCase())
-  );
-}
+  searchText = '';
+  filterLocations() {
+    this.filteredLocations = this.locations.filter((countryCode:any) =>
+      this.getCountryFullName(countryCode).toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
+
+  _language() {
+    this._translate.setDefaultLang('en');
+    this._translate.get('SIM_ID_COPIED').subscribe((res: string) => {
+      this.SIM_ID_COPIED = res;
+    });
+
+    this._translate.get('EXPIRES_AT').subscribe((res: string) => {
+      this.EXPIRES_AT = res;
+    });
+
+    this._translate.get('AVAILABLE_TO_USE').subscribe((res: string) => {
+      this.AVAILABLE_TO_USE = res;
+    });
+
+    this._translate.get('SUPPORTED_COUNTRIES').subscribe((res: string) => {
+      this.SUPPORTED_COUNTRIES = res;
+    });
+
+    this._translate.get('SEARCH_FOR_COUNTRY').subscribe((res: string) => {
+      this.SEARCH_FOR_COUNTRY = res;
+    });
+
+    this._translate.get('SEARCH_CLOSE').subscribe((res: string) => {
+      this.SEARCH_CLOSE= res;
+    });
+
+    this._translate.get('UPGRADE_YOUR_PLAN').subscribe((res: string) => {
+      this.UPGRADE_YOUR_PLAN= res;
+    });
+
+    this._translate.get('LOGOUT').subscribe((res: string) => {
+      this.LOGOUT = res;
+    });
+
+    this._translate.get('LOGOUT_SURE').subscribe((res: string) => {
+      this.LOGOUT_SURE = res;
+    });
+
+  }
+
 }

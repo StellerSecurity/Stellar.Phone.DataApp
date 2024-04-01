@@ -1,0 +1,18 @@
+{
+  "HOME_WELCOME": "Willkommen bei Stellar Data",
+  "HOME_ENTER_SIM_ID": "Bitte geben Sie Ihre SIM-ID ein",
+  "HOME_INPUT": "Ihre SIM-ID",
+  "HOME_BUTTON_LOGIN": "Anmelden",
+  "HOME_HELP": "Brauchen Sie Hilfe?",
+  "HOME_HELP_CONTACT_LINK": "KONTAKTIEREN SIE UNS",
+  "SIM_ID_COPIED": "SIM-ID wurde kopiert",
+  "EXPIRES_AT": "Läuft ab am:",
+  "AVAILABLE_TO_USE": "Verfügbar zum Verwenden:",
+  "SUPPORTED_COUNTRIES": "Unterstützte Länder",
+  "SEARCH_FOR_COUNTRY": "Land suchen",
+  "SEARCH_CLOSE": "Schließen",
+  "UPGRADE_YOUR_PLAN": "Aktualisieren Sie Ihren Plan",
+  "LOGOUT": "Ausloggen",
+  "LOGOUT_SURE": "Möchten Sie sich wirklich ausloggen?",
+  "AVAILABLE_IN_COUNTRIES": "Verfügbar in {{number}} Ländern"
+}

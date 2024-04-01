@@ -5,9 +5,6 @@ project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
 
-include ':capacitor-background-runner'
-project(':capacitor-background-runner').projectDir = new File('../node_modules/@capacitor/background-runner/android')
-
 include ':capacitor-clipboard'
 project(':capacitor-clipboard').projectDir = new File('../node_modules/@capacitor/clipboard/android')
 
@@ -22,6 +19,3 @@ project(':capacitor-local-notifications').projectDir = new File('../node_modules
 
 include ':capacitor-status-bar'
 project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
-
-include ':transistorsoft-capacitor-background-fetch'
-project(':transistorsoft-capacitor-background-fetch').projectDir = new File('../node_modules/@transistorsoft/capacitor-background-fetch/android')

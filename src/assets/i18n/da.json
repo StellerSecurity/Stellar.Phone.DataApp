@@ -1,0 +1,18 @@
+{
+  "HOME_WELCOME": "Velkommen til Stellar Data",
+  "HOME_ENTER_SIM_ID": "Indtast dit SIM-ID",
+  "HOME_INPUT": "Dit SIM-ID",
+  "HOME_BUTTON_LOGIN": "Log ind",
+  "HOME_HELP": "Har du brug for hjælp?",
+  "HOME_HELP_CONTACT_LINK": "KONTAKT OS",
+  "SIM_ID_COPIED": "Sim-id er blevet kopieret",
+  "EXPIRES_AT": "Udløber den:",
+  "AVAILABLE_TO_USE": "Tilgængelig til brug:",
+  "SUPPORTED_COUNTRIES": "Understøttede lande",
+  "SEARCH_FOR_COUNTRY": "Søg efter land",
+  "SEARCH_CLOSE": "Luk",
+  "UPGRADE_YOUR_PLAN": "Opgrader din plan",
+  "LOGOUT": "Log ud",
+  "LOGOUT_SURE": "Er du sikker på, at du vil logge ud?",
+  "AVAILABLE_IN_COUNTRIES": "Tilgængelig i {{number}} lande"
+}
