@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import {TranslateService} from "@ngx-translate/core";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-sim-input',
@@ -19,8 +20,15 @@ export class SimInputPage implements OnInit {
   public HOME_HELP = "";
   public HOME_HELP_CONTACT_LINK = "";
 
-  constructor(public alertController: AlertController, private navCtrl: NavController, public _translate: TranslateService) {
+  constructor(public alertController: AlertController, private navCtrl: NavController, public _translate: TranslateService, private route: ActivatedRoute) {
     this._language();
+    this.route.queryParams.subscribe(params => {
+        if(params != null) {
+          if(params['clear'] == 1) {
+            window.location.href = '/sim-input';
+          }
+        }
+    });
   }
 
   async saveInput() {debugger

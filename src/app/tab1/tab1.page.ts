@@ -211,9 +211,7 @@ export class Tab1Page {
   }
 logout(){
   localStorage.clear();
-  setTimeout(async () => {
-    await this.navCtrl.navigateForward('/');
-  }, 200);
+  this.navCtrl.navigateForward('/sim-input?clear=1');
 
 }
   searchText = '';
