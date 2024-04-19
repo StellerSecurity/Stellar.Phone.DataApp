@@ -91,9 +91,19 @@ export class Tab1Page {
 
   handleRefresh(event: any) {
     this.getData();
-    setTimeout(() => {
+    setTimeout(async () => {
       // Any calls to load data go here
       event.target.complete();
+
+      const toast = await this.toastController.create({
+        message: "Latest Data Info has been updated",
+        duration: 1500,
+        position: 'bottom',
+      });
+
+      await toast.present();
+
+
     }, 2000);
   }
 
