@@ -90,9 +90,7 @@
     <div class="modal-header">
       <ion-toolbar>
         <div class="d-flex">
-          <ion-title>
-            {{SUPPORTED_COUNTRIES}} ({{locations.length}})
-          </ion-title>
+          <h6><strong>{{SUPPORTED_COUNTRIES}} ({{locations.length}})</strong></h6>
           <ion-buttons slot="end">
             <ion-button (click)="toggleModal()">{{SEARCH_CLOSE}}</ion-button>
           </ion-buttons>
@@ -108,14 +106,10 @@
 
    <div class="modal-body">
       <div class="country-list">
-        <ion-list>
           <div *ngFor="let item of filteredLocations" class="country-item">
-            <ion-item>
               <img src="assets/flags/{{item}}.svg" class="flag" />
               <span>{{ getCountryFullName(item) }}</span>
-            </ion-item>
           </div>
-        </ion-list>
       </div>
    </div>
   </div>
