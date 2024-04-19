@@ -164,7 +164,7 @@ ion-item {
     &:nth-child(3){
       left: 32px;
     }
-    
+
 }
 }
 .flags-list .flag {
@@ -211,7 +211,7 @@ ion-item {
 
 
 
-  
+
 .circular-chart {
   display: block;
   margin: 10px auto;
@@ -375,7 +375,15 @@ ion-item {
       background-position: 50% 16%;
       padding-top: 4rem !important;
       background-image: url('../../assets/icon/tabler-icon-logout.svg');
-      
+
     }
   }
+}
+
+ion-item {
+  width: 100%;
+}
+
+ion-item img {
+  margin-right: 15px;
 }

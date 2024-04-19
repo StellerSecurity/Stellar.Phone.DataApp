@@ -29,6 +29,13 @@
           </div>
           <!-- <p class="box-text-small">{{data.days_until_expire}} Days</p> -->
         </div>
+        <div class="box">
+          <h2 class="box-heading">Account Number</h2>
+          <div class="details-box">
+            <p class="box-text">{{data.id}}</p>
+          </div>
+          <!-- <p class="box-text-small">{{data.days_until_expire}} Days</p> -->
+        </div>
       </div>
 
     </div>
@@ -101,10 +108,14 @@
 
    <div class="modal-body">
       <div class="country-list">
-        <div *ngFor="let item of filteredLocations" class="country-item">
-          <img src="assets/flags/{{item}}.svg" class="flag" />
-          <span>{{ getCountryFullName(item) }}</span>
-        </div>
+        <ion-list>
+          <div *ngFor="let item of filteredLocations" class="country-item">
+            <ion-item>
+              <img src="assets/flags/{{item}}.svg" class="flag" />
+              <span>{{ getCountryFullName(item) }}</span>
+            </ion-item>
+          </div>
+        </ion-list>
       </div>
    </div>
   </div>
