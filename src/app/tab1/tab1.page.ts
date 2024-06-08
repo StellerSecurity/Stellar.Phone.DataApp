@@ -164,9 +164,7 @@ export class Tab1Page {
 
         this.format(this.data);
         this.getPercentOfData()
-
-
-
+        
       },
       error: (error) => {
         if(loading !== null) {

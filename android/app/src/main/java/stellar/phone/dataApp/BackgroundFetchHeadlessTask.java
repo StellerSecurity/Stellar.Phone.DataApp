@@ -2,15 +2,27 @@ package stellar.phone.dataApp;
 
 /// ---------------- Paste everything BELOW THIS LINE: -----------------------
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
 import static com.getcapacitor.util.JSONUtils.getString;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
+import com.capacitorjs.plugins.localnotifications.LocalNotification;
+import com.capacitorjs.plugins.localnotifications.LocalNotificationAttachment;
+import com.getcapacitor.JSObject;
+import com.getcapacitor.PluginCall;
 import com.transistorsoft.tsbackgroundfetch.BackgroundFetch;
 import com.transistorsoft.tsbackgroundfetch.BGTask;
 
@@ -21,10 +33,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 
 public class BackgroundFetchHeadlessTask{
+
+  NotificationManager notificationManager;
+
+  Notification notification = null;
+
   public void onFetch(Context context,  BGTask task) {
     // Get a reference to the BackgroundFetch Android API.
     BackgroundFetch backgroundFetch = BackgroundFetch.getInstance(context);
@@ -38,33 +55,53 @@ public class BackgroundFetchHeadlessTask{
     SharedPreferences sh = context.getSharedPreferences("CapacitorStorage", Activity.MODE_PRIVATE);
     String sim_id = sh.getString("sim_id", null);
 
-
-    Log.d("DATAPP", sim_id + " hehe");
-
     if(sim_id != null) {
 
       Thread httpThread = new Thread() {
           public void run() {
             try {
 
-              Log.d("DATAPP", "starting...");
               URL url = new URL("https://stellardatauiapiappprod.azurewebsites.net/api/v1/overviewcontroller/view?id=" + sim_id);
               HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-              Log.d("DATAPP", "starting1...");
               conn.setRequestMethod("GET");
-              Log.d("DATAPP", "starting2...");
               conn.connect();
-              int responsecode = conn.getResponseCode();
 
               JSONObject jObject = new JSONObject(readFullyAsString(conn.getInputStream(), "UTF-8"));
               int days_left = jObject.optInt("days_until_expire", 0);
 
+              if(14 >= days_left) {
 
-              if(14 > days_left) {
-                // send notification..
+                NotificationCompat.Builder builder =null ;
+
+                NotificationManager notificationManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                NotificationChannel notificationChannel = new NotificationChannel(
+                  "stellar.phone.dataApp",
+                  "Stellar Phone",
+                  NotificationManager.IMPORTANCE_DEFAULT);
+
+                notificationManager.createNotificationChannel(notificationChannel);
+
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setClass(context, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+
+                builder = new NotificationCompat.Builder(context, "stellar.phone.dataApp")
+                  .setAutoCancel(false)
+                  .setOngoing(false)
+                  .setContentTitle("Stellar Data")
+                  .setContentIntent(pendingIntent)
+                  .setSmallIcon(R.drawable.ic_launcher_foreground)
+                  .setContentText("Your Stellar Data will expire in " + days_left + " days")
+                  .setWhen(System.currentTimeMillis());
+
+                notificationManager.notify(696969, builder.build());
+
               }
 
-              //Log.d("DATAPP", "pedh" + days_left);
             } catch (IOException exception) {
               //Log.d("DATAPP", exception.getMessage() + " lol");
             } catch (JSONException e) {
@@ -103,7 +140,5 @@ public class BackgroundFetchHeadlessTask{
     }
     return baos;
   }
-
-  
 
 }
