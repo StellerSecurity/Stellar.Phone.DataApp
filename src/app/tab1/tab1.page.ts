@@ -46,6 +46,11 @@ export class Tab1Page {
     this.sim_id = localStorage.getItem("sim_id");
     this._language();
 
+    Preferences.set({
+      key: 'sim_id',
+      value: this.sim_id,
+    }).then(r =>{} );
+
 
   }
 
@@ -67,32 +72,6 @@ export class Tab1Page {
 
  }
   private async localNotifications() {
-
-
-
-    const test = async () => {
-      await Preferences.set({
-        key: 'sim_id',
-        value: this.sim_id,
-      });
-    };
-
-    const setName = async () => {
-      await Preferences.set({
-        key: 'name',
-        value: 'Max',
-      });
-    };
-
-    setName();
-
-    const checkName = async () => {
-      const { value } = await Preferences.get({ key: 'name' });
-
-      console.log(`Hello ${value}!`);
-    };
-
-    checkName();
 
     const permissions = await LocalNotifications.checkPermissions();
     console.log('checkPermissions result:', permissions);
@@ -237,9 +216,10 @@ export class Tab1Page {
     });
     alert.present();
   }
-logout(){
+async logout() {
   localStorage.clear();
-  this.navCtrl.navigateForward('/sim-input?clear=1');
+  await Preferences.clear();
+  await this.navCtrl.navigateForward('/sim-input?clear=1');
 
 }
   searchText = '';

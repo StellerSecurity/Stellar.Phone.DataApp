@@ -33,7 +33,7 @@ export class AppComponent {
 
   async initBackgroundFetch() {
     const status = await BackgroundFetch.configure({
-      minimumFetchInterval: 15,
+      minimumFetchInterval: 2880,
       stopOnTerminate: false,
       startOnBoot: true,
       enableHeadless: true
