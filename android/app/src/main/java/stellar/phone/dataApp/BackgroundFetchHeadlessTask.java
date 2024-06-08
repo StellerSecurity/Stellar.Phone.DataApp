@@ -69,7 +69,7 @@ public class BackgroundFetchHeadlessTask{
               JSONObject jObject = new JSONObject(readFullyAsString(conn.getInputStream(), "UTF-8"));
               int days_left = jObject.optInt("days_until_expire", 0);
 
-              if(14 >= days_left) {
+              if(14 >= days_left && 0 <= days_left) {
 
                 NotificationCompat.Builder builder =null ;
 
