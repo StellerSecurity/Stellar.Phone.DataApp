@@ -5,7 +5,7 @@ import { Clipboard } from '@capacitor/clipboard';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import {COUNTRY_CODES} from "../data/country-code";
 import {TranslateService} from "@ngx-translate/core";
-
+import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-tab1',
@@ -31,21 +31,24 @@ export class Tab1Page {
   public LOGOUT_SURE = "";
   public AVAILABLE_IN_COUNTRIES = "";
 
+  cssprop = 'circular-chart nill';
+  strokes = '0 ,100';
+  value = 100;
+
+
   constructor(private toastController: ToastController,
               public dataServiceAPIService: DataServiceAPIService,
               private loadingCtrl: LoadingController,public alertController: AlertController,private navCtrl: NavController, public _translate: TranslateService) {
 
-    this.localNotifications();
+    this.localNotifications().then(r => {});
 
     // @ts-ignore
     this.sim_id = localStorage.getItem("sim_id");
     this._language();
+
+
   }
 
-
-  cssprop = 'circular-chart nill';
-  strokes = '0 ,100';
-  value = 100;
  getPercentOfData(){
   this.value = (this.data?.total_usage/ this.data?.total_data) * 100
   if (Number(this.value) > 0 && Number(this.value) <= 50) {
@@ -64,6 +67,33 @@ export class Tab1Page {
 
  }
   private async localNotifications() {
+
+
+
+    const test = async () => {
+      await Preferences.set({
+        key: 'sim_id',
+        value: this.sim_id,
+      });
+    };
+
+    const setName = async () => {
+      await Preferences.set({
+        key: 'name',
+        value: 'Max',
+      });
+    };
+
+    setName();
+
+    const checkName = async () => {
+      const { value } = await Preferences.get({ key: 'name' });
+
+      console.log(`Hello ${value}!`);
+    };
+
+    checkName();
+
     const permissions = await LocalNotifications.checkPermissions();
     console.log('checkPermissions result:', permissions);
     if (permissions.display !== 'granted') {
@@ -75,18 +105,6 @@ export class Tab1Page {
       }
     }
 
-    /*let notifs = await LocalNotifications.schedule({
-      notifications: [
-        {
-          title: 'Stellar Data',
-          body: 'You have 1 GB remaining',
-          id: 1,
-          schedule: { at: new Date(Date.now() + 1000 * 5) },
-          actionTypeId: '',
-          extra: null,
-        },
-      ],
-    });*/
   }
 
   handleRefresh(event: any) {
@@ -97,14 +115,14 @@ export class Tab1Page {
 
       const toast = await this.toastController.create({
         message: "Latest Data Info has been updated",
-        duration: 1500,
+        duration: 2500,
         position: 'bottom',
       });
 
       await toast.present();
 
 
-    }, 2000);
+    }, 2500);
   }
 
   ionViewWillEnter() {

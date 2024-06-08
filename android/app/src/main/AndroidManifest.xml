@@ -31,7 +31,6 @@
         </provider>
     </application>
 
-    <!-- Permissions -->
-
+  <uses-permission android:minSdkVersion="34" android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

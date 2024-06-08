@@ -1443,7 +1443,7 @@
   resolved "https://registry.npmjs.org/@capacitor/clipboard/-/clipboard-5.0.7.tgz"
   integrity sha512-N9JJruFB1mKNmA/+HPXyhcSugvEmYYfM4BibYB8lPqGc9QUY8WirU1+/5Keo8+lKJ6Sv9FVyHr2Sf8XFpwK7Tw==
 
-"@capacitor/core@^5.0.0", "@capacitor/core@^5.3.0", "@capacitor/core@5.3.0":
+"@capacitor/core@^5.0.0", "@capacitor/core@^5.3.0", "@capacitor/core@^6.0.0", "@capacitor/core@5.3.0":
   version "5.3.0"
   resolved "https://registry.npmjs.org/@capacitor/core/-/core-5.3.0.tgz"
   integrity sha512-mvhh1yJtcUTZ0hUUriBKKpxq47hn75bjxH3tYPRgAFu1z3gowCg+OtG4Rce3W5gr5fSfCjQgOSL0Vp7k9hPUWw==
@@ -1464,6 +1464,11 @@
   version "5.0.7"
   resolved "https://registry.npmjs.org/@capacitor/local-notifications/-/local-notifications-5.0.7.tgz"
   integrity sha512-Q16sAv9B55qrXRBgjsom3UAXQ9J5I9HxOToYtQ6jvM3237DphotvVSNriX2AGeXLi5nHkmNv2ZsFu17wTrRcpA==
+
+"@capacitor/preferences@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/@capacitor/preferences/-/preferences-6.0.0.tgz"
+  integrity sha512-4A49UKEc/sgf28TFNwRX4Kx6G0oMeRC9btA2voaEuL2LZd2l8IMfAEFDIrfQWi5rYE6RWenEUexUTyiEZnYFvQ==
 
 "@capacitor/status-bar@^5.0.6":
   version "5.0.7"
@@ -1974,10 +1979,10 @@
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@transistorsoft/capacitor-background-fetch@^5.1.1":
-  version "5.2.4"
-  resolved "https://registry.npmjs.org/@transistorsoft/capacitor-background-fetch/-/capacitor-background-fetch-5.2.4.tgz"
-  integrity sha512-lHJrKAuKR2n7amxExuwSWQgXcvrA2A4+99jxMJGfZJwRub13CsoRfKnCauqVLU+UKHpjt+7x/AwdcgEyZ7oIdg==
+"@transistorsoft/capacitor-background-fetch@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/@transistorsoft/capacitor-background-fetch/-/capacitor-background-fetch-6.0.0.tgz"
+  integrity sha512-fwnwqmpXiqTLlAGvjJXSnfRRF4zw1ULquJjRfipnOdZSNPS05U4um+56UPoSVJKLgoHIjSjw8/BryfY4qL1Dmw==
 
 "@trapezedev/gradle-parse@5.0.10":
   version "5.0.10"
@@ -3807,11 +3812,6 @@ copy-webpack-plugin@11.0.0:
     normalize-path "^3.0.0"
     schema-utils "^4.0.0"
     serialize-javascript "^6.0.0"
-
-cordova-plugin-background-fetch@^7.2.1:
-  version "7.2.3"
-  resolved "https://registry.npmjs.org/cordova-plugin-background-fetch/-/cordova-plugin-background-fetch-7.2.3.tgz"
-  integrity sha512-t6bUs5bEyNzykMPY4jpde4wMHEgSQ7lykNjJabEJ4HV4tYJZksQaHaYrQDupalmAWs/REVHVLM03fl8PCH1Z2g==
 
 core-js-compat@^3.31.0, core-js-compat@^3.33.1:
   version "3.37.0"
