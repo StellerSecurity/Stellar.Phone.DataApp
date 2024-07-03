@@ -163,15 +163,27 @@ export class Tab1Page {
         localStorage.setItem("stored_data",  JSON.stringify(response));
 
         this.format(this.data);
-        this.getPercentOfData()
-        
+        this.getPercentOfData();
+
+
       },
-      error: (error) => {
-        if(loading !== null) {
+      error: async (error) => {
+        if (loading !== null) {
           loading.dismiss();
         }
+
+        const toast = await this.toastController.create({
+          message: 'Could not load data. Trying again in 10 seconds.. (check your internet-connection..)',
+          duration: 2500,
+          position: 'bottom',
+        });
+
+        await toast.present();
+
         //alert('Check your internet connection..');
         setTimeout(() => {
+
+
           this.getData();
 
         }, 10000);
