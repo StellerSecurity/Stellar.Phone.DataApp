@@ -174,7 +174,7 @@ export class Tab1Page {
 
         const toast = await this.toastController.create({
           message: 'Could not load data. Trying again in 10 seconds.. (check your internet-connection..)',
-          duration: 2500,
+          duration: 10000,
           position: 'bottom',
         });
 
