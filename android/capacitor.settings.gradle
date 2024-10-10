@@ -25,3 +25,6 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacit
 
 include ':transistorsoft-capacitor-background-fetch'
 project(':transistorsoft-capacitor-background-fetch').projectDir = new File('../node_modules/@transistorsoft/capacitor-background-fetch/android')
+
+include ':stellar-data-usage'
+project(':stellar-data-usage').projectDir = new File('../stellar-data-usage/android')

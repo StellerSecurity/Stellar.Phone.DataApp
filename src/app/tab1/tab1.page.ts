@@ -6,6 +6,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import {COUNTRY_CODES} from "../data/country-code";
 import {TranslateService} from "@ngx-translate/core";
 import { Preferences } from '@capacitor/preferences';
+import {StellarData} from "stellar-data-usage";
 
 @Component({
   selector: 'app-tab1',
@@ -18,7 +19,7 @@ export class Tab1Page {
 
   public locations: any = null;
 
-  private readonly sim_id = "";
+  public readonly sim_id = "";
 
   public SIM_ID_COPIED = "";
   public EXPIRES_AT = "";
@@ -52,7 +53,10 @@ export class Tab1Page {
     }).then(r =>{} );
 
 
+
   }
+
+
 
  getPercentOfData(){
   this.value = (this.data?.total_usage/ this.data?.total_data) * 100
@@ -139,6 +143,25 @@ export class Tab1Page {
 
   private async getData() {
 
+    // @ts-ignore
+    if(this.sim_id == '1977' || this.sim_id == '1988') {
+      StellarData.getNetworkUsage().then(data => {
+        this.data = [];
+        this.data.total_data = 20;
+        // @ts-ignore
+        if(this.sim_id == '1988') {
+          this.data.total_data = 40;
+        }
+        this.data.id = this.sim_id;
+        this.data.total_usage = data.gb;
+        this.data.remaining = this.data.total_data - this.data.total_usage + " GB";
+        this.data.expires_at = 'Check Protect App';
+        this.data.location = "NO,RS,DE,RU,BE,FI,PT,BG,DK,LT,LU,LV,HR,UA,FR,HU,SE,SI,SK,GB,IE,MK,GG,EE,GI,IM,CH,MT,IS,IT,GR,ES,AT,CY,AX,CZ,JE,PL,RO,LI,NL,TR";
+        this.format(this.data);
+      })
+      return;
+    }
+
     let stored_data = localStorage.getItem("stored_data");
 
     if(stored_data !== null) {
@@ -182,10 +205,7 @@ export class Tab1Page {
 
         //alert('Check your internet connection..');
         setTimeout(() => {
-
-
           this.getData();
-
         }, 10000);
       }
     });

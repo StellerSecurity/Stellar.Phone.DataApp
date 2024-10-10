@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {BackgroundFetch} from '@transistorsoft/capacitor-background-fetch';
-import {LocalNotifications} from "@capacitor/local-notifications";
 import {Platform} from "@ionic/angular";
 @Component({
   selector: 'app-root',
