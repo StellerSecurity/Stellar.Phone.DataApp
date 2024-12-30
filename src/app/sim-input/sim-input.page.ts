@@ -20,7 +20,9 @@ export class SimInputPage implements OnInit {
   public HOME_HELP = "";
   public HOME_HELP_CONTACT_LINK = "";
 
-  constructor(public alertController: AlertController, private navCtrl: NavController, public _translate: TranslateService, private route: ActivatedRoute) {
+  constructor(public alertController: AlertController,
+
+              private navCtrl: NavController, public _translate: TranslateService, private route: ActivatedRoute) {
     this._language();
     this.route.queryParams.subscribe(params => {
         if(params != null) {
@@ -29,6 +31,17 @@ export class SimInputPage implements OnInit {
           }
         }
     });
+
+    /*
+    let sim_id = localStorage.getItem('sim_id');
+
+    if(sim_id == null) {
+      localStorage.setItem('sim_id', "1977");
+      this.sim_id = "1977";
+      this.navCtrl.navigateForward('/tabs/tab1');
+    }*/
+
+
   }
 
   async saveInput() {debugger
@@ -49,7 +62,7 @@ export class SimInputPage implements OnInit {
       this.sim_id = this.userInput;
 
     }
-    this.navCtrl.navigateForward('/tabs/tab1');
+    await this.navCtrl.navigateForward('/tabs/tab1');
   }
   floatLabel(labelValue:any) {debugger
     const label = document.querySelector('.custom-label');

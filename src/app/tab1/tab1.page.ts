@@ -192,7 +192,7 @@ export class Tab1Page {
       },
       error: async (error) => {
         if (loading !== null) {
-          loading.dismiss();
+          await loading.dismiss();
         }
 
         const toast = await this.toastController.create({
@@ -244,7 +244,7 @@ export class Tab1Page {
         }
       ]
     });
-    alert.present();
+    await alert.present();
   }
 async logout() {
   localStorage.clear();
