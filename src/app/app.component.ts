@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {BackgroundFetch} from '@transistorsoft/capacitor-background-fetch';
 import {Platform} from "@ionic/angular";
+import { StatusBar, Style } from '@capacitor/status-bar';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -13,6 +15,9 @@ export class AppComponent {
 
 
   constructor(public _translate: TranslateService, public _platform: Platform) {
+
+    StatusBar.setBackgroundColor({color: '#2152D4'}).then(r => {});
+    StatusBar.setStyle({style: Style.Light}).then(r => {});
 
     if(this._platform.is('android')) {
       this.initBackgroundFetch();
