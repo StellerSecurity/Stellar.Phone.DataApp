@@ -11,7 +11,7 @@ export class DataServiceAPIService {
     constructor(private httpClient: HttpClient) {};
 
   getOverview(sim_id: string) {
-    return this.httpClient.get<any>(this.API_URL + "v1/overviewcontroller/view?id=" + sim_id);
+    return this.httpClient.get<any>(this.API_URL + "v2/overviewcontroller/view?id=" + sim_id);
   }
 
 }
