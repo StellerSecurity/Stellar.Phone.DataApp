@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Data</string>
+    <string name="title_activity_main">Data</string>
+    <string name="package_name">stellar.phone.dataApp</string>
+    <string name="custom_url_scheme">stellar.phone.dataApp</string>
+</resources>
