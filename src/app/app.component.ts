@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
-import {BackgroundFetch} from '@transistorsoft/capacitor-background-fetch';
 import {Platform} from "@ionic/angular";
 import { StatusBar, Style } from '@capacitor/status-bar';
 
@@ -20,7 +19,7 @@ export class AppComponent {
     StatusBar.setStyle({style: Style.Light}).then(r => {});
 
     if(this._platform.is('android')) {
-      this.initBackgroundFetch();
+      //this.initBackgroundFetch();
     }
 
     this._translate.setDefaultLang('en');
@@ -35,7 +34,7 @@ export class AppComponent {
 
   }
 
-  async initBackgroundFetch() {
+  /*async initBackgroundFetch() {
     const status = await BackgroundFetch.configure({
       minimumFetchInterval: 2880,
       stopOnTerminate: false,
@@ -73,6 +72,6 @@ export class AppComponent {
         resolve(true);
       }, 5000);
     });
-  }
+  }*/
 
 }
