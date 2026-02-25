@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
-import {TranslateService} from "@ngx-translate/core";
-import {ActivatedRoute} from "@angular/router";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AlertController, IonContent, NavController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sim-input',
@@ -9,75 +9,86 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./sim-input.page.scss'],
 })
 export class SimInputPage implements OnInit {
+  @ViewChild(IonContent, { static: false }) content?: IonContent;
+
   public userInput: string = '';
   private sim_id: string | null = '';
 
+  public HOME_WELCOME = '';
+  public HOME_ENTER_SIM_ID = '';
+  public HOME_INPUT = '';
+  public HOME_BUTTON_LOGIN = '';
+  public HOME_HELP = '';
+  public HOME_HELP_CONTACT_LINK = '';
 
-  public HOME_WELCOME = "";
-  public HOME_ENTER_SIM_ID = "";
-  public HOME_INPUT = "";
-  public HOME_BUTTON_LOGIN = "";
-  public HOME_HELP = "";
-  public HOME_HELP_CONTACT_LINK = "";
-
-  constructor(public alertController: AlertController,
-
-              private navCtrl: NavController, public _translate: TranslateService, private route: ActivatedRoute) {
+  constructor(
+    public alertController: AlertController,
+    private navCtrl: NavController,
+    public _translate: TranslateService,
+    private route: ActivatedRoute
+  ) {
     this._language();
-    this.route.queryParams.subscribe(params => {
-        if(params != null) {
-          if(params['clear'] == 1) {
-            window.location.href = '/sim-input';
-          }
-        }
+
+    this.route.queryParams.subscribe((params) => {
+      if (params && params['clear'] == 1) {
+        window.location.href = '/sim-input';
+      }
     });
-
-    /*
-    let sim_id = localStorage.getItem('sim_id');
-
-    if(sim_id == null) {
-      localStorage.setItem('sim_id', "1977");
-      this.sim_id = "1977";
-      this.navCtrl.navigateForward('/tabs/tab1');
-    }*/
-
-
   }
 
-  async saveInput() {debugger
-    const alert = await this.alertController.create({
-      header: 'Enter SIM ID',
-      message: 'Please enter your sim id.',
-      buttons: ['OK'],
-      cssClass: 'general-popup',
-    });
-    this.sim_id = localStorage.getItem('sim_id');
-
-    if (this.userInput.trim() === '') {
-      await alert.present();
-      return
-    }
-    if (this.sim_id === null) {
-      localStorage.setItem('sim_id', this.userInput);
-      this.sim_id = this.userInput;
-
-    }
-    await this.navCtrl.navigateForward('/tabs/tab1');
-  }
-  floatLabel(labelValue:any) {debugger
-    const label = document.querySelector('.custom-label');
-    labelValue?.classList.add('float-label');
-  }
   ngOnInit() {}
 
-  _language() {
+  async scrollFocusedIntoView(): Promise<void> {
+    setTimeout(async () => {
+      try {
+        const active = document.activeElement as HTMLElement | null;
+        if (!active) return;
 
+        const item = (active.closest('ion-item') as HTMLElement | null) ?? active;
+        const rect = item.getBoundingClientRect();
 
+        const targetY = rect.top + window.scrollY - 140;
 
+        if (this.content) {
+          await this.content.scrollToPoint(0, Math.max(0, targetY), 250);
+        } else {
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      } catch {
+        // ignore
+      }
+    }, 50);
+  }
 
+  async saveInput(): Promise<void> {
+    const trimmed = (this.userInput || '').trim();
+
+    if (trimmed === '') {
+      const alert = await this.alertController.create({
+        header: 'Enter SIM ID',
+        message: 'Please enter your sim id.',
+        buttons: ['OK'],
+        cssClass: 'general-popup',
+      });
+      await alert.present();
+      return;
+    }
+
+    this.sim_id = localStorage.getItem('sim_id');
+
+    if (this.sim_id === null) {
+      localStorage.setItem('sim_id', trimmed);
+      this.sim_id = trimmed;
+    }
+
+    await this.navCtrl.navigateForward('/tabs/tab1');
+  }
+
+  _language(): void {
     this._translate.get('HOME_WELCOME').subscribe((res: string) => {
       this.HOME_WELCOME = res;
     });
+
     this._translate.get('HOME_ENTER_SIM_ID').subscribe((res: string) => {
       this.HOME_ENTER_SIM_ID = res;
     });

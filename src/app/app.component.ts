@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
-import {Platform} from "@ionic/angular";
+import { TranslateService } from '@ngx-translate/core';
+import { Platform } from '@ionic/angular';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-root',
@@ -9,69 +11,61 @@ import { StatusBar, Style } from '@capacitor/status-bar';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-
   public supportedLanguages = ['en', 'da', 'se', 'es', 'fr', 'de'];
 
-
   constructor(public _translate: TranslateService, public _platform: Platform) {
-
-    StatusBar.setBackgroundColor({color: '#2152D4'}).then(r => {});
-    StatusBar.setStyle({style: Style.Light}).then(r => {});
-
-    if(this._platform.is('android')) {
-      //this.initBackgroundFetch();
-    }
-
     this._translate.setDefaultLang('en');
 
-    let userLanguage = <string>this._translate.getBrowserLang();
-
-    if(userLanguage != undefined) {
-      if(this.supportedLanguages.includes(userLanguage)) {
-        this._translate.use(userLanguage);
-      }
+    const userLanguage = this._translate.getBrowserLang() as string;
+    if (userLanguage !== undefined && this.supportedLanguages.includes(userLanguage)) {
+      this._translate.use(userLanguage);
     }
 
-  }
-
-  /*async initBackgroundFetch() {
-    const status = await BackgroundFetch.configure({
-      minimumFetchInterval: 2880,
-      stopOnTerminate: false,
-      startOnBoot: true,
-      enableHeadless: true
-    }, async (taskId) => {
-      console.log('[BackgroundFetch] EVENT:', taskId);
-      // Perform your work in an awaited Promise
-      const result = await this.performYourWorkHere();
-      console.log('[BackgroundFetch] work complete:', result);
-
-      BackgroundFetch.finish(taskId);
-    }, async (taskId) => {
-      // The OS has signalled that your remaining background-time has expired.
-      // You must immediately complete your work and signal #finish.
-      console.log('[BackgroundFetch] TIMEOUT:', taskId);
-      // [REQUIRED] Signal to the OS that your work is complete.
-      await BackgroundFetch.finish(taskId);
-    });
-
-    // Checking BackgroundFetch status:
-    if (status !== BackgroundFetch.STATUS_AVAILABLE) {
-      // Uh-oh:  we have a problem:
-      if (status === BackgroundFetch.STATUS_DENIED) {
-        alert('The user explicitly disabled background behavior for this app or for the whole system.');
-      } else if (status === BackgroundFetch.STATUS_RESTRICTED) {
-        alert('Background updates are unavailable and the user cannot enable them again.')
+    // Ensure native plugins run only after platform is ready
+    this._platform.ready().then(() => {
+      if (this._platform.is('android')) {
+        // Avoid overlays that break keyboard resize on some devices
+        StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {});
       }
-    }
+
+      StatusBar.setBackgroundColor({ color: '#2152D4' }).catch(() => {});
+      StatusBar.setStyle({ style: Style.Light }).catch(() => {});
+
+      if (this._platform.is('android')) {
+        this.setupAndroidKeyboardPaddingFallback();
+      }
+    });
   }
 
-  async performYourWorkHere() {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        resolve(true);
-      }, 5000);
-    });
-  }*/
+  private setupAndroidKeyboardPaddingFallback(): void {
+    if (!Capacitor.isNativePlatform()) return;
+    if (Capacitor.getPlatform() !== 'android') return;
 
+    const setKeyboardHeight = (h: number) => {
+      document.documentElement.style.setProperty('--kb-h', `${h}px`);
+      document.body.classList.add('kb-open');
+    };
+
+    const clearKeyboardHeight = () => {
+      document.documentElement.style.setProperty('--kb-h', '0px');
+      document.body.classList.remove('kb-open');
+    };
+
+    // Some devices fire will* only, others did* only — listen to both
+    Keyboard.addListener('keyboardWillShow', (info) => {
+      setKeyboardHeight(info?.keyboardHeight ?? 0);
+    });
+
+    Keyboard.addListener('keyboardDidShow', (info) => {
+      setKeyboardHeight(info?.keyboardHeight ?? 0);
+    });
+
+    Keyboard.addListener('keyboardWillHide', () => {
+      clearKeyboardHeight();
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      clearKeyboardHeight();
+    });
+  }
 }

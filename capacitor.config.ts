@@ -9,6 +9,10 @@ const config: CapacitorConfig = {
     androidScheme: 'https'
   },
   plugins: {
+    Keyboard: {
+      resize: "ionic", // or "body"
+      resizeOnFullScreen: true, // Needed for edge-to-edge apps
+    },
     LocalNotifications: {
       smallIcon: "ic_stat_icon_config_sample",
       iconColor: "#488AFF",
