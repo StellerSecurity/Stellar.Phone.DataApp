@@ -1,37 +1,79 @@
-<ion-content class="background" [fullscreen]="true">
-  <div class="main-content">
-    <div class="stellar_display">
-      <div class="main_logo">
-        <img src="assets/stellar-data-Logo.svg" class="logo" alt="Logo">
-      </div>
-      <div class="info_logo">
-        <img src="assets/stellar-powered-logo.svg" class="logo" alt="Logo">
+<ion-content class="background luxury-page" [fullscreen]="true">
+  <div class="page-shell">
+    <div class="ambient ambient-top"></div>
+    <div class="ambient ambient-bottom"></div>
+
+    <div class="hero-section">
+      <div class="brand-lockup">
+        <div class="brand-pill">Stellar Data</div>
+        <img src="assets/stellar-data-Logo.svg" class="brand-logo" alt="Stellar Data logo" />
+        <img src="assets/stellar-powered-logo.svg" class="brand-powered" alt="Powered by Stellar" />
       </div>
     </div>
 
-    <div class="stellar_action">
-      <h2>{{ HOME_WELCOME }}</h2>
-      <p>{{ HOME_ENTER_SIM_ID }}</p>
+    <div class="entry-card">
+      <div class="entry-card-glow"></div>
 
-      <ion-item class="rounded-input-container">
-        <ion-label class="gray-color" position="floating">{{ HOME_INPUT }}</ion-label>
+      <div class="entry-header">
+        <h1>{{ HOME_WELCOME }}</h1>
+        <p>{{ HOME_ENTER_SIM_ID }}</p>
+      </div>
 
-        <ion-input
-          [(ngModel)]="userInput"
-          type="text"
-          class="rounded-input"
-          inputmode="text"
-          enterkeyhint="done">
-        </ion-input>
-      </ion-item>
+      <div class="saved-sim-card" *ngIf="hasSavedSim">
+        <div class="saved-sim-top">
+          <span class="saved-sim-label">{{ HOME_SAVED_SIM }}</span>
+          <span class="saved-badge">Saved</span>
+        </div>
 
-      <ion-button expand="full" (click)="saveInput()" class="rounded-button">
-        Login
+        <div class="saved-sim-value">{{ savedSimId }}</div>
+
+        <div class="saved-sim-actions">
+          <ion-button expand="block" class="saved-button primary" (click)="useSavedSim()">
+            {{ HOME_CONTINUE_SAVED }}
+          </ion-button>
+
+          <ion-button expand="block" fill="outline" class="saved-button secondary" (click)="useDifferentSim()">
+            {{ HOME_USE_DIFFERENT }}
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="input-block">
+        <label class="input-label">{{ HOME_INPUT }}</label>
+
+        <ion-item class="rounded-input-container" lines="none">
+          <ion-input
+            [(ngModel)]="userInput"
+            type="text"
+            class="rounded-input"
+            inputmode="text"
+            enterkeyhint="done"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            clearInput="true"
+            (ionFocus)="scrollFocusedIntoView()"
+            (ionInput)="onInputChange($any($event.target).value)"
+            (keyup.enter)="saveInput()"
+          ></ion-input>
+        </ion-item>
+
+        <div class="input-helper">{{ HOME_INPUT_HINT }}</div>
+        <div class="input-error" *ngIf="validationMessage">{{ validationMessage }}</div>
+      </div>
+
+      <ion-button
+        expand="block"
+        (click)="saveInput()"
+        class="rounded-button"
+        [disabled]="!isValidInput || isSubmitting"
+      >
+        {{ HOME_BUTTON_LOGIN }}
       </ion-button>
 
       <div class="help_support">
-        {{ HOME_HELP }}
-        <a href="https://stellarsecurity.com/contact-us" target="_blank" class="primary-color">
+        <span>{{ HOME_HELP }}</span>
+        <a href="https://stellarsecurity.com/contact-us" target="_blank" rel="noopener noreferrer">
           {{ HOME_HELP_CONTACT_LINK }}
         </a>
       </div>

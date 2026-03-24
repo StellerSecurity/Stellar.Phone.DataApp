@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Capacitor } from '@capacitor/core';
@@ -11,20 +10,13 @@ import { Keyboard } from '@capacitor/keyboard';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  public supportedLanguages = ['en', 'da', 'se', 'es', 'fr', 'de'];
+  constructor(public _platform: Platform) {
+    this.initializeApp();
+  }
 
-  constructor(public _translate: TranslateService, public _platform: Platform) {
-    this._translate.setDefaultLang('en');
-
-    const userLanguage = this._translate.getBrowserLang() as string;
-    if (userLanguage !== undefined && this.supportedLanguages.includes(userLanguage)) {
-      this._translate.use(userLanguage);
-    }
-
-    // Ensure native plugins run only after platform is ready
+  private initializeApp(): void {
     this._platform.ready().then(() => {
       if (this._platform.is('android')) {
-        // Avoid overlays that break keyboard resize on some devices
         StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {});
       }
 
@@ -51,7 +43,6 @@ export class AppComponent {
       document.body.classList.remove('kb-open');
     };
 
-    // Some devices fire will* only, others did* only — listen to both
     Keyboard.addListener('keyboardWillShow', (info) => {
       setKeyboardHeight(info?.keyboardHeight ?? 0);
     });

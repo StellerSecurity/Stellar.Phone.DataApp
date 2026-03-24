@@ -1,132 +1,293 @@
-/* Key: create extra space when keyboard opens (from AppComponent setting --kb-h) */
-ion-content.background {
-  --padding-bottom: calc(24px + var(--kb-h, 0px));
+ion-content.background.luxury-page {
+  --background: linear-gradient(180deg, #2152d4 0%, #1d49be 42%, #173a97 100%);
+  --padding-bottom: calc(28px + var(--kb-h, 0px));
   --keyboard-offset: var(--kb-h, 0px);
 }
 
-.rounded-input-container {
-  background-color: #EAEAF0;
-  --background: transparent;
-  border-radius: 24px;
-  --border-width: 0;
-  --min-height: 55px;
-  width: 100%;
-  max-width: 320px;
-  position: relative;
-  padding: 0 1rem;
-
-  ion-label {
-    margin: 0;
-    transform: translateY(96%);
-  }
-
-  &.item-has-focus,
-  &.item-has-value {
-    .label-floating {
-      -webkit-transform: translateY(50%) scale(0.75);
-      transform: translateY(50%) scale(0.75) !important;
-    }
-  }
-}
-
-.label {
-  color: #000;
-  background-color: transparent;
-  margin-bottom: 0.5rem;
-}
-
-.rounded-input {
-  border: 0;
-  background-color: transparent;
-  color: #000;
-  outline: none;
-}
-
-/* Your old button had --background: transparent which can make it invisible on some setups */
-.rounded-button {
-  width: 100%;
-  margin-top: 20px;
-  max-width: 320px;
-  padding: 6px;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 600;
-  --box-shadow: unset;
-  --background: #007bff;
-  --color: #fff;
-}
-
-/* IMPORTANT FIX:
-   - DO NOT lock the page to height: 100% with space-between.
-   - Use min-height so content can grow and scroll when keyboard opens.
-*/
-.main-content {
+.page-shell {
   min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* Remove height calc() — it prevents scroll on some devices */
-.stellar_display {
+.ambient {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(28px);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.ambient-top {
+  width: 280px;
+  height: 280px;
+  top: -70px;
+  right: -80px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 72%);
+}
+
+.ambient-bottom {
+  width: 320px;
+  height: 320px;
+  bottom: 110px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(118, 158, 255, 0.28) 0%, rgba(118, 158, 255, 0) 72%);
+}
+
+.hero-section {
   flex: 1 1 auto;
-  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 24px;
-
-  .main_logo {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-  }
-
-  .info_logo {
-    padding-bottom: 24px;
-  }
-}
-
-/* Stick this to bottom visually but still allow scroll when needed */
-.stellar_action {
-  margin-top: auto;
-  min-height: 328px;
-  width: 100%;
-  padding: 20px;
-  background: #fff;
-  border-radius: 24px 24px 0px 0px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: calc(var(--ion-safe-area-top, 0px) + 34px) 24px 22px;
+}
 
-  h2 {
+.brand-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.brand-pill {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 12px 24px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.brand-logo {
+  width: min(72vw, 240px);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.16));
+}
+
+.brand-powered {
+  width: min(56vw, 180px);
+  opacity: 0.96;
+}
+
+.entry-card {
+  position: relative;
+  margin-top: auto;
+  padding: 28px 22px calc(22px + var(--ion-safe-area-bottom, 0px));
+  border-radius: 32px 32px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.14) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 -18px 48px rgba(18, 40, 103, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.entry-card-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 32px 32px 0 0;
+  background: radial-gradient(circle at top center, rgba(255, 255, 255, 0.18), transparent 62%);
+}
+
+.entry-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 22px;
+
+  h1 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 700;
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
 
   p {
-    margin-top: 4px;
+    margin: 10px auto 0;
+    max-width: 320px;
+    color: rgba(255, 255, 255, 0.78);
     font-size: 14px;
-    color: #62626A;
-    margin-bottom: 20px;
-  }
-
-  .help_support {
-    padding: 33px 0;
-    font-weight: 600;
-    font-size: 14px;
-
-    a {
-      text-decoration: none;
-      color: #007bff;
-    }
+    line-height: 1.5;
   }
 }
 
-.gray-color {
-  color: #62626A;
+.saved-sim-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow:
+    0 14px 28px rgba(21, 51, 133, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.saved-sim-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.saved-sim-label {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.saved-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.saved-sim-value {
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  word-break: break-word;
+  letter-spacing: -0.02em;
+}
+
+.saved-sim-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.saved-button {
+  margin: 0;
+  min-height: 48px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  --border-radius: 18px;
+}
+
+.saved-button.primary {
+  --background: #ffffff;
+  --color: #2152d4;
+  --box-shadow: 0 14px 30px rgba(11, 39, 111, 0.18);
+}
+
+.saved-button.secondary {
+  --background: rgba(255, 255, 255, 0.06);
+  --color: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.2);
+}
+
+.input-block {
+  position: relative;
+  z-index: 1;
+}
+
+.input-label {
+  display: block;
+  margin: 0 0 10px 4px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.rounded-input-container {
+  --background: rgba(255, 255, 255, 0.16);
+  --border-width: 0;
+  --min-height: 58px;
+  border-radius: 22px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(19, 47, 126, 0.12);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:focus-within {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.34);
+    box-shadow:
+      0 0 0 4px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 16px 30px rgba(17, 44, 118, 0.18);
+  }
+}
+
+.rounded-input {
+  color: #ffffff;
+  --color: #ffffff;
+  font-size: 16px;
+}
+
+.input-helper {
+  margin-top: 10px;
+  padding-left: 4px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.input-error {
+  margin-top: 10px;
+  padding-left: 4px;
+  color: #ffd2d2;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rounded-button {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  min-height: 54px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  --border-radius: 20px;
+  --background: #2152d4;
+  --color: #ffffff;
+  --box-shadow: 0 18px 34px rgba(18, 44, 117, 0.24);
+}
+
+.help_support {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+  line-height: 1.5;
+
+  a {
+    margin-left: 4px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 800;
+  }
 }

@@ -1,117 +1,210 @@
-<ion-content class="page-content" [fullscreen]="true">
+<ion-content class="page-content luxury-dashboard" [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline"></ion-refresher-content>
   </ion-refresher>
 
-  <div class="top-container pd-x-20">
-    <div class="rectangle">
-      <div class="heading">
-        <img class="logo" width="126" src="assets/stellar-data-Logo.svg" alt="logo" />
-        <img (click)="presentAlert()" class="logo" src="assets/tabler-icon-logout.svg" alt="logout" />
-      </div>
+  <div class="dashboard-shell">
+    <div class="ambient ambient-top-right"></div>
+    <div class="ambient ambient-left"></div>
 
-      <div class="data-details" *ngIf="data !== null">
-        <div class="box">
-          <h2 class="box-heading">Sim ID: </h2>
-          <div class="details-box">
-            <ion-label class="box-text"> {{data.id}} </ion-label>
-            <div class="vector-container" (click)="copy()">
-              <img class="vector" src="assets/icon/copy_icon.svg" alt="Copy" />
-            </div>
+    <section class="hero-card">
+      <div class="hero-header">
+        <div class="brand-area">
+          <img class="brand-logo" src="assets/stellar-data-Logo.svg" alt="Stellar Data logo" />
+
+          <div class="meta-stack" *ngIf="formattedLastUpdated">
+            <span class="meta-label">{{ UPDATED_LABEL }}</span>
+            <span class="meta-value">{{ formattedLastUpdated }}</span>
           </div>
         </div>
 
-        <div class="box">
-          <h2 class="box-heading">{{EXPIRES_AT}}</h2>
-          <div class="details-box">
-            <p class="box-text">{{data.expires_at}}</p>
-          </div>
-          <p class="box-text-small">({{data.days_until_expire}} days left)</p>
+        <button class="icon-button floating-logout" type="button" (click)="presentAlert()" [attr.aria-label]="LOGOUT">
+          <img class="logout-icon" src="assets/tabler-icon-logout.svg" alt="" />
+        </button>
+      </div>
+
+      <div class="status-row" *ngIf="showingCachedData && formattedLastUpdated">
+        <div class="status-pill status-pill-info">{{ SAVED_DATA_VIEW }}</div>
+      </div>
+
+      <div class="status-banner error" *ngIf="hasError">
+        <div class="status-banner-copy">
+          <div class="status-banner-title">{{ REFRESH_ISSUE }}</div>
+          <div class="status-banner-text">{{ errorMessage }}</div>
         </div>
 
-        <div class="box">
-          <h2 class="box-heading">Account Number</h2>
-          <div class="details-box">
-            <p class="box-text">{{data.id}}</p>
-          </div>
+        <ion-button size="small" class="retry-button" (click)="retryLoad()">{{ RETRY }}</ion-button>
+      </div>
+
+      <div class="warning-stack" *ngIf="isDataReady">
+        <div class="warning-chip warning-chip-gold" *ngIf="isLowData">
+          {{ LOW_DATA_REMAINING }}
+        </div>
+
+        <div class="warning-chip warning-chip-red" *ngIf="isExpiringSoon">
+          {{ EXPIRES_SOON }}
         </div>
       </div>
-    </div>
 
-    <div class="usage-container" *ngIf="data !== null">
-      <div class="single-chart">
-        <svg viewBox="0 0 36 36" class="circular-chart green">
-          <path
-            class="circle-bg"
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-          <path
-            class="circle"
-            [attr.stroke-dasharray]="strokes"
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-          <text x="18" y="18.35" class="usage_data">{{data.total_usage}} GB</text>
-          <text x="18" y="22.35" class="total_data">Used from {{data.total_data}} GB</text>
-        </svg>
+      <div class="hero-body" *ngIf="data !== null">
+        <div class="hero-copy">
+          <div class="eyebrow">{{ REMAINING_DATA }}</div>
+          <div class="hero-value">{{ remainingSummaryText }}</div>
+          <div class="hero-subtitle">
+            <span>{{ usedTotalSummaryText }}</span>
+            <span class="separator"></span>
+            <span>{{ totalAllowanceSummaryText }}</span>
+          </div>
+        </div>
+
+        <div class="ring-card">
+          <svg viewBox="0 0 36 36" [ngClass]="cssprop">
+            <path
+              class="circle-bg"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <path
+              class="circle"
+              [attr.stroke-dasharray]="strokes"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text x="18" y="18.1" class="usage_data">{{ percentUsedRounded }}%</text>
+            <text x="18" y="22.6" class="total_data">{{ USED_LABEL }}</text>
+          </svg>
+        </div>
       </div>
 
-      <div class="data-usage-p">
-        <span>Available to use:</span><p>{{data.remaining}}</p>
+      <div class="stat-grid" *ngIf="data !== null">
+        <div class="stat-card glass-card">
+          <div class="stat-label">SIM ID</div>
+          <div class="stat-value-row">
+            <div class="stat-value">{{ data.id }}</div>
+
+            <button
+              class="icon-button copy-button"
+              type="button"
+              (click)="copy()"
+              aria-label="Copy SIM ID"
+            >
+              <img
+                class="vector"
+                [src]="isCopying ? 'assets/icon/checkmark-icon.svg' : 'assets/icon/copy_icon.svg'"
+                alt=""
+                onerror="this.src='assets/icon/copy_icon.svg'"
+              />
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-label">{{ EXPIRES_SHORT }}</div>
+          <div class="stat-value">{{ data.expires_at }}</div>
+          <div class="stat-caption" *ngIf="daysUntilExpire > 0">{{ data.days_until_expire }} {{ DAYS_LEFT }}</div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-label">{{ ACCOUNT_SHORT }}</div>
+          <div class="stat-value">{{ data.id }}</div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-label">{{ STATUS_LABEL }}</div>
+          <div class="stat-value">{{ usageSummaryText }}</div>
+          <div class="stat-caption">{{ statusSummaryText }}</div>
+        </div>
       </div>
 
-      <div class="upgrade-btn" (click)="upgradePlan()">
-        <p class="upgrade-text">{{UPGRADE_YOUR_PLAN}}</p>
+      <div class="cta-row" *ngIf="data !== null">
+        <button class="upgrade-btn premium-button" type="button" (click)="upgradePlan()">
+          {{ NEED_MORE_DATA }}
+        </button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <div class="flags-content" *ngIf="data !== null">
-    <div class="flags-list" (click)="toggleModal()">
-      <span *ngFor="let item of locations.slice(0, 3)">
-        <img src="assets/flags/{{item}}.svg" class="flag" />
-        <span>{{ getCountryFullName(item) }}</span>
-      </span>
+    <section class="coverage-card glass-card" *ngIf="data !== null">
+      <div class="coverage-header">
+        <div>
+          <div class="section-label">{{ COVERAGE_LABEL }}</div>
+          <h3>{{ availableInCountriesLabel || COVERAGE_INFORMATION_UNAVAILABLE }}</h3>
+        </div>
 
-      <p class="flags-p">{{AVAILABLE_IN_COUNTRIES}}</p>
-      <img src="assets/icon/right-arrow.svg" alt="arrow" />
+        <button class="coverage-link" type="button" (click)="toggleModal(true)">
+          {{ VIEW_ALL }}
+        </button>
+      </div>
+
+      <button class="flags-list" type="button" (click)="toggleModal(true)">
+        <div class="flag-stack">
+          <span *ngFor="let item of locations.slice(0, 3)">
+            <img src="assets/flags/{{ item }}.svg" class="flag" [alt]="getCountryFullName(item)" />
+          </span>
+        </div>
+
+        <div class="coverage-preview">
+          <span *ngFor="let item of locations.slice(0, 3)">
+            {{ getCountryFullName(item) }}
+          </span>
+        </div>
+
+        <img src="assets/icon/right-arrow.svg" alt="" class="right-arrow" />
+      </button>
+    </section>
+
+    <div class="usage-skeleton" *ngIf="isLoading && data === null">
+      <div class="skeleton-hero"></div>
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+      <div class="skeleton-button"></div>
     </div>
   </div>
 </ion-content>
 
 <div class="modal-container" *ngIf="showModal" [ngClass]="{ 'slide-in-from-bottom': showModal }">
-  <div class="modal-content">
-    <div class="modal-header">
-      <ion-toolbar>
-        <div class="d-flex">
-          <h6><strong>{{SUPPORTED_COUNTRIES}} ({{locations.length}})</strong></h6>
-          <ion-buttons slot="end">
-            <ion-button (click)="toggleModal()">{{SEARCH_CLOSE}}</ion-button>
-          </ion-buttons>
-        </div>
+  <button class="modal-backdrop" type="button" (click)="toggleModal(false)" aria-label="Close"></button>
 
-        <div class="contry_search">
-          <img src="assets/icon/tabler-icon-search.svg" alt="search" />
-          <input
-            type="text"
-            placeholder="{{SEARCH_FOR_COUNTRY}}"
-            [(ngModel)]="searchText"
-            (input)="filterLocations()"
-          />
-        </div>
-      </ion-toolbar>
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+
+    <div class="modal-header">
+      <div class="modal-heading">
+        <div class="section-label">{{ COVERAGE_LABEL }}</div>
+        <h4>{{ countriesHeadingText }}</h4>
+      </div>
+
+      <button class="close-pill" type="button" (click)="toggleModal(false)">
+        {{ CLOSE_LABEL }}
+      </button>
+    </div>
+
+    <div class="search-shell">
+      <img src="assets/icon/tabler-icon-search.svg" alt="" />
+      <input
+        type="text"
+        [placeholder]="SEARCH_COUNTRY_LABEL"
+        [(ngModel)]="searchText"
+        (input)="filterLocations()"
+      />
     </div>
 
     <div class="modal-body">
-      <div class="country-list">
+      <div class="country-list" *ngIf="filteredLocations.length > 0; else emptyCountries">
         <div *ngFor="let item of filteredLocations" class="country-item">
-          <img src="assets/flags/{{item}}.svg" class="flag" />
+          <div class="country-flag-wrap">
+            <img src="assets/flags/{{ item }}.svg" class="flag" [alt]="getCountryFullName(item)" />
+          </div>
           <span>{{ getCountryFullName(item) }}</span>
         </div>
       </div>
+
+      <ng-template #emptyCountries>
+        <div class="empty-state">{{ NO_COUNTRIES_FOUND_LABEL }}</div>
+      </ng-template>
     </div>
   </div>
 </div>
