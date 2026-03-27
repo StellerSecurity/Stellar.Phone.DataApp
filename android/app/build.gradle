@@ -3,6 +3,13 @@ apply plugin: 'com.android.application'
 android {
     namespace "stellar.phone.dataApp"
     compileSdkVersion rootProject.ext.compileSdkVersion
+
+  packagingOptions {
+    dex {
+      useLegacyPackaging false
+    }
+  }
+
     defaultConfig {
         applicationId "stellar.phone.dataApp"
         minSdkVersion rootProject.ext.minSdkVersion
