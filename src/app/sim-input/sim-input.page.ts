@@ -69,27 +69,6 @@ export class SimInputPage implements OnInit {
     return !!this.savedSimId;
   }
 
-  async scrollFocusedIntoView(): Promise<void> {
-    setTimeout(async () => {
-      try {
-        const active = document.activeElement as HTMLElement | null;
-        if (!active) return;
-
-        const item = (active.closest('ion-item') as HTMLElement | null) ?? active;
-        const rect = item.getBoundingClientRect();
-        const targetY = rect.top + window.scrollY - 140;
-
-        if (this.content) {
-          await this.content.scrollToPoint(0, Math.max(0, targetY), 250);
-        } else {
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-        }
-      } catch {
-        // ignore
-      }
-    }, 50);
-  }
-
   onInputChange(value: string | number | null | undefined): void {
     this.userInput = String(value ?? '');
     this.validationMessage = '';
