@@ -52,7 +52,6 @@
             autocapitalize="off"
             spellcheck="false"
             clearInput="true"
-            (ionFocus)="scrollFocusedIntoView()"
             (ionInput)="onInputChange($any($event.target).value)"
             (keyup.enter)="saveInput()"
           ></ion-input>
