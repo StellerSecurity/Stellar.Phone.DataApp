@@ -14,4 +14,17 @@ export class DataServiceAPIService {
     return this.httpClient.get<any>(this.API_URL + "v2/overviewcontroller/view?id=" + sim_id);
   }
 
+
+  resolveTopupToken(token: string) {
+    return this.httpClient.get<any>(this.API_URL + "v1/topupcontroller/resolve/" + encodeURIComponent(token));
+  }
+
+  createTopupCheckout(token: string, packageCode: string, plan: any = {}) {
+    return this.httpClient.post<any>(this.API_URL + "v1/topupcontroller/checkout", {
+      token: token,
+      package_code: packageCode,
+      plan: plan
+    });
+  }
+
 }

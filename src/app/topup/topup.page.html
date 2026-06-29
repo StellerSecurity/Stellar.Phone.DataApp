@@ -1,0 +1,100 @@
+<ion-content class="topup-page" [fullscreen]="true">
+  <div class="topup-hero">
+    <img class="topup-logo" src="assets/stellar-data-Logo.svg" alt="Stellar Data" />
+    <h1>Top up your Stellar eSIM</h1>
+    <p>Add more data to the eSIM from your secure top-up link.</p>
+  </div>
+
+  <div class="topup-container">
+    <div class="status-card error-card" *ngIf="errorMessage">
+      <h2>Top-up link unavailable</h2>
+      <p>{{ errorMessage }}</p>
+      <ion-button expand="block" class="primary-button" (click)="loadTopup()">Try again</ion-button>
+    </div>
+
+    <ng-container *ngIf="!errorMessage && !loading">
+      <div class="status-card" *ngIf="sim">
+        <div class="card-label">eSIM</div>
+        <h2>{{ getSimLabel() }}</h2>
+
+        <div class="sim-detail" *ngIf="getCurrentPlanName()">
+          <span>Current plan</span>
+          <strong>{{ getCurrentPlanName() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getCurrentPlanArea()">
+          <span>Coverage</span>
+          <strong>{{ getCurrentPlanArea() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getTotalData()">
+          <span>Total data</span>
+          <strong>{{ getTotalData() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getRemainingData()">
+          <span>Remaining</span>
+          <strong>{{ getRemainingData() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getUsedData()">
+          <span>Used</span>
+          <strong>{{ getUsedData() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getExpiresAt()">
+          <span>Expires</span>
+          <strong>{{ getExpiresAt() }}</strong>
+        </div>
+
+        <div class="sim-detail" *ngIf="getActivatedAt()">
+          <span>Activated</span>
+          <strong>{{ getActivatedAt() }}</strong>
+        </div>
+      </div>
+
+      <div class="plans-section" *ngIf="plans.length > 0">
+        <h2>Choose top-up package</h2>
+        <p class="section-hint" *ngIf="getCurrentPlanArea()">Showing top-ups available for {{ getCurrentPlanArea() }}.</p>
+
+        <button
+          type="button"
+          class="plan-card"
+          *ngFor="let plan of getVisiblePlans()"
+          [class.selected]="selectedPlan === plan"
+          (click)="selectPlan(plan)">
+          <div>
+            <h3>{{ getPlanName(plan) }}</h3>
+            <p>
+              <span *ngIf="getPlanData(plan)">{{ getPlanData(plan) }}</span>
+              <span *ngIf="getPlanData(plan) && getPlanValidity(plan)"> · </span>
+              <span *ngIf="getPlanValidity(plan)">{{ getPlanValidity(plan) }}</span>
+            </p>
+          </div>
+
+          <div class="plan-price">{{ getPlanPrice(plan) }}</div>
+        </button>
+
+        <div class="plans-actions" *ngIf="plans.length > 5">
+          <button type="button" class="show-more-button" *ngIf="hasMorePlans()" (click)="showMorePlans()">
+            Show {{ getHiddenPlansCount() > 5 ? 5 : getHiddenPlansCount() }} more
+            <span>{{ getHiddenPlansCount() }} remaining</span>
+          </button>
+
+          <button type="button" class="show-less-button" *ngIf="!hasMorePlans()" (click)="showLessPlans()">
+            Show fewer packages
+          </button>
+        </div>
+
+        <ion-button expand="block" class="primary-button checkout-button" [disabled]="!selectedPlan || checkoutLoading" (click)="checkout()">
+          Continue to checkout
+        </ion-button>
+      </div>
+
+      <div class="status-card" *ngIf="sim && plans.length === 0">
+        <h2>No top-up packages available</h2>
+        <p>This eSIM does not currently have any available top-up packages.</p>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>

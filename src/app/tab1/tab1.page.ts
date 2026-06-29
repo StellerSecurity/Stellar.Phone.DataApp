@@ -135,7 +135,19 @@ export class Tab1Page {
   }
 
   public upgradePlan() {
-    //const url =`https://stellarsecurity.com/simcard/change?sim_id=${this.sim_id}`
+    const topupUrl = this.data?.topup_url || this.data?.top_up_url || this.data?.links?.topup || this.data?.links?.top_up;
+    const topupToken = this.data?.topup_token || this.data?.top_up_token;
+
+    if (topupUrl) {
+      window.open(topupUrl, '_blank');
+      return;
+    }
+
+    if (topupToken) {
+      window.open(`/topup/${encodeURIComponent(topupToken)}`, '_blank');
+      return;
+    }
+
     const url = 'https://stellarsecurity.com/contact-us';
     window.open(url, '_blank');
   }
