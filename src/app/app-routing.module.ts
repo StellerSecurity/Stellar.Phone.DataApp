@@ -3,6 +3,10 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: 'topup-checkout',
+    loadChildren: () => import('./topup-checkout/topup-checkout.module').then(m => m.TopupCheckoutPageModule)
+  },
+  {
     path: 'topup/:token',
     loadChildren: () => import('./topup/topup.module').then(m => m.TopupPageModule)
   },

@@ -133,6 +133,7 @@ export class TopupPage implements OnInit {
 
         const redirectUrl = this.pickCheckoutUrl(response);
         if (redirectUrl) {
+          this.rememberCheckoutResponse(response);
           window.location.href = redirectUrl;
           return;
         }
@@ -302,6 +303,42 @@ export class TopupPage implements OnInit {
     }
 
     return raw.split(',').map((value) => value.trim().toUpperCase()).filter(Boolean).sort();
+  }
+
+
+  private pickOrderId(response: any): string {
+    const candidates = [
+      response?.order_id,
+      response?.data?.order_id,
+      response?.data?.data?.order_id,
+      response?.data?.data?.order?.id,
+      response?.data?.order?.id,
+      response?.order?.id,
+    ];
+
+    const orderId = candidates.find((value) => typeof value === 'string' && value.trim() !== '');
+    return orderId ? orderId.trim() : '';
+  }
+
+  private pickCheckoutPayload(response: any): any {
+    return response?.data?.data || response?.data || response || null;
+  }
+
+  private rememberCheckoutResponse(response: any): void {
+    const orderId = this.pickOrderId(response);
+    if (!orderId) {
+      return;
+    }
+
+    const payload = this.pickCheckoutPayload(response);
+    const key = `stellar_topup_checkout_${orderId}`;
+
+    try {
+      sessionStorage.setItem(key, JSON.stringify(payload));
+      localStorage.setItem(key, JSON.stringify(payload));
+    } catch {
+      // Storage is best-effort only. The checkout route can still load by order_id.
+    }
   }
 
   private pickCheckoutUrl(response: any): string {

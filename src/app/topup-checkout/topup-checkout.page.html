@@ -1,0 +1,65 @@
+<ion-content [fullscreen]="true" class="topup-checkout-page">
+  <div class="checkout-shell">
+    <div class="brand-row">
+      <img src="assets/stellar-powered-logo.svg" alt="Stellar" />
+    </div>
+
+    <section class="checkout-card">
+      <div class="eyebrow">Stellar eSIM top-up</div>
+      <h1>Complete your top-up payment</h1>
+      <p class="intro">
+        Your top-up order has been created. Complete payment to apply the package to your eSIM.
+      </p>
+
+      <div class="status-pill" [class.status-pending]="status === 'PENDING_PAYMENT'">
+        {{ status }}
+      </div>
+
+      <div class="order-summary" *ngIf="hasOrder">
+        <div class="summary-row">
+          <span>Order</span>
+          <button type="button" class="copy-button" (click)="copyOrderId()">{{ orderId }}</button>
+        </div>
+
+        <div class="summary-row">
+          <span>Package</span>
+          <strong>{{ itemName }}</strong>
+        </div>
+
+        <div class="summary-row" *ngIf="packageCode">
+          <span>Package code</span>
+          <strong>{{ packageCode }}</strong>
+        </div>
+
+        <div class="summary-row" *ngIf="topupSessionId">
+          <span>Top-up session</span>
+          <strong>{{ topupSessionId }}</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <strong>{{ totalFormatted }}</strong>
+        </div>
+      </div>
+
+      <div class="warning-box" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="payment-box">
+        <h2>Payment method</h2>
+        <p>
+          This page is now routed correctly. The next backend step is to connect a real payment provider endpoint for this top-up order.
+        </p>
+
+        <ion-button expand="block" class="primary-button" [disabled]="true">
+          Payment endpoint missing
+        </ion-button>
+      </div>
+
+      <button type="button" class="secondary-link" (click)="backToTopup()">
+        Back to Stellar Data
+      </button>
+    </section>
+  </div>
+</ion-content>
