@@ -2,6 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
+const hasStoredSimId = (): boolean => {
+  try {
+    return !!localStorage.getItem('sim_id');
+  } catch {
+    return false;
+  }
+};
+
 const routes: Routes = [
   {
     path: 'tabs',
@@ -9,27 +17,24 @@ const routes: Routes = [
     children: [
       {
         path: 'tab1',
-        loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        loadChildren: () => import('../tab1/tab1.module').then((m) => m.Tab1PageModule),
       },
       {
         path: '',
         redirectTo: '/tabs/tab1',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: 'sim-input',
-    loadChildren: () =>
-      import('../sim-input/sim-input.module').then(
-        (m) => m.SimInputPageModule
-      ),
+    loadChildren: () => import('../sim-input/sim-input.module').then((m) => m.SimInputPageModule),
   },
   {
     path: '',
-    redirectTo: localStorage.getItem('sim_id') ? '/tabs/tab1' : 'sim-input',
-    pathMatch: 'full'
-  }
+    redirectTo: hasStoredSimId() ? '/tabs/tab1' : '/sim-input',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

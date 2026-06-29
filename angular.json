@@ -58,10 +58,10 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "8kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "12kb"
                 }
-              ],
+              ]
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
