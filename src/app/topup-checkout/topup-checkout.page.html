@@ -46,15 +46,25 @@
         {{ errorMessage }}
       </div>
 
+      <div class="success-box" *ngIf="paymentMessage">
+        {{ paymentMessage }}
+      </div>
+
       <div class="payment-box">
         <h2>Payment method</h2>
         <p>
-          This page is now routed correctly. The next backend step is to connect a real payment provider endpoint for this top-up order.
+          Pay securely by card. The top-up is applied automatically after Stripe confirms the payment.
         </p>
 
-        <ion-button expand="block" class="primary-button" [disabled]="true">
-          Payment endpoint missing
+        <div id="stellar-topup-card-element" class="stripe-card-element"></div>
+
+        <ion-button expand="block" class="primary-button" [disabled]="!paymentReady || paymentLoading" (click)="payWithCard()">
+          {{ paymentLoading ? 'Processing payment...' : 'Pay ' + totalFormatted }}
         </ion-button>
+
+        <button type="button" class="config-link" *ngIf="!paymentReady && errorMessage === 'Stripe publishable key is missing.'" (click)="showPaymentConfigHelp()">
+          Payment configuration help
+        </button>
       </div>
 
       <button type="button" class="secondary-link" (click)="backToTopup()">

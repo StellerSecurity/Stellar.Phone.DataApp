@@ -177,3 +177,34 @@ h1 {
   padding: 10px;
   text-align: center;
 }
+
+.stripe-card-element {
+  width: 100%;
+  min-height: 48px;
+  margin: 14px 0 16px;
+  padding: 15px 14px;
+  border: 1px solid #dce4ff;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.success-box {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #ecfff4;
+  color: #087a3b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.config-link {
+  margin-top: 10px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #2761fc;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
