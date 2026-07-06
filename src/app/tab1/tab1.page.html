@@ -119,8 +119,13 @@
       </div>
 
       <div class="cta-row" *ngIf="data !== null">
-        <button class="upgrade-btn premium-button" type="button" (click)="upgradePlan()">
-          {{ NEED_MORE_DATA }}
+        <button
+          class="upgrade-btn premium-button"
+          type="button"
+          (click)="upgradePlan()"
+          [disabled]="isTopupRedirecting"
+        >
+          {{ isTopupRedirecting ? 'Preparing top-up...' : NEED_MORE_DATA }}
         </button>
       </div>
     </section>

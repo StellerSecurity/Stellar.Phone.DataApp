@@ -26,6 +26,7 @@ export class Tab1Page {
   public errorMessage = '';
   public showingCachedData = false;
   public isCopying = false;
+  public isTopupRedirecting = false;
 
   public cssprop = 'circular-chart nill';
   public strokes = '0 ,100';
@@ -246,21 +247,154 @@ export class Tab1Page {
     this.showModal = typeof open === 'boolean' ? open : !this.showModal;
   }
 
-  public upgradePlan(): void {
-    const topupUrl = this.data?.topup_url || this.data?.top_up_url || this.data?.links?.topup || this.data?.links?.top_up;
-    const topupToken = this.data?.topup_token || this.data?.top_up_token;
+  public async upgradePlan(): Promise<void> {
+    const existingTopupUrl = this.extractExistingTopupUrl();
+    const existingTopupToken = this.extractExistingTopupToken();
 
-    if (topupUrl) {
-      window.open(topupUrl, '_blank');
+    if (existingTopupUrl) {
+      this.redirectToTopup(existingTopupUrl);
       return;
     }
 
-    if (topupToken) {
-      window.open(`/topup/${encodeURIComponent(topupToken)}`, '_blank');
+    if (existingTopupToken) {
+      this.redirectToTopup(`/topup/${encodeURIComponent(existingTopupToken)}`);
       return;
     }
 
-    window.open('https://stellarsecurity.com/contact-us', '_blank');
+    const simId = this.getTopupSimId();
+
+    if (!simId) {
+      const toast = await this.toastController.create({
+        message: 'Top-up is not available for this eSIM yet.',
+        duration: 3500,
+        position: 'bottom',
+      });
+      await toast.present();
+      return;
+    }
+
+    this.isTopupRedirecting = true;
+
+    const loading = await this.loadingCtrl.create({
+      cssClass: 'loader-popup',
+      message: 'Preparing secure top-up...',
+    });
+
+    await loading.present();
+
+    this.dataServiceAPIService.createTopupToken(simId, 'app_requested').subscribe({
+      next: async (response) => {
+        await loading.dismiss();
+        this.isTopupRedirecting = false;
+
+        const topupUrl = this.extractTopupUrlFromTokenResponse(response);
+        const topupToken = this.extractTopupTokenFromTokenResponse(response);
+
+        if (topupUrl) {
+          this.redirectToTopup(topupUrl);
+          return;
+        }
+
+        if (topupToken) {
+          this.redirectToTopup(`/topup/${encodeURIComponent(topupToken)}`);
+          return;
+        }
+
+        const toast = await this.toastController.create({
+          message: 'Top-up link could not be created.',
+          duration: 4500,
+          position: 'bottom',
+        });
+        await toast.present();
+      },
+      error: async (error) => {
+        await loading.dismiss();
+        this.isTopupRedirecting = false;
+
+        const message = error?.error?.response_message
+          || error?.error?.message
+          || 'Top-up link could not be created. Please try again.';
+
+        const toast = await this.toastController.create({
+          message,
+          duration: 5500,
+          position: 'bottom',
+        });
+
+        await toast.present();
+      },
+    });
+  }
+
+
+  private getTopupSimId(): string {
+    const rawValue = this.data?.sim_id
+      || this.data?.plan_id
+      || this.data?.account_number
+      || this.sim_id;
+
+    const simId = String(rawValue || '').replace(/\s+/g, '').trim();
+
+    if (!/^[A-Za-z0-9]{16}$/.test(simId)) {
+      return '';
+    }
+
+    return simId;
+  }
+
+  private extractExistingTopupUrl(): string {
+    return String(
+      this.data?.topup_url
+      || this.data?.top_up_url
+      || this.data?.links?.topup
+      || this.data?.links?.top_up
+      || ''
+    ).trim();
+  }
+
+  private extractExistingTopupToken(): string {
+    return String(
+      this.data?.topup_token
+      || this.data?.top_up_token
+      || this.data?.links?.topup_token
+      || this.data?.links?.top_up_token
+      || ''
+    ).trim();
+  }
+
+  private extractTopupUrlFromTokenResponse(response: any): string {
+    const payload = response?.data || response;
+
+    return String(
+      payload?.topup_url
+      || payload?.top_up_url
+      || payload?.url
+      || response?.topup_url
+      || response?.top_up_url
+      || ''
+    ).trim();
+  }
+
+  private extractTopupTokenFromTokenResponse(response: any): string {
+    const payload = response?.data || response;
+
+    return String(
+      payload?.token
+      || payload?.topup_token
+      || payload?.top_up_token
+      || response?.token
+      || response?.topup_token
+      || response?.top_up_token
+      || ''
+    ).trim();
+  }
+
+  private redirectToTopup(target: string): void {
+    if (!target) {
+      return;
+    }
+
+    window.location.assign(target);
   }
 
   public async presentAlert(): Promise<void> {
