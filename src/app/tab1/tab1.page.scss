@@ -744,3 +744,31 @@ ion-content.page-content.luxury-dashboard {
     grid-template-columns: 1fr;
   }
 }
+
+.status-banner.topup-processing {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-banner.topup-processing .status-banner-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  animation: topupPulseDashboard 1s ease-in-out infinite;
+}
+
+@keyframes topupPulseDashboard {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}

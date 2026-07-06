@@ -27,6 +27,10 @@ export class Tab1Page {
   public showingCachedData = false;
   public isCopying = false;
   public isTopupRedirecting = false;
+  public topupRefreshNotice = false;
+  public topupRefreshText = '';
+
+  private topupRefreshTimers: any[] = [];
 
   public cssprop = 'circular-chart nill';
   public strokes = '0 ,100';
@@ -207,7 +211,47 @@ export class Tab1Page {
   }
 
   public ionViewWillEnter(): void {
+    const topupRefreshRequired = localStorage.getItem('stellar_topup_refresh_required') === '1';
+
+    if (topupRefreshRequired) {
+      this.handleTopupReturnRefresh();
+      return;
+    }
+
     this.getData().catch(() => {});
+  }
+
+  public ionViewWillLeave(): void {
+    this.clearTopupRefreshTimers();
+  }
+
+
+
+  private async handleTopupReturnRefresh(): Promise<void> {
+    localStorage.removeItem('stellar_topup_refresh_required');
+    localStorage.removeItem('stored_data');
+
+    this.topupRefreshNotice = true;
+    this.topupRefreshText = 'Top-up confirmed. Updating your data usage now...';
+
+    await this.getData(true);
+
+    this.scheduleTopupRefresh(900);
+    this.scheduleTopupRefresh(6000);
+    this.scheduleTopupRefresh(15000);
+  }
+
+  private scheduleTopupRefresh(delayMs: number): void {
+    const timer = setTimeout(() => {
+      this.getData(true).catch(() => {});
+    }, delayMs);
+
+    this.topupRefreshTimers.push(timer);
+  }
+
+  private clearTopupRefreshTimers(): void {
+    this.topupRefreshTimers.forEach((timer) => clearTimeout(timer));
+    this.topupRefreshTimers = [];
   }
 
   public async handleRefresh(event: any): Promise<void> {

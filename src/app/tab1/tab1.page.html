@@ -36,6 +36,15 @@
         <ion-button size="small" class="retry-button" (click)="retryLoad()">{{ RETRY }}</ion-button>
       </div>
 
+      <div class="status-banner topup-processing" *ngIf="topupRefreshNotice">
+        <div class="status-banner-copy">
+          <div class="status-banner-title">Top-up is being applied</div>
+          <div class="status-banner-text">{{ topupRefreshText }}</div>
+        </div>
+
+        <ion-button size="small" class="retry-button" (click)="retryLoad()">Refresh now</ion-button>
+      </div>
+
       <div class="warning-stack" *ngIf="isDataReady">
         <div class="warning-chip warning-chip-gold" *ngIf="isLowData">
           {{ LOW_DATA_REMAINING }}

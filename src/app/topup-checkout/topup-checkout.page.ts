@@ -29,11 +29,18 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   public paymentMessage = '';
   public paymentLoading = false;
   public stripeReady = false;
+  public paymentSucceeded = false;
+  public paymentLocked = false;
+  public topupProcessing = false;
+  public redirectCountdown = 4;
+
 
   private stripe: any = null;
   private cardElement: any = null;
   private paymentIntentClientSecret = '';
   private paymentIntentId = '';
+  private redirectTimer: any = null;
+
 
   private readonly defaultWebsiteApiBaseUrl = 'https://stellaruiwebsiteapiprod.azurewebsites.net/api/';
   private readonly defaultPaymentIntentPath = 'v1/checkoutcontroller/createpaymentintent';
@@ -60,13 +67,8 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.cardElement) {
-      try {
-        this.cardElement.destroy();
-      } catch {
-        // Ignore Stripe cleanup errors.
-      }
-    }
+    this.clearRedirectTimer();
+    this.destroyCardElement();
   }
 
   public get hasOrder(): boolean {
@@ -115,11 +117,15 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   public get paymentReady(): boolean {
-    return this.stripeReady && !!this.paymentIntentClientSecret && !!this.stripe && !!this.cardElement;
+    return !this.paymentSucceeded && !this.paymentLocked && this.stripeReady && !!this.paymentIntentClientSecret && !!this.stripe && !!this.cardElement;
   }
 
   public async backToTopup(): Promise<void> {
     await this.router.navigateByUrl('/');
+  }
+
+  public async goToDataNow(): Promise<void> {
+    await this.redirectToDataTab();
   }
 
   public copyOrderId(): void {
@@ -138,6 +144,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     }
 
     this.paymentLoading = true;
+    this.paymentLocked = true;
     this.paymentMessage = '';
     this.errorMessage = '';
 
@@ -152,19 +159,14 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       });
 
       if (result?.error) {
+        this.paymentLocked = false;
         this.errorMessage = result.error.message || 'The card payment failed.';
         return;
       }
 
       const status = result?.paymentIntent?.status || '';
       if (status === 'succeeded') {
-        this.paymentMessage = 'Payment succeeded. Your top-up is being applied.';
-        const toast = await this.toastController.create({
-          message: this.paymentMessage,
-          duration: 5000,
-          position: 'bottom',
-        });
-        await toast.present();
+        await this.handleSuccessfulPayment();
         return;
       }
 
@@ -173,8 +175,10 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
         return;
       }
 
+      this.paymentLocked = false;
       this.errorMessage = 'Payment was not completed. Please try again.';
     } catch (error: any) {
+      this.paymentLocked = false;
       this.errorMessage = this.readErrorMessage(error) || 'Payment could not be completed.';
     } finally {
       this.paymentLoading = false;
@@ -201,6 +205,11 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.checkout = null;
     this.order = null;
+    this.paymentSucceeded = false;
+    this.paymentLocked = false;
+    this.topupProcessing = false;
+    this.redirectCountdown = 4;
+    this.clearRedirectTimer();
 
     if (!this.orderId) {
       this.errorMessage = 'Missing top-up order id.';
@@ -224,6 +233,10 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   private async prepareStripePayment(): Promise<void> {
+    if (this.paymentSucceeded) {
+      return;
+    }
+
     this.stripeReady = false;
     this.paymentIntentClientSecret = '';
     this.paymentIntentId = '';
@@ -254,7 +267,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   private mountCardElement(): void {
-    if (!this.stripe || !this.paymentIntentClientSecret) {
+    if (this.paymentSucceeded || !this.stripe || !this.paymentIntentClientSecret) {
       return;
     }
 
@@ -264,13 +277,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.cardElement) {
-      try {
-        this.cardElement.destroy();
-      } catch {
-        // Ignore Stripe cleanup errors.
-      }
-    }
+    this.destroyCardElement();
 
     const elements = this.stripe.elements();
     this.cardElement = elements.create('card', {
@@ -288,6 +295,92 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
     this.cardElement.mount(target);
     this.stripeReady = true;
+  }
+
+
+  private async handleSuccessfulPayment(): Promise<void> {
+    this.paymentSucceeded = true;
+    this.paymentLocked = true;
+    this.topupProcessing = true;
+    this.paymentLoading = false;
+    this.stripeReady = false;
+    this.paymentMessage = 'Payment succeeded. Your top-up is being applied.';
+    this.errorMessage = '';
+
+    this.destroyCardElement();
+    this.markTopupCompletedForTabRefresh();
+
+    const toast = await this.toastController.create({
+      message: 'Payment succeeded. Applying top-up and refreshing your dashboard shortly.',
+      duration: 3000,
+      position: 'bottom',
+    });
+    await toast.present();
+
+    this.startRedirectCountdown();
+  }
+
+  private startRedirectCountdown(): void {
+    this.clearRedirectTimer();
+    this.redirectCountdown = 4;
+
+    this.redirectTimer = setInterval(() => {
+      this.redirectCountdown = Math.max(0, this.redirectCountdown - 1);
+
+      if (this.redirectCountdown <= 0) {
+        this.clearRedirectTimer();
+        this.redirectToDataTab().catch(() => undefined);
+      }
+    }, 1000);
+  }
+
+  private clearRedirectTimer(): void {
+    if (this.redirectTimer) {
+      clearInterval(this.redirectTimer);
+      this.redirectTimer = null;
+    }
+  }
+
+  private async redirectToDataTab(): Promise<void> {
+    this.clearRedirectTimer();
+    this.markTopupCompletedForTabRefresh();
+    await this.router.navigate(['/tabs/tab1'], {
+      replaceUrl: true,
+      queryParams: {
+        refresh: Date.now(),
+        source: 'topup_success',
+      },
+    });
+  }
+
+  private markTopupCompletedForTabRefresh(): void {
+    try {
+      localStorage.setItem('stellar_topup_completed_at', new Date().toISOString());
+      localStorage.setItem('stellar_topup_refresh_required', '1');
+      localStorage.setItem('stellar_topup_last_order_id', this.orderId || '');
+      localStorage.setItem('stellar_topup_last_package_code', this.packageCode || '');
+      localStorage.setItem('stellar_topup_last_session_id', this.topupSessionId || '');
+    } catch {
+      // Storage is best-effort only.
+    }
+  }
+
+  private destroyCardElement(): void {
+    if (this.cardElement) {
+      try {
+        this.cardElement.destroy();
+      } catch {
+        // Ignore Stripe cleanup errors.
+      }
+    }
+
+    this.cardElement = null;
+    this.stripeReady = false;
+
+    const target = document.getElementById('stellar-topup-card-element');
+    if (target) {
+      target.innerHTML = '';
+    }
   }
 
   private async createPaymentIntent(): Promise<any> {
