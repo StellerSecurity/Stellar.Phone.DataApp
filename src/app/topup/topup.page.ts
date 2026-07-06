@@ -164,7 +164,7 @@ export class TopupPage implements OnInit {
   }
 
   public getPlanCode(plan: any): string {
-    return String(plan?.package_code || plan?.code || plan?.sku || plan?.id || plan?.plan_id || '').trim();
+    return String(plan?.provider_topup_value || plan?.package_code || plan?.code || plan?.sku || plan?.id || plan?.plan_id || '').trim();
   }
 
   public getPlanData(plan: any): string {
@@ -285,7 +285,7 @@ export class TopupPage implements OnInit {
       return sameLocationCode || sameLocationSet;
     });
 
-    return filtered.length > 0 ? filtered : plans;
+    return filtered;
   }
 
   private locationCodeFromPlan(plan: any): string {
