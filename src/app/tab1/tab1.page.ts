@@ -31,6 +31,7 @@ export class Tab1Page {
   public topupRefreshText = '';
 
   private topupRefreshTimers: any[] = [];
+  private topupRefreshHideTimer: any = null;
 
   public cssprop = 'circular-chart nill';
   public strokes = '0 ,100';
@@ -231,6 +232,7 @@ export class Tab1Page {
     localStorage.removeItem('stellar_topup_refresh_required');
     localStorage.removeItem('stored_data');
 
+    this.clearTopupRefreshTimers();
     this.topupRefreshNotice = true;
     this.topupRefreshText = 'Top-up confirmed. Updating your data usage now...';
 
@@ -239,6 +241,7 @@ export class Tab1Page {
     this.scheduleTopupRefresh(900);
     this.scheduleTopupRefresh(6000);
     this.scheduleTopupRefresh(15000);
+    this.scheduleTopupNoticeHide(22000);
   }
 
   private scheduleTopupRefresh(delayMs: number): void {
@@ -249,9 +252,36 @@ export class Tab1Page {
     this.topupRefreshTimers.push(timer);
   }
 
+  private markTopupRefreshUpdated(): void {
+    if (!this.topupRefreshNotice) {
+      return;
+    }
+
+    this.topupRefreshText = 'Top-up applied. Data usage updated.';
+    this.clearTopupRefreshTimers();
+    this.scheduleTopupNoticeHide(3500);
+  }
+
+  private scheduleTopupNoticeHide(delayMs: number): void {
+    if (this.topupRefreshHideTimer !== null) {
+      clearTimeout(this.topupRefreshHideTimer);
+    }
+
+    this.topupRefreshHideTimer = setTimeout(() => {
+      this.topupRefreshNotice = false;
+      this.topupRefreshText = '';
+      this.topupRefreshHideTimer = null;
+    }, delayMs);
+  }
+
   private clearTopupRefreshTimers(): void {
     this.topupRefreshTimers.forEach((timer) => clearTimeout(timer));
     this.topupRefreshTimers = [];
+
+    if (this.topupRefreshHideTimer !== null) {
+      clearTimeout(this.topupRefreshHideTimer);
+      this.topupRefreshHideTimer = null;
+    }
   }
 
   public async handleRefresh(event: any): Promise<void> {
@@ -535,6 +565,8 @@ export class Tab1Page {
         this.getPercentOfData();
 
         if (forceRefresh) {
+          this.markTopupRefreshUpdated();
+
           const toast = await this.toastController.create({
             message: 'Usage updated just now.',
             duration: 2500,
