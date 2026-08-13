@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
@@ -29,6 +29,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   public paymentMessage = '';
   public paymentLoading = false;
   public stripeReady = false;
+  public expressWalletsAvailable = false;
   public paymentSucceeded = false;
   public paymentLocked = false;
   public topupProcessing = false;
@@ -37,6 +38,8 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
   private stripe: any = null;
   private cardElement: any = null;
+  private walletElements: any = null;
+  private expressCheckoutElement: any = null;
   private paymentIntentClientSecret = '';
   private paymentIntentId = '';
   private redirectTimer: any = null;
@@ -50,6 +53,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private ngZone: NgZone,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
     private alertController: AlertController
@@ -68,7 +72,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.clearRedirectTimer();
-    this.destroyCardElement();
+    this.destroyPaymentElements();
   }
 
   public get hasOrder(): boolean {
@@ -186,6 +190,68 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     }
   }
 
+
+  public async confirmExpressWallet(): Promise<void> {
+    if (this.paymentLoading || this.paymentLocked || this.paymentSucceeded) {
+      return;
+    }
+
+    if (!this.stripe || !this.walletElements || !this.paymentIntentClientSecret) {
+      this.errorMessage = 'Wallet payment is not ready. Please try again.';
+      return;
+    }
+
+    this.paymentLoading = true;
+    this.paymentLocked = true;
+    this.paymentMessage = '';
+    this.errorMessage = '';
+
+    try {
+      const returnUrl = new URL(window.location.href);
+      returnUrl.searchParams.set('order_id', this.orderId);
+      returnUrl.searchParams.set('type', this.checkoutType);
+      returnUrl.searchParams.set('payment_method', 'wallet');
+
+      const result = await this.stripe.confirmPayment({
+        elements: this.walletElements,
+        confirmParams: {
+          return_url: returnUrl.toString(),
+        },
+        redirect: 'if_required',
+      });
+
+      if (result?.error) {
+        this.paymentLocked = false;
+        this.errorMessage = result.error.message || 'The wallet payment failed.';
+        return;
+      }
+
+      const status = result?.paymentIntent?.status || '';
+      if (status === 'succeeded') {
+        await this.handleSuccessfulPayment();
+        return;
+      }
+
+      if (status === 'processing') {
+        this.paymentMessage = 'Payment is processing. Your top-up will be applied after confirmation.';
+        return;
+      }
+
+      if (!result?.paymentIntent) {
+        this.paymentMessage = 'Payment confirmation is in progress.';
+        return;
+      }
+
+      this.paymentLocked = false;
+      this.errorMessage = `Payment status: ${status || 'not completed'}. Please try again.`;
+    } catch (error: any) {
+      this.paymentLocked = false;
+      this.errorMessage = this.readErrorMessage(error) || 'Wallet payment could not be completed.';
+    } finally {
+      this.paymentLoading = false;
+    }
+  }
+
   public async showPaymentConfigHelp(): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Payment configuration missing',
@@ -237,7 +303,9 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.destroyPaymentElements();
     this.stripeReady = false;
+    this.expressWalletsAvailable = false;
     this.paymentIntentClientSecret = '';
     this.paymentIntentId = '';
 
@@ -263,7 +331,100 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       return;
     }
 
-    setTimeout(() => this.mountCardElement(), 0);
+    setTimeout(() => {
+      this.mountExpressCheckoutElement();
+      this.mountCardElement();
+    }, 0);
+  }
+
+
+  private mountExpressCheckoutElement(): void {
+    if (this.paymentSucceeded || !this.stripe || !this.paymentIntentClientSecret) {
+      return;
+    }
+
+    const target = document.getElementById('stellar-topup-express-checkout');
+    if (!target) {
+      setTimeout(() => this.mountExpressCheckoutElement(), 50);
+      return;
+    }
+
+    this.destroyWalletElements();
+
+    this.walletElements = this.stripe.elements({
+      clientSecret: this.paymentIntentClientSecret,
+      appearance: {
+        theme: 'flat',
+        variables: {
+          colorPrimary: '#2761FC',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          borderRadius: '16px',
+          colorBackground: '#FFFFFF',
+        },
+      },
+    });
+
+    this.expressCheckoutElement = this.walletElements.create('expressCheckout', {
+      paymentMethodOrder: ['apple_pay', 'google_pay'],
+      paymentMethods: {
+        applePay: 'always',
+        googlePay: 'always',
+        link: 'never',
+        paypal: 'never',
+        amazonPay: 'never',
+        klarna: 'never',
+      },
+      buttonHeight: 52,
+      buttonType: {
+        applePay: 'check-out',
+        googlePay: 'checkout',
+      },
+      layout: {
+        maxColumns: 2,
+        overflow: 'never',
+      },
+    });
+
+    this.expressCheckoutElement.on('ready', (event: any) => {
+      this.updateExpressWalletAvailability(event?.availablePaymentMethods);
+    });
+
+    this.expressCheckoutElement.on('availablepaymentmethodschange', (event: any) => {
+      this.updateExpressWalletAvailability(event?.paymentMethods);
+    });
+
+    this.expressCheckoutElement.on('confirm', () => {
+      this.ngZone.run(() => void this.confirmExpressWallet());
+    });
+
+    this.expressCheckoutElement.on('loaderror', () => {
+      this.ngZone.run(() => {
+        this.expressWalletsAvailable = false;
+      });
+    });
+
+    this.expressCheckoutElement.mount(target);
+  }
+
+  private updateExpressWalletAvailability(paymentMethods: any): void {
+    const hasAvailableWallet = this.isExpressPaymentMethodAvailable(paymentMethods?.applePay)
+      || this.isExpressPaymentMethodAvailable(paymentMethods?.googlePay);
+
+    this.ngZone.run(() => {
+      this.expressWalletsAvailable = hasAvailableWallet;
+    });
+  }
+
+  private isExpressPaymentMethodAvailable(paymentMethod: unknown): boolean {
+    if (typeof paymentMethod === 'boolean') {
+      return paymentMethod;
+    }
+
+    if (paymentMethod && typeof paymentMethod === 'object' && 'available' in paymentMethod) {
+      return (paymentMethod as { available?: boolean }).available === true;
+    }
+
+    return false;
   }
 
   private mountCardElement(): void {
@@ -307,7 +468,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.paymentMessage = 'Payment succeeded. Your top-up is being applied.';
     this.errorMessage = '';
 
-    this.destroyCardElement();
+    this.destroyPaymentElements();
     this.markTopupCompletedForTabRefresh();
 
     const toast = await this.toastController.create({
@@ -362,6 +523,31 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       localStorage.setItem('stellar_topup_last_session_id', this.topupSessionId || '');
     } catch {
       // Storage is best-effort only.
+    }
+  }
+
+
+  private destroyPaymentElements(): void {
+    this.destroyWalletElements();
+    this.destroyCardElement();
+  }
+
+  private destroyWalletElements(): void {
+    if (this.expressCheckoutElement) {
+      try {
+        this.expressCheckoutElement.destroy();
+      } catch {
+        // Ignore Stripe cleanup errors.
+      }
+    }
+
+    this.expressCheckoutElement = null;
+    this.walletElements = null;
+    this.expressWalletsAvailable = false;
+
+    const target = document.getElementById('stellar-topup-express-checkout');
+    if (target) {
+      target.innerHTML = '';
     }
   }
 

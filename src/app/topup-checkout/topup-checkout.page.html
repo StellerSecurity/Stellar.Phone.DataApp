@@ -72,8 +72,16 @@
       <div class="payment-box" *ngIf="!paymentSucceeded">
         <h2>Payment method</h2>
         <p>
-          Pay securely by card. The top-up is applied automatically after Stripe confirms the payment.
+          Pay securely with Apple Pay, Google Pay, or card. The top-up is applied automatically after Stripe confirms the payment.
         </p>
+
+        <div class="express-checkout-shell" [class.express-checkout-shell-visible]="expressWalletsAvailable">
+          <div class="express-checkout-label" *ngIf="expressWalletsAvailable">Express checkout</div>
+          <div id="stellar-topup-express-checkout" class="express-checkout-mount"></div>
+          <div class="express-checkout-divider" *ngIf="expressWalletsAvailable">
+            <span>or pay by card</span>
+          </div>
+        </div>
 
         <div id="stellar-topup-card-element" class="stripe-card-element"></div>
 

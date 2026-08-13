@@ -178,6 +178,52 @@ h1 {
   text-align: center;
 }
 
+
+.express-checkout-shell {
+  width: 100%;
+  min-width: 0;
+}
+
+.express-checkout-shell-visible {
+  margin: 14px 0 4px;
+}
+
+.express-checkout-label {
+  margin-bottom: 10px;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.express-checkout-mount {
+  width: 100%;
+  min-height: 0;
+}
+
+.express-checkout-shell-visible .express-checkout-mount {
+  min-height: 52px;
+}
+
+.express-checkout-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 2px;
+  color: #7c8496;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.express-checkout-divider::before,
+.express-checkout-divider::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: rgba(17, 24, 39, 0.12);
+}
+
 .stripe-card-element {
   width: 100%;
   min-height: 48px;
