@@ -139,6 +139,66 @@
       </div>
     </section>
 
+    <section class="auto-topup-card glass-card" *ngIf="showAutoTopupCard">
+      <ng-container *ngIf="autoTopupStatus; else autoTopupLoadingState">
+        <div class="auto-topup-header">
+          <div class="auto-topup-heading">
+            <div class="auto-topup-icon" aria-hidden="true">
+              <span class="auto-topup-bolt">↻</span>
+            </div>
+
+            <div>
+              <div class="section-label">{{ 'AUTO_TOPUP_EYEBROW' | translate }}</div>
+              <h3>{{ 'AUTO_TOPUP_TITLE' | translate }}</h3>
+            </div>
+          </div>
+
+          <div class="auto-topup-control">
+            <span class="auto-topup-state" [class.is-on]="autoTopupEnabled">
+              {{ autoTopupStateLabel }}
+            </span>
+
+            <button
+              class="auto-topup-switch"
+              type="button"
+              role="switch"
+              [class.is-on]="autoTopupEnabled"
+              [class.is-processing]="autoTopupProcessing"
+              [attr.aria-checked]="autoTopupEnabled"
+              [attr.aria-label]="'AUTO_TOPUP_TITLE' | translate"
+              [disabled]="autoTopupSwitchDisabled"
+              (click)="requestAutoTopupToggle()"
+            >
+              <span class="auto-topup-switch-knob"></span>
+            </button>
+          </div>
+        </div>
+
+        <p class="auto-topup-description">{{ autoTopupDescription }}</p>
+
+        <div class="auto-topup-footer">
+          <span class="auto-topup-meta" *ngIf="autoTopupMetaText">{{ autoTopupMetaText }}</span>
+          <button class="auto-topup-learn" type="button" (click)="openAutoTopupLearnMore()">
+            {{ 'AUTO_TOPUP_LEARN_MORE' | translate }}
+          </button>
+        </div>
+
+        <div class="auto-topup-inline-error" *ngIf="autoTopupError">
+          {{ autoTopupError }}
+        </div>
+      </ng-container>
+
+      <ng-template #autoTopupLoadingState>
+        <div class="auto-topup-loading">
+          <div class="auto-topup-loading-icon"></div>
+          <div class="auto-topup-loading-copy">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </ng-template>
+    </section>
+
     <section class="coverage-card glass-card" *ngIf="data !== null">
       <div class="coverage-header">
         <div>
@@ -219,6 +279,76 @@
       <ng-template #emptyCountries>
         <div class="empty-state">{{ NO_COUNTRIES_FOUND_LABEL }}</div>
       </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="modal-container auto-topup-modal-container" *ngIf="showAutoTopupModal">
+  <button
+    class="modal-backdrop"
+    type="button"
+    (click)="closeAutoTopupModal()"
+    [attr.aria-label]="'AUTO_TOPUP_CLOSE' | translate"
+  ></button>
+
+  <div class="modal-sheet auto-topup-sheet" role="dialog" aria-modal="true" [attr.aria-label]="autoTopupModalTitle">
+    <div class="sheet-handle"></div>
+
+    <button
+      class="auto-topup-modal-close"
+      type="button"
+      (click)="closeAutoTopupModal()"
+      [disabled]="isAutoTopupUpdating"
+      [attr.aria-label]="'AUTO_TOPUP_CLOSE' | translate"
+    >
+      ×
+    </button>
+
+    <div class="auto-topup-modal-icon" aria-hidden="true">↻</div>
+    <div class="section-label auto-topup-modal-eyebrow">{{ 'AUTO_TOPUP_TITLE' | translate }}</div>
+    <h4 class="auto-topup-modal-title">{{ autoTopupModalTitle }}</h4>
+    <p class="auto-topup-modal-body">{{ autoTopupModalBody }}</p>
+
+    <div class="auto-topup-benefits">
+      <div class="auto-topup-benefit">
+        <span class="auto-topup-check">✓</span>
+        <span>{{ 'AUTO_TOPUP_BENEFIT_AUTOMATIC' | translate }}</span>
+      </div>
+      <div class="auto-topup-benefit">
+        <span class="auto-topup-check">✓</span>
+        <span>{{ 'AUTO_TOPUP_BENEFIT_ONLY_WHEN_NEEDED' | translate }}</span>
+      </div>
+      <div class="auto-topup-benefit">
+        <span class="auto-topup-check">✓</span>
+        <span>{{ 'AUTO_TOPUP_BENEFIT_CONFIRMATION' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="auto-topup-modal-error" *ngIf="autoTopupError">{{ autoTopupError }}</div>
+
+    <div class="auto-topup-modal-actions">
+      <button
+        class="auto-topup-primary-action"
+        type="button"
+        [class.is-destructive]="autoTopupModalMode === 'disable'"
+        [disabled]="isAutoTopupUpdating"
+        (click)="confirmAutoTopupModal()"
+      >
+        <span class="auto-topup-action-spinner" *ngIf="isAutoTopupUpdating"></span>
+        <span>{{ autoTopupModalActionLabel }}</span>
+      </button>
+
+      <button
+        class="auto-topup-secondary-action"
+        type="button"
+        *ngIf="autoTopupModalMode !== 'learn'"
+        [disabled]="isAutoTopupUpdating"
+        (click)="closeAutoTopupModal()"
+      >
+        {{ autoTopupModalMode === 'disable'
+          ? ('AUTO_TOPUP_KEEP_ON' | translate)
+          : ('AUTO_TOPUP_NOT_NOW' | translate) }}
+      </button>
     </div>
   </div>
 </div>

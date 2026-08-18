@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { DataServiceAPIService } from '../services/data-service-api.service';
+import { AutoTopupStatus, DataServiceAPIService } from '../services/data-service-api.service';
 import { AlertController, LoadingController, NavController, ToastController } from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { COUNTRY_CODES } from '../data/country-code';
 import { TranslateService } from '@ngx-translate/core';
 import { Preferences } from '@capacitor/preferences';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -29,6 +30,13 @@ export class Tab1Page {
   public isTopupRedirecting = false;
   public topupRefreshNotice = false;
   public topupRefreshText = '';
+
+  public autoTopupStatus: AutoTopupStatus | null = null;
+  public isAutoTopupLoading = false;
+  public isAutoTopupUpdating = false;
+  public autoTopupError = '';
+  public showAutoTopupModal = false;
+  public autoTopupModalMode: 'learn' | 'enable' | 'disable' = 'learn';
 
   private topupRefreshTimers: any[] = [];
   private topupRefreshHideTimer: any = null;
@@ -91,6 +99,164 @@ export class Tab1Page {
 
   get isDataReady(): boolean {
     return this.data !== null && !this.isLoading;
+  }
+
+  get showAutoTopupCard(): boolean {
+    return this.data !== null && (this.autoTopupStatus?.visible === true || this.isAutoTopupLoading);
+  }
+
+  get autoTopupEnabled(): boolean {
+    return this.autoTopupStatus?.enabled === true;
+  }
+
+  get autoTopupProcessing(): boolean {
+    return this.autoTopupStatus?.processing === true;
+  }
+
+  get autoTopupSwitchDisabled(): boolean {
+    if (this.isAutoTopupLoading || this.isAutoTopupUpdating || !this.autoTopupStatus) {
+      return true;
+    }
+
+    return !this.autoTopupStatus.can_manage
+      || (!this.autoTopupStatus.enabled && !this.autoTopupStatus.can_enable);
+  }
+
+  get autoTopupStateLabel(): string {
+    if (this.autoTopupStatus?.turn_off_pending_current_topup) {
+      return this._translate.instant('AUTO_TOPUP_FINISHING');
+    }
+
+    return this.autoTopupEnabled
+      ? this._translate.instant('AUTO_TOPUP_ON')
+      : this._translate.instant('AUTO_TOPUP_OFF');
+  }
+
+  get autoTopupDataLabel(): string {
+    const bytes = Number(this.autoTopupStatus?.data_bytes || 0);
+    if (!Number.isFinite(bytes) || bytes <= 0) {
+      return '';
+    }
+
+    const gb = bytes / Math.pow(1024, 3);
+    if (gb >= 1) {
+      return `${this.trimNumber(gb)} GB`;
+    }
+
+    const mb = bytes / Math.pow(1024, 2);
+    return `${this.trimNumber(mb)} MB`;
+  }
+
+  get autoTopupPriceLabel(): string {
+    const amountCents = Number(this.autoTopupStatus?.amount_cents);
+    const currency = String(this.autoTopupStatus?.currency || '').toUpperCase();
+
+    if (!Number.isFinite(amountCents) || amountCents < 0 || !/^[A-Z]{3}$/.test(currency)) {
+      return '';
+    }
+
+    try {
+      return new Intl.NumberFormat(this._translate.currentLang || 'en', {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amountCents / 100);
+    } catch {
+      return `${(amountCents / 100).toFixed(2)} ${currency}`;
+    }
+  }
+
+  get autoTopupDescription(): string {
+    if (this.autoTopupStatus?.turn_off_pending_current_topup) {
+      return this._translate.instant('AUTO_TOPUP_PROCESSING_DESCRIPTION');
+    }
+
+    if (this.autoTopupEnabled) {
+      return this._translate.instant('AUTO_TOPUP_CARD_DESCRIPTION', {
+        data: this.autoTopupDataLabel || this._translate.instant('AUTO_TOPUP_MORE_DATA'),
+      });
+    }
+
+    if (this.autoTopupStatus?.can_enable) {
+      return this._translate.instant('AUTO_TOPUP_OFF_DESCRIPTION', {
+        data: this.autoTopupDataLabel || this._translate.instant('AUTO_TOPUP_MORE_DATA'),
+      });
+    }
+
+    return this.autoTopupUnavailableMessage;
+  }
+
+  get autoTopupMetaText(): string {
+    if (!this.autoTopupPriceLabel) {
+      return '';
+    }
+
+    return this._translate.instant('AUTO_TOPUP_META', {
+      price: this.autoTopupPriceLabel,
+    });
+  }
+
+  get autoTopupUnavailableMessage(): string {
+    const reason = String(this.autoTopupStatus?.reason_code || '');
+
+    if (reason === 'saved_card_unavailable') {
+      return this._translate.instant('AUTO_TOPUP_CARD_REQUIRED');
+    }
+
+    if (reason === 'temporarily_unavailable' || reason === 'authorization_sync_pending') {
+      return this._translate.instant('AUTO_TOPUP_TEMPORARY_ERROR');
+    }
+
+    return this._translate.instant('AUTO_TOPUP_UNAVAILABLE');
+  }
+
+  get autoTopupModalTitle(): string {
+    if (this.autoTopupModalMode === 'enable') {
+      return this._translate.instant('AUTO_TOPUP_ENABLE_TITLE');
+    }
+
+    if (this.autoTopupModalMode === 'disable') {
+      return this._translate.instant('AUTO_TOPUP_DISABLE_TITLE');
+    }
+
+    return this._translate.instant('AUTO_TOPUP_LEARN_TITLE');
+  }
+
+  get autoTopupModalBody(): string {
+    if (this.autoTopupModalMode === 'enable') {
+      return this._translate.instant('AUTO_TOPUP_ENABLE_BODY', {
+        data: this.autoTopupDataLabel || this._translate.instant('AUTO_TOPUP_MORE_DATA'),
+        price: this.autoTopupPriceLabel,
+      });
+    }
+
+    if (this.autoTopupModalMode === 'disable') {
+      return this._translate.instant('AUTO_TOPUP_DISABLE_BODY');
+    }
+
+    if (!this.autoTopupPriceLabel) {
+      return this._translate.instant('AUTO_TOPUP_LEARN_BODY_NO_PRICE', {
+        data: this.autoTopupDataLabel || this._translate.instant('AUTO_TOPUP_MORE_DATA'),
+      });
+    }
+
+    return this._translate.instant('AUTO_TOPUP_LEARN_BODY', {
+      data: this.autoTopupDataLabel || this._translate.instant('AUTO_TOPUP_MORE_DATA'),
+      price: this.autoTopupPriceLabel,
+    });
+  }
+
+  get autoTopupModalActionLabel(): string {
+    if (this.autoTopupModalMode === 'enable') {
+      return this._translate.instant('AUTO_TOPUP_ENABLE_ACTION');
+    }
+
+    if (this.autoTopupModalMode === 'disable') {
+      return this._translate.instant('AUTO_TOPUP_DISABLE_ACTION');
+    }
+
+    return this._translate.instant('AUTO_TOPUP_DONE');
   }
 
   get formattedLastUpdated(): string {
@@ -212,6 +378,8 @@ export class Tab1Page {
   }
 
   public ionViewWillEnter(): void {
+    this.loadAutoTopupStatus().catch(() => {});
+
     const topupRefreshRequired = localStorage.getItem('stellar_topup_refresh_required') === '1';
 
     if (topupRefreshRequired) {
@@ -285,7 +453,10 @@ export class Tab1Page {
   }
 
   public async handleRefresh(event: any): Promise<void> {
-    await this.getData(true);
+    await Promise.all([
+      this.getData(true),
+      this.loadAutoTopupStatus(),
+    ]);
 
     if (event?.target?.complete) {
       event.target.complete();
@@ -293,7 +464,10 @@ export class Tab1Page {
   }
 
   public async retryLoad(): Promise<void> {
-    await this.getData(true);
+    await Promise.all([
+      this.getData(true),
+      this.loadAutoTopupStatus(),
+    ]);
   }
 
   public async copy(): Promise<void> {
@@ -319,6 +493,111 @@ export class Tab1Page {
 
   public toggleModal(open?: boolean): void {
     this.showModal = typeof open === 'boolean' ? open : !this.showModal;
+  }
+
+  public openAutoTopupLearnMore(): void {
+    this.autoTopupModalMode = 'learn';
+    this.showAutoTopupModal = true;
+  }
+
+  public requestAutoTopupToggle(): void {
+    if (this.autoTopupSwitchDisabled) {
+      if (this.autoTopupStatus && !this.autoTopupStatus.can_enable && !this.autoTopupStatus.enabled) {
+        this.presentAutoTopupToast(this.autoTopupUnavailableMessage).catch(() => {});
+      }
+      return;
+    }
+
+    this.autoTopupModalMode = this.autoTopupEnabled ? 'disable' : 'enable';
+    this.showAutoTopupModal = true;
+  }
+
+  public closeAutoTopupModal(): void {
+    if (this.isAutoTopupUpdating) {
+      return;
+    }
+
+    this.showAutoTopupModal = false;
+    this.autoTopupError = '';
+  }
+
+  public async confirmAutoTopupModal(): Promise<void> {
+    if (this.autoTopupModalMode === 'learn') {
+      this.closeAutoTopupModal();
+      return;
+    }
+
+    const enabled = this.autoTopupModalMode === 'enable';
+    const simId = this.getAutoTopupSimId();
+    if (!simId) {
+      await this.presentAutoTopupToast(this._translate.instant('AUTO_TOPUP_UNAVAILABLE'));
+      return;
+    }
+
+    this.isAutoTopupUpdating = true;
+    this.autoTopupError = '';
+
+    try {
+      const response = await firstValueFrom(
+        this.dataServiceAPIService.updateAutoTopup(simId, enabled, enabled),
+      );
+
+      this.autoTopupStatus = response.data;
+      this.showAutoTopupModal = false;
+
+      await this.presentAutoTopupToast(
+        this._translate.instant(enabled ? 'AUTO_TOPUP_ENABLED_TOAST' : 'AUTO_TOPUP_DISABLED_TOAST'),
+      );
+    } catch (error: any) {
+      this.autoTopupError = this.extractAutoTopupError(error);
+      await this.presentAutoTopupToast(this.autoTopupError);
+    } finally {
+      this.isAutoTopupUpdating = false;
+    }
+  }
+
+  private async loadAutoTopupStatus(): Promise<void> {
+    const simId = this.getAutoTopupSimId();
+    if (!simId) {
+      this.autoTopupStatus = null;
+      return;
+    }
+
+    this.isAutoTopupLoading = true;
+    this.autoTopupError = '';
+
+    try {
+      const response = await firstValueFrom(this.dataServiceAPIService.getAutoTopupStatus(simId));
+      this.autoTopupStatus = response.data;
+    } catch (error: any) {
+      this.autoTopupError = this.extractAutoTopupError(error);
+    } finally {
+      this.isAutoTopupLoading = false;
+    }
+  }
+
+  private getAutoTopupSimId(): string {
+    const simId = String(this.data?.id || this.sim_id || '').replace(/\s+/g, '').trim();
+
+    return /^\d{16}$/.test(simId) ? simId : '';
+  }
+
+  private extractAutoTopupError(error: any): string {
+    return String(
+      error?.error?.response_message
+      || error?.error?.message
+      || this._translate.instant('AUTO_TOPUP_TEMPORARY_ERROR')
+    ).trim();
+  }
+
+  private async presentAutoTopupToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 4200,
+      position: 'bottom',
+    });
+
+    await toast.present();
   }
 
   public async upgradePlan(): Promise<void> {
@@ -702,6 +981,13 @@ export class Tab1Page {
         this.GB_USED = t.GB_USED;
         this.GB_TOTAL = t.GB_TOTAL;
       });
+  }
+
+  private trimNumber(value: number): string {
+    return value
+      .toFixed(2)
+      .replace(/\.00$/, '')
+      .replace(/(\.\d)0$/, '$1');
   }
 
   private numberFromPossibleGb(value: any): number {
