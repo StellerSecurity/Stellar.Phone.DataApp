@@ -189,12 +189,56 @@
       </ng-container>
 
       <ng-template #autoTopupLoadingState>
-        <div class="auto-topup-loading">
+        <div class="auto-topup-loading" *ngIf="isAutoTopupLoading; else autoTopupUnavailableState">
           <div class="auto-topup-loading-icon"></div>
           <div class="auto-topup-loading-copy">
             <div></div>
             <div></div>
           </div>
+        </div>
+      </ng-template>
+
+      <ng-template #autoTopupUnavailableState>
+        <div class="auto-topup-header">
+          <div class="auto-topup-heading">
+            <div class="auto-topup-icon" aria-hidden="true">
+              <span class="auto-topup-bolt">↻</span>
+            </div>
+
+            <div>
+              <div class="section-label">{{ 'AUTO_TOPUP_EYEBROW' | translate }}</div>
+              <h3>{{ 'AUTO_TOPUP_TITLE' | translate }}</h3>
+            </div>
+          </div>
+
+          <div class="auto-topup-control">
+            <span class="auto-topup-state">{{ 'AUTO_TOPUP_OFF' | translate }}</span>
+            <button
+              class="auto-topup-switch"
+              type="button"
+              role="switch"
+              aria-checked="false"
+              [attr.aria-label]="'AUTO_TOPUP_TITLE' | translate"
+              disabled
+            >
+              <span class="auto-topup-switch-knob"></span>
+            </button>
+          </div>
+        </div>
+
+        <p class="auto-topup-description">
+          {{ autoTopupError || ('AUTO_TOPUP_TEMPORARY_ERROR' | translate) }}
+        </p>
+
+        <div class="auto-topup-footer auto-topup-unavailable-footer">
+          <button
+            class="auto-topup-retry"
+            type="button"
+            [disabled]="isAutoTopupLoading"
+            (click)="retryAutoTopupStatus()"
+          >
+            {{ RETRY }}
+          </button>
         </div>
       </ng-template>
     </section>

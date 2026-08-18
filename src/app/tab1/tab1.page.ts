@@ -102,7 +102,7 @@ export class Tab1Page {
   }
 
   get showAutoTopupCard(): boolean {
-    return this.data !== null && (this.autoTopupStatus?.visible === true || this.isAutoTopupLoading);
+    return this.data !== null && this.getAutoTopupSimId() !== '';
   }
 
   get autoTopupEnabled(): boolean {
@@ -470,6 +470,10 @@ export class Tab1Page {
     ]);
   }
 
+  public async retryAutoTopupStatus(): Promise<void> {
+    await this.loadAutoTopupStatus();
+  }
+
   public async copy(): Promise<void> {
     await Clipboard.write({ string: this.sim_id });
     this.isCopying = true;
@@ -500,16 +504,41 @@ export class Tab1Page {
     this.showAutoTopupModal = true;
   }
 
-  public requestAutoTopupToggle(): void {
+  public async requestAutoTopupToggle(): Promise<void> {
     if (this.autoTopupSwitchDisabled) {
       if (this.autoTopupStatus && !this.autoTopupStatus.can_enable && !this.autoTopupStatus.enabled) {
-        this.presentAutoTopupToast(this.autoTopupUnavailableMessage).catch(() => {});
+        await this.presentAutoTopupToast(this.autoTopupUnavailableMessage);
       }
       return;
     }
 
-    this.autoTopupModalMode = this.autoTopupEnabled ? 'disable' : 'enable';
-    this.showAutoTopupModal = true;
+    const enabled = !this.autoTopupEnabled;
+    const simId = this.getAutoTopupSimId();
+
+    if (!simId) {
+      await this.presentAutoTopupToast(this._translate.instant('AUTO_TOPUP_UNAVAILABLE'));
+      return;
+    }
+
+    this.isAutoTopupUpdating = true;
+    this.autoTopupError = '';
+
+    try {
+      const response = await firstValueFrom(
+        this.dataServiceAPIService.updateAutoTopup(simId, enabled, enabled),
+      );
+
+      this.autoTopupStatus = response.data;
+
+      await this.presentAutoTopupToast(
+        this._translate.instant(enabled ? 'AUTO_TOPUP_ENABLED_TOAST' : 'AUTO_TOPUP_DISABLED_TOAST'),
+      );
+    } catch (error: any) {
+      this.autoTopupError = this.extractAutoTopupError(error);
+      await this.presentAutoTopupToast(this.autoTopupError);
+    } finally {
+      this.isAutoTopupUpdating = false;
+    }
   }
 
   public closeAutoTopupModal(): void {

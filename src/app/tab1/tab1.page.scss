@@ -772,3 +772,224 @@ ion-content.page-content.luxury-dashboard {
     transform: scale(1.2);
   }
 }
+
+/* Auto Top-Up Learn More modal: compact premium presentation. */
+.auto-topup-modal-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auto-topup-modal-container .modal-backdrop {
+  background: rgba(8, 20, 58, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.auto-topup-modal-container .auto-topup-sheet {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  width: min(100%, 520px);
+  max-height: min(88vh, 720px);
+  padding: 30px 30px 26px;
+  border-radius: 28px;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.995) 0%, rgba(247, 249, 255, 0.995) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 34px 90px rgba(4, 16, 55, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  animation: autoTopupModalIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auto-topup-modal-container .auto-topup-sheet .sheet-handle {
+  display: none;
+}
+
+.auto-topup-modal-container .auto-topup-modal-close {
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(20, 32, 59, 0.06);
+  color: #31405e;
+  font-size: 22px;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 160ms ease;
+}
+
+.auto-topup-modal-container .auto-topup-modal-close:active {
+  transform: scale(0.94);
+  background: rgba(20, 32, 59, 0.11);
+}
+
+.auto-topup-modal-container .auto-topup-modal-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #3670ff 0%, #2152d4 100%);
+  color: #ffffff;
+  font-size: 24px;
+  box-shadow: 0 12px 24px rgba(33, 82, 212, 0.22);
+}
+
+.auto-topup-modal-container .auto-topup-modal-eyebrow {
+  color: #6d7b99;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.auto-topup-modal-container .auto-topup-modal-title {
+  margin: 8px auto 0;
+  max-width: 430px;
+  color: #14203b;
+  font-size: 28px;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.auto-topup-modal-container .auto-topup-modal-body {
+  margin: 13px auto 0;
+  max-width: 440px;
+  color: #5c6984;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.auto-topup-modal-container .auto-topup-benefits {
+  gap: 0;
+  margin-top: 22px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(33, 82, 212, 0.045);
+  border: 1px solid rgba(33, 82, 212, 0.085);
+}
+
+.auto-topup-modal-container .auto-topup-benefit {
+  position: relative;
+  min-height: 0;
+  padding: 14px 15px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #31405e;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+.auto-topup-modal-container .auto-topup-benefit + .auto-topup-benefit {
+  border-top: 1px solid rgba(33, 82, 212, 0.075);
+}
+
+.auto-topup-modal-container .auto-topup-check {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  background: #ffffff;
+  color: #2152d4;
+  border: 1px solid rgba(33, 82, 212, 0.1);
+  box-shadow: 0 5px 12px rgba(33, 82, 212, 0.08);
+  font-size: 12px;
+}
+
+.auto-topup-modal-container .auto-topup-modal-error {
+  margin-top: 14px;
+}
+
+.auto-topup-modal-container .auto-topup-modal-actions {
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.auto-topup-modal-container .auto-topup-primary-action,
+.auto-topup-modal-container .auto-topup-secondary-action {
+  min-height: 50px;
+  border-radius: 15px;
+  font-size: 14px;
+}
+
+.auto-topup-modal-container .auto-topup-primary-action {
+  background: linear-gradient(180deg, #2d63e8 0%, #2152d4 100%);
+  box-shadow: 0 12px 24px rgba(33, 82, 212, 0.18);
+}
+
+@keyframes autoTopupModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .auto-topup-modal-container {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .auto-topup-modal-container .auto-topup-sheet {
+    width: 100%;
+    max-height: 90vh;
+    padding: 12px 20px calc(20px + var(--ion-safe-area-bottom, 0px));
+    border-radius: 28px 28px 0 0;
+    animation: slideInFromBottom 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .auto-topup-modal-container .auto-topup-sheet .sheet-handle {
+    display: block;
+    margin-bottom: 12px;
+    background: rgba(31, 45, 80, 0.16);
+  }
+
+  .auto-topup-modal-container .auto-topup-modal-close {
+    top: 14px;
+    right: 16px;
+  }
+
+  .auto-topup-modal-container .auto-topup-modal-icon {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 14px;
+    border-radius: 15px;
+    font-size: 23px;
+  }
+
+  .auto-topup-modal-container .auto-topup-modal-title {
+    max-width: 320px;
+    font-size: 24px;
+  }
+
+  .auto-topup-modal-container .auto-topup-modal-body {
+    max-width: 350px;
+    margin-top: 11px;
+    font-size: 13.5px;
+  }
+
+  .auto-topup-modal-container .auto-topup-benefits {
+    margin-top: 18px;
+  }
+
+  .auto-topup-modal-container .auto-topup-benefit {
+    padding: 12px 13px;
+  }
+
+  .auto-topup-modal-container .auto-topup-modal-actions {
+    margin-top: 18px;
+  }
+}
