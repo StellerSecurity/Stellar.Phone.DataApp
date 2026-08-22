@@ -3,16 +3,22 @@ server {
     #proxy_cache_valid 200 1s;
     listen 8080;
     listen [::]:8080;
-    root /home/site/wwwroot/www; # Changed for Laravel
+    root /home/site/wwwroot/dist/app/browser; # Changed for Laravel
     index  index.html index.htm;
     server_name  example.com www.example.com;
     port_in_redirect off;
 
     location / {
-        index  index.php index.html index.htm hostingstart.html;
-        try_files $uri $uri/ /index.html =404;
+        index  index.html index.htm hostingstart.html;
+        try_files $uri $uri/ /index.html?$args; # Changed for Laravel
     }
 
+    # redirect server error pages to the static page /50x.html
+    #
+    #error_page   500 502 503 504  /50x.html; # Commented out for Laravel so that Laravel debug mode pages are shown
+    location = /50x.html {
+        root   /html/;
+    }
 
     # Disable .git directory
     location ~ /\.git {
@@ -39,4 +45,6 @@ server {
         fastcgi_busy_buffers_size 256k;
         fastcgi_temp_file_write_size 256k;
     }
+
+
 }

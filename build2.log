@@ -1,0 +1,17 @@
+
+> Stellar.Phone.DataApp@0.0.1 build
+> ng build
+
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+✔ Browser application bundle generation complete.
+
+Warning: /mnt/data/topup_checkout_page_work/src/app/sim-input/sim-input.page.scss exceeded maximum budget. Budget 4.00 kB was not met by 190 bytes with a total of 4.19 kB.
+
+Warning: /mnt/data/topup_checkout_page_work/src/app/tab1/tab1.page.scss exceeded maximum budget. Budget 4.00 kB was not met by 5.46 kB with a total of 9.46 kB.
+
+
+
+Error: /mnt/data/topup_checkout_page_work/src/app/tab1/tab1.page.scss exceeded maximum budget. Budget 8.00 kB was not met by 1.46 kB with a total of 9.46 kB.
+
+

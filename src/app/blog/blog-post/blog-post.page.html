@@ -1,0 +1,94 @@
+<app-header
+        [title]="metaTitle"
+        [description]="metaDescription"
+        [keywords]="metaKeywords"
+        [url]="url">
+</app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="blog-wrap">
+
+    <div class="post-shell" *ngIf="!isLoading && post; else loadingOrMissing">
+
+      <!-- Back to blog -->
+      <div class="post-actions">
+        <ion-button fill="clear" class="back-link" routerLink="/blog">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+          Back to all posts
+        </ion-button>
+      </div>
+
+      <div class="post-head">
+        <div class="post-meta">
+          <span class="post-pill">{{ post!.category }}</span>
+          <span>{{ formatDate(post!.dateISO) }}</span>
+          <span>•</span>
+          <span>{{ post!.readingTime }}</span>
+        </div>
+
+        <h1 class="post-title">{{ post!.title }}</h1>
+        <p class="post-excerpt">{{ post!.excerpt }}</p>
+      </div>
+
+      <div class="post-content" *ngIf="post!.content?.length">
+        <ng-container *ngFor="let block of post!.content; trackBy: trackBlock">
+
+          <h1 *ngIf="block.type === 'h1'">{{ block.text }}</h1>
+          <h2 *ngIf="block.type === 'h2'">{{ block.text }}</h2>
+          <h3 *ngIf="block.type === 'h3'">{{ block.text }}</h3>
+
+          <p *ngIf="block.type === 'p'">{{ block.text }}</p>
+
+          <div class="quote" *ngIf="block.type === 'quote'">
+            <p class="quote-text">“{{ block.text }}”</p>
+            <p class="quote-by" *ngIf="block.by">— {{ block.by }}</p>
+          </div>
+
+          <ul *ngIf="block.type === 'ul'">
+            <li *ngFor="let item of block.items">{{ item }}</li>
+          </ul>
+
+          <ol *ngIf="block.type === 'ol'">
+            <li *ngFor="let item of block.items">{{ item }}</li>
+          </ol>
+
+          <pre class="code" *ngIf="block.type === 'code'"><code>{{ block.text }}</code></pre>
+
+          <div class="callout" *ngIf="block.type === 'callout'">
+            <div class="callout-title" *ngIf="block.title">{{ block.title }}</div>
+            <div class="callout-text">{{ block.text }}</div>
+          </div>
+
+          <div class="divider" *ngIf="block.type === 'divider'"></div>
+
+          <div class="cta" *ngIf="block.type === 'cta'">
+            <div class="cta-title">{{ block.title }}</div>
+            <div class="cta-text">{{ block.text }}</div>
+            <ion-button class="cta-btn" [routerLink]="block.href">
+              {{ block.buttonText }}
+            </ion-button>
+          </div>
+
+        </ng-container>
+      </div>
+
+    </div>
+
+    <ng-template #loadingOrMissing>
+      <div class="post-shell" *ngIf="isLoading">
+        <div class="skeleton-line w-60"></div>
+        <div class="skeleton-line w-90"></div>
+        <div class="skeleton-line w-75"></div>
+      </div>
+
+      <div class="post-shell missing" *ngIf="!isLoading && !post">
+        <h2>Post not found</h2>
+        <p>This link is dead. Like most human plans.</p>
+        <ion-button class="back-btn" routerLink="/blog">Back to blog</ion-button>
+      </div>
+    </ng-template>
+
+  </div>
+
+  <app-footer></app-footer>
+</ion-content>

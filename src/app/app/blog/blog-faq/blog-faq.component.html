@@ -1,0 +1,14 @@
+<div class="faq" *ngIf="items?.length">
+  <h2 class="faq-title">{{ title }}</h2>
+
+  <ion-accordion-group>
+    <ion-accordion *ngFor="let item of items; let i = index" [value]="i">
+      <ion-item slot="header" lines="full">
+        <ion-label>{{ item.q }}</ion-label>
+      </ion-item>
+      <div slot="content" class="answer">
+        <p>{{ item.a }}</p>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</div>

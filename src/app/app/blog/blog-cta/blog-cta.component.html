@@ -1,0 +1,17 @@
+<ion-card class="cta">
+  <ion-card-header>
+    <ion-card-title>{{ cta.title }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <p class="text">{{ cta.text }}</p>
+
+    <ion-button
+      expand="block"
+      [routerLink]="external ? null : cta.href"
+      [href]="external ? cta.href : null"
+      [target]="external ? '_blank' : null"
+      rel="noopener"
+    >{{ cta.buttonText }}</ion-button>
+  </ion-card-content>
+</ion-card>

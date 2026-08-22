@@ -1,0 +1,135 @@
+<!-- home.page.html -->
+<app-header
+        [title]="metaTitle"
+        [description]="metaDescription"
+        [keywords]="metaKeywords"
+        [url]="url">
+</app-header>
+
+<ion-content [fullscreen]="false" class="main-sec">
+    <div class="container">
+        <ion-grid>
+            <ion-row>
+                <ion-col size-sm="5" size-xs="12">
+                    <div id="container" class="ion-padding">
+                        <img src="assets/monkeys.png" class="monkeys">
+                        <h1 class="title">{{ 'HOME.SHARE_TITLE' | translate }}</h1>
+                        <p class="sub-title">
+                            {{ 'HOME.SHARE_DESCRIPTION_PART_1' | translate }}
+                            {{ 'HOME.SHARE_DESCRIPTION_PART_2' | translate }}
+                        </p>
+                        <div class="box">
+                            <ul>
+                                <li>
+                                    <img src="/assets/icon/tabler-icon-spy-off.svg" valign="top">
+                                    {{ 'HOME.SHARE_BULLET_1' | translate }}
+                                </li>
+                                <li>
+                                    <img src="/assets/icon/tabler-icon-user-shield.svg" valign="top">
+                                    {{ 'HOME.SHARE_BULLET_2' | translate }}
+                                </li>
+                                <li>
+                                    <img src="/assets/icon/tabler-icon-lock-check.svg" valign="top">
+                                    {{ 'HOME.SHARE_BULLET_3' | translate }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </ion-col>
+
+                <ion-col size-sm="1" size-xs="12"></ion-col>
+
+                <ion-col size-sm="6" size-xs="12">
+                    <div class="ion-padding white-box-options password-box">
+                        <ion-textarea
+                                autofocus
+                                class="ion-padding"
+                                [(ngModel)]="addSecretModal.message"
+                                [placeholder]="'HOME.SHARE_TEXTAREA_PLACEHOLDER' | translate">
+                        </ion-textarea>
+
+                        <div class="options">
+                            <div class="options-selector" (click)="optionsToggle()">
+                                <strong>{{ 'HOME.SHARE_OPTIONS' | translate }}</strong>
+                                <img src="/assets/icon/tabler-icon-circle-chevron-down.svg" style="float: right">
+                            </div>
+
+                            <div class="options-content" *ngIf="optionsDisplay">
+                                <br><br>
+                                <span>{{ 'HOME.SHARE_BURNER_TIME' | translate }}</span><br><br>
+
+                                <ion-grid class="grid options-grids">
+                                    <ion-col *ngFor="let burnerTime of burnerTimes" style="padding: 5px!important;">
+                    <span
+                            (click)="setBurnerTime(burnerTime)"
+                            class="timer-option"
+                            [ngClass]="{active: chosenBurnerTime === burnerTime}">
+                      {{ burnerTime }} hours
+                    </span>
+                                    </ion-col>
+                                </ion-grid>
+
+                                <br>
+
+                                <ion-input
+                                        class="passphrase-input"
+                                        autocomplete="off"
+                                        [placeholder]="'HOME.SHARE_PASS_PHRASE' | translate"
+                                        type="password"
+                                        [(ngModel)]="addSecretModal.password">
+                                </ion-input>
+
+                                <br>
+                            </div>
+                        </div>
+
+                        <div *ngIf="secretFiles.length > 0">
+                            <strong>Attached Files:</strong><br><br>
+                            <span *ngFor="let secretFile of secretFiles; let i = index">
+                <ion-icon name="document-outline"></ion-icon>
+                                {{ secretFile.name }}
+                                (<span class="delete-file" (click)="removeFile(i)">remove</span>)<br>
+              </span>
+                            <br>
+                        </div>
+
+                        <!-- HIDE ON iOS: keep #fileInput in same *ngIf scope -->
+                        <ng-container *ngIf="!isIOS">
+              <span class="attach-file" (click)="fileInput.click()">
+                <ion-icon name="cloud-upload-outline"></ion-icon> Attach file (max 30 MB)
+              </span>
+                            <span *ngIf="fileReading" class="file-reading-status" role="status" aria-live="polite">
+                              <ion-spinner name="crescent"></ion-spinner> Preparing file...
+                            </span><br><br>
+
+                            <input
+                                    type="file"
+                                    #fileInput
+                                    class="file-input"
+                                    (change)="onChangeFileUpload($event)" />
+                        </ng-container>
+
+                        <button
+                                class="blue-btn busy-btn"
+                                type="button"
+                                (click)="createLink()"
+                                [disabled]="creating || fileReading"
+                                [attr.aria-busy]="creating || fileReading">
+                            <ion-spinner
+                                    *ngIf="creating"
+                                    class="busy-spinner"
+                                    name="crescent"
+                                    aria-label="Creating secret">
+                            </ion-spinner>
+                            <span *ngIf="!creating" class="busy-label">
+                                {{ 'HOME.SHARE_BUTTON' | translate }}
+                            </span>
+                        </button>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+
+    <app-footer></app-footer>
+</ion-content>

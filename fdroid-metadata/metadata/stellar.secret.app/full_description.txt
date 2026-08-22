@@ -1,0 +1,22 @@
+Share private messages and files securely with Stellar Secret, the privacy-first app that lets you send sensitive content through self-destructing, one-time view links. Once opened, the message disappears—forever.
+
+🔐 Features:
+One-Time Message Viewing
+Create messages that can be viewed only once before they auto-delete.
+
+Self-Destructing Links
+Each message generates a unique link that vanishes after it's opened.
+
+AES-256 Encrypted
+All content is encrypted for maximum security and peace of mind.
+
+File Sharing (Up to 15 MB)
+Send documents, credentials, or images securely and privately.
+
+No Sign-Up Required
+Share instantly without creating an account.
+
+Clean & Lightweight
+Simple interface. Fast performance. Under 6 MB.
+
+📥 Download Stellar Secret now and take control of how you share private information—one message at a time.

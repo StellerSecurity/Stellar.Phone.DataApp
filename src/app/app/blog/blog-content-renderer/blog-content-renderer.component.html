@@ -1,0 +1,27 @@
+<div class="content">
+  <ng-container *ngFor="let block of blocks">
+
+    <h2 *ngIf="block.type === 'h2'" [id]="block.id" class="h2">{{ block.text }}</h2>
+    <h3 *ngIf="block.type === 'h3'" [id]="block.id" class="h3">{{ block.text }}</h3>
+
+    <p *ngIf="block.type === 'p'" class="p">{{ block.text }}</p>
+
+    <ul *ngIf="block.type === 'ul'" class="ul">
+      <li *ngFor="let item of block.items">{{ item }}</li>
+    </ul>
+
+    <blockquote *ngIf="block.type === 'quote'" class="quote">
+      <p>{{ block.text }}</p>
+      <footer *ngIf="block.by">{{ block.by }}</footer>
+    </blockquote>
+
+    <pre *ngIf="block.type === 'code'" class="code"><code>{{ block.code }}</code></pre>
+
+    <hr *ngIf="block.type === 'divider'" class="divider" />
+
+    <app-blog-cta *ngIf="isCta(block)" [cta]="block.cta"></app-blog-cta>
+
+    <app-blog-faq *ngIf="isFaq(block)" [items]="block.items"></app-blog-faq>
+
+  </ng-container>
+</div>

@@ -1,0 +1,58 @@
+.content {
+  display: block;
+}
+
+.h2 {
+  font-size: 22px;
+  margin: 28px 0 10px;
+}
+
+.h3 {
+  font-size: 18px;
+  margin: 22px 0 8px;
+}
+
+.p {
+  margin: 0 0 12px;
+  line-height: 1.55;
+  opacity: 0.94;
+}
+
+.ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  opacity: 0.94;
+}
+
+.quote {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-left: 3px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+}
+
+.quote p {
+  margin: 0;
+}
+
+.quote footer {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.code {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 16px;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 22px 0;
+}

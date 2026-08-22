@@ -1,0 +1,31 @@
+<ion-card class="post-card" [routerLink]="href" button>
+  <div class="cover" *ngIf="post.coverImageUrl">
+    <img [src]="post.coverImageUrl" [alt]="post.title" loading="lazy" />
+  </div>
+
+  <ion-card-header>
+    <div class="meta-row">
+      <ion-chip class="category" color="medium">
+        <ion-label>{{ post.category }}</ion-label>
+      </ion-chip>
+
+      <div class="meta">
+        <span class="date">{{ dateLabel }}</span>
+        <span class="dot" aria-hidden="true">•</span>
+        <span class="reading" *ngIf="post.readingTime">{{ post.readingTime }}</span>
+      </div>
+    </div>
+
+    <ion-card-title>{{ post.title }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <p class="excerpt">{{ post.excerpt }}</p>
+
+    <div class="tags" *ngIf="post.tags?.length">
+      <ion-chip class="tag" color="light" *ngFor="let t of post.tags | slice:0:3">
+        <ion-label>#{{ t }}</ion-label>
+      </ion-chip>
+    </div>
+  </ion-card-content>
+</ion-card>

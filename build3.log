@@ -1,0 +1,110 @@
+
+> Stellar.Phone.DataApp@0.0.1 build
+> ng build
+
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+✔ Browser application bundle generation complete.
+- Copying assets...
+✔ Copying assets complete.
+- Generating index html...
+- Generating index html...
+20 rules skipped due to selector errors:
+  :host-context([dir=rtl]) .ion-float-start -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-start:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-end -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-end:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-sm-start -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-sm-start:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-sm-end -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-sm-end:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-md-start -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-md-start:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-md-end -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-md-end:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-lg-start -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-lg-start:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-lg-end -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-lg-end:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-xl-start -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-xl-start:dir(rtl) -> Unknown pseudo-class :dir
+  :host-context([dir=rtl]) .ion-float-xl-end -> Unknown pseudo-class :host-context([object Object])
+  .ion-float-xl-end:dir(rtl) -> Unknown pseudo-class :dir
+✔ Index html generation complete.
+- Generating service worker...
+✔ Service worker generation complete.
+
+Initial Chunk Files                   | Names                                |  Raw Size | Estimated Transfer Size
+main.5c967ae294a60b8a.js              | main                                 | 465.07 kB |               122.22 kB
+polyfills.441dd4ca9dc0674f.js         | polyfills                            |  33.16 kB |                10.70 kB
+styles.a716cb78b7b5c4fb.css           | styles                               |  30.36 kB |                 4.62 kB
+runtime.f65f49c1054fb4c8.js           | runtime                              |   4.63 kB |                 2.23 kB
+
+| Initial Total                        | 533.23 kB |               139.77 kB
+
+Lazy Chunk Files                      | Names                                |  Raw Size | Estimated Transfer Size
+polyfills-core-js.93f56369317b7a8e.js | polyfills-core-js                    |  91.83 kB |                27.76 kB
+5962.b0f236cd161cbc68.js              | -                                    |  81.25 kB |                 9.41 kB
+7059.4e8fa70fa6116326.js              | -                                    |  74.44 kB |                13.60 kB
+3734.320c6e5bc2b81d54.js              | -                                    |  56.85 kB |                 6.26 kB
+4530.35e6a4f70dd1bc04.js              | -                                    |  49.74 kB |                 6.22 kB
+6754.ed0ba24d09fba780.js              | -                                    |  43.64 kB |                 7.46 kB
+5860.1ac906fbc4b95eec.js              | -                                    |  40.73 kB |                 9.17 kB
+2567.0decff4d2f0cea26.js              | tab1-tab1-module                     |  39.87 kB |                10.32 kB
+6304.e02672accf28d8e5.js              | -                                    |  37.37 kB |                 6.46 kB
+7666.39e9b95c3762fe3b.js              | -                                    |  32.45 kB |                 5.90 kB
+8577.72dfb594591d52aa.js              | -                                    |  27.47 kB |                 6.83 kB
+3672.2b1c96be30facc69.js              | -                                    |  27.10 kB |                 5.11 kB
+1372.e7e759757d374020.js              | -                                    |  26.61 kB |                 5.41 kB
+3998.f6993592178f1537.js              | -                                    |  26.24 kB |                 4.51 kB
+8866.0c96d06f253ed554.js              | -                                    |  25.05 kB |                 4.05 kB
+7219.fd1f106abc3fc385.js              | -                                    |  24.56 kB |                 5.08 kB
+185.8f64058fac521c1f.js               | -                                    |  23.87 kB |                 5.93 kB
+8382.9adec83eafc2dee9.js              | -                                    |  23.44 kB |                 5.16 kB
+4090.98ee70a35777d1aa.js              | -                                    |  22.67 kB |                 3.49 kB
+4087.c64375f70820c6f5.js              | -                                    |  22.36 kB |                 3.86 kB
+9882.0fbcc581d0103acd.js              | -                                    |  22.05 kB |                 4.23 kB
+4458.2255e6624dfe2fcb.js              | -                                    |  21.67 kB |                 3.94 kB
+9166.e6de50f3fc87032d.js              | topup-topup-module                   |  21.62 kB |                 4.95 kB
+6642.0f14adc079fdad01.js              | -                                    |  20.79 kB |                 5.05 kB
+8633.c32de727c29302be.js              | -                                    |  20.20 kB |                 4.04 kB
+5454.8698bda517397e1a.js              | -                                    |  19.15 kB |                 1.92 kB
+7635.cf49e31444bf22ae.js              | -                                    |  19.01 kB |                 3.13 kB
+common.79f91d4b5ad77fb0.js            | common                               |  18.92 kB |                 5.59 kB
+polyfills-dom.516ff539260f3e0d.js     | polyfills-dom                        |  18.05 kB |                 5.03 kB
+9857.41a7c4755d6445da.js              | -                                    |  14.04 kB |                 3.02 kB
+6181.7f3eb0ab538293eb.js              | -                                    |  13.30 kB |                 4.31 kB
+8484.c563806d288577a0.js              | -                                    |  12.40 kB |                 3.01 kB
+505.32110297f2c02942.js               | -                                    |  12.03 kB |                 2.44 kB
+4744.34d0d2ecbbb21abf.js              | sim-input-sim-input-module           |  11.98 kB |                 3.39 kB
+5675.faa1c2225a795732.js              | -                                    |  11.92 kB |                 3.75 kB
+4764.9e418e39d6dc1040.js              | -                                    |  11.51 kB |                 3.97 kB
+3150.c15a7c256512ebba.js              | -                                    |  11.32 kB |                 2.36 kB
+9820.453c9538fc4e5c0b.js              | -                                    |  11.19 kB |                 2.32 kB
+8594.6e8e4b8ff83f929b.js              | ios-transition-js                    |  10.21 kB |                 2.62 kB
+3483.b347287d66c79420.js              | -                                    |   9.63 kB |                 2.60 kB
+4279.a69ca8f5585c229c.js              | topup-checkout-topup-checkout-module |   9.37 kB |                 2.80 kB
+1315.9cd64aab0fac8841.js              | -                                    |   8.81 kB |                 1.50 kB
+962.3fb0dac75d94cc95.js               | ios-transition-js                    |   8.11 kB |                 2.94 kB
+9992.c3749e7e0fc0120b.js              | -                                    |   7.89 kB |                 2.39 kB
+6673.9c5c1db0ae75b230.js              | -                                    |   7.06 kB |                 1.31 kB
+433.64da6828fc8f6255.js               | -                                    |   6.83 kB |                 2.08 kB
+9588.97d21a268bc7f457.js              | -                                    |   6.28 kB |                 1.57 kB
+9352.ddcec8f0a8109c14.js              | -                                    |   5.85 kB |                 1.51 kB
+9793.14134edf891b8f77.js              | -                                    |   5.55 kB |                 1.31 kB
+2975.d14185248aaada1b.js              | -                                    |   5.53 kB |                 1.98 kB
+6879.bf6614186a5ac5f0.js              | input-shims-5329bbe8-js              |   4.94 kB |                 1.88 kB
+2841.62b1952184474045.js              | -                                    |   4.15 kB |                 1.48 kB
+3544.9951c5c91033a6a5.js              | -                                    |   4.08 kB |                 1.13 kB
+3850.67da52541f2444b3.js              | web                                  |   3.63 kB |               988 bytes
+7465.756e34ddc326b731.js              | -                                    |   3.10 kB |               973 bytes
+7419.22483f207598cee7.js              | index-020f5464-js                    |   1.87 kB |               827 bytes
+1745.acbc84123fea9f83.js              | -                                    |   1.80 kB |               752 bytes
+469.8557c90565723eff.js               | -                                    |   1.54 kB |               548 bytes
+899.fe0d466afab9cae7.js               | web                                  |   1.51 kB |               579 bytes
+4054.3872781a521a7e9e.js              | tabs-tabs-module                     |   1.16 kB |               546 bytes
+8811.a10d406c6b753319.js              | -                                    |   1.09 kB |               628 bytes
+7250.dd7a58df6c68d73e.js              | md-transition-js                     |   1.04 kB |               486 bytes
+57.f185461e0e0e927d.js                | status-tap-dfea3607-js               | 526 bytes |               319 bytes
+
+Build at: 2026-06-29T23:12:13.356Z - Hash: b67d433f7891e773 - Time: 20329ms

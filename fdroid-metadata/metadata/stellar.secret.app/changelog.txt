@@ -1,0 +1,2 @@
+# v1.50
+- Initial release on F-Droid

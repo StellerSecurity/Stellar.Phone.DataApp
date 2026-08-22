@@ -1,0 +1,130 @@
+<app-header
+        [title]="metaTitle"
+        [description]="metaDescription"
+        [keywords]="metaKeywords"
+        [url]="url">
+</app-header>
+
+<ion-content class="main-sec" [fullscreen]="true">
+  <div class="blog-wrap">
+
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <div class="blog-top app-fade-up">
+      <div class="blog-title-row">
+        <div>
+          <h1 class="blog-title">Guides & Updates</h1>
+          <p class="blog-subtitle">
+            Security notes, one-time secrets, and less dumb ways to share sensitive data.
+          </p>
+        </div>
+      </div>
+
+      <div class="filters app-glass">
+        <ion-searchbar
+                placeholder="Search posts"
+                [value]="search"
+                (ionInput)="onSearchInput($event)"
+                animated="true"
+                inputmode="search"
+                show-clear-button="focus">
+        </ion-searchbar>
+
+        <!--<div class="segment-shell">
+          <ion-segment
+            [value]="selectedCategory"
+            (ionChange)="onCategorySegmentChange($event)">
+            <ion-segment-button *ngFor="let c of categories" [value]="c">
+              <ion-label>{{ c }}</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>-->
+      </div>
+
+      <!-- Tags (exclude "All" from chip list, keep it as state only) -->
+      <!--<div class="tag-row" *ngIf="tags?.length && tags.length > 1">
+        <button
+          class="tag-chip"
+          [class.active]="selectedTag === 'All'"
+          type="button"
+          (click)="onTagChange('All')">
+          All
+        </button>
+
+        <button
+          class="tag-chip"
+          [class.active]="selectedTag === t"
+          *ngFor="let t of (tags || []).slice(1)"
+          type="button"
+          (click)="onTagChange(t)">
+          {{ t }}
+        </button>
+      </div>-->
+    </div>
+
+    <ng-container *ngIf="isLoading; else loaded">
+      <div class="posts-grid">
+        <div class="skeleton" *ngFor="let _ of [1,2,3,4,5,6]">
+          <div class="skeleton-line w-60"></div>
+          <div class="skeleton-line w-90"></div>
+          <div class="skeleton-line w-75"></div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loaded>
+      <div class="posts-grid app-stagger" *ngIf="visiblePosts.length; else empty">
+        <ion-card
+                class="post-card app-surface"
+                [class.featured]="p.featured"
+                *ngFor="let p of visiblePosts; trackBy: trackBySlug"
+                [routerLink]="['/blog', p.slug]"
+                button="true">
+          <ion-card-header>
+            <div class="post-meta">
+              <span class="post-pill">{{ p.category }}</span>
+              <span>{{ formatDate(p.dateISO) }}</span>
+              <span>•</span>
+              <span>{{ p.readingTime }}</span>
+            </div>
+
+            <h2 class="post-title">{{ p.title }}</h2>
+            <p class="post-excerpt">{{ p.excerpt }}</p>
+          </ion-card-header>
+
+          <div class="post-footer">
+            <div class="tag-row" *ngIf="p.tags?.length">
+              <span class="tag-chip" *ngFor="let t of (p.tags || []).slice(0, 2)">{{ t }}</span>
+            </div>
+            <span class="read-link">Read</span>
+          </div>
+        </ion-card>
+      </div>
+
+      <ng-template #empty>
+        <div class="empty-state app-fade-up">
+          <p class="empty-title">Nothing found</p>
+          <p class="empty-text">Try a different search or clear filters.</p>
+        </div>
+      </ng-template>
+
+      <div class="load-more-wrap" *ngIf="!isLoading && hasMore">
+        <ion-button expand="block" class="load-more-btn" (click)="loadMoreManual()">
+          Load more
+        </ion-button>
+      </div>
+
+      <ion-infinite-scroll
+              threshold="200px"
+              [disabled]="isLoading || !hasMore"
+              (ionInfinite)="loadMore($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ng-template>
+
+  </div>
+
+  <app-footer></app-footer>
+</ion-content>

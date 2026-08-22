@@ -1,0 +1,71 @@
+<ion-header [translucent]="false"
+  appMetaTags 
+  [title]="title" 
+  [description]="description" 
+  [keywords]="keywords"
+  [url]="url"
+>
+  <ion-toolbar>
+    <ion-title>
+      <div class="container">
+        <ion-row>
+          <ion-col size-sm="6" size-xs="6">
+            <div class="left logo">
+              <ion-button routerLink="/">
+                <img src="/assets/icon/secret_icon_white.png"> 
+                <span>{{ 'HOME.HEADER_TITLE' | translate }}</span>
+              </ion-button>
+            </div>
+          </ion-col>
+          <ion-col size-sm="6" size-xs="6">
+            <div class="right">
+              <ion-row>
+
+                <ion-col size-sm="6" size-xs="12">
+                  <ion-button routerLink="/how-it-works">
+                    <img src="/assets/icon/tabler-icon-info-circle.svg"> 
+                    <span>{{ 'HOME.HOW_IT_WORKS' | translate }}</span>
+                  </ion-button>
+                </ion-col>
+
+                <ion-col size-sm="6" size-xs="6" class="download-btn">
+                  <ion-button (click)="openPopover($event)" style="display: flex;" class="ion-align-items-center">
+                    <img src="/assets/icon/download-icon.svg">
+                    <span>{{ 'HOME.DOWNLOAD_APP' | translate }}</span>
+                  </ion-button>
+                </ion-col>
+
+              </ion-row>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-popover
+  [isOpen]="isPopoverOpen"
+  [event]="popoverEvent"
+  reference="trigger"
+  (didDismiss)="isPopoverOpen = false"
+  side="bottom"
+  alignment="end"
+  cssClass="custom-popover"
+  [showBackdrop]="true"
+  [translucent]="true"
+>
+  <ng-template>
+    <ion-content class="popover-inner-content">
+      <div class="store-links">
+        <a href="https://play.google.com/store/apps/details?id=stellar.secret.app" target="_blank">
+          <img src="assets/google-play-download.png" alt="Google Play" />
+        </a>
+        <a href="https://auroraoss.com/" target="_blank" style="margin-bottom: -5px;">
+          <img src="assets/aurora-store-download.png" alt="Aurora Store" />
+        </a>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-popover>
+

@@ -1,7 +1,7 @@
 {
-  "name": "myApp",
+  "name": "Secret",
   "integrations": {
     "capacitor": {}
   },
-  "type": "angular"
+  "type": "angular-standalone"
 }

@@ -1,0 +1,20 @@
+<div class="pager" *ngIf="total > pageSize">
+  <ion-button fill="clear" [disabled]="!canPrev" (click)="go(page - 1)">
+    <ion-icon slot="start" name="chevron-back"></ion-icon>
+    Prev
+  </ion-button>
+
+  <div class="pages">
+    <ion-button
+      *ngFor="let p of pages()"
+      [fill]="p === page ? 'solid' : 'clear'"
+      (click)="go(p)"
+      class="page-btn"
+    >{{ p }}</ion-button>
+  </div>
+
+  <ion-button fill="clear" [disabled]="!canNext" (click)="go(page + 1)">
+    Next
+    <ion-icon slot="end" name="chevron-forward"></ion-icon>
+  </ion-button>
+</div>

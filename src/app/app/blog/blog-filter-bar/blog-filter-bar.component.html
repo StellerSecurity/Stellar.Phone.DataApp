@@ -1,0 +1,46 @@
+<div class="filter-bar">
+  <ion-searchbar
+    [value]="value.q || ''"
+    (ionInput)="setQuery({ q: $any($event.target).value })"
+    placeholder="Search guides"
+    debounce="250"
+  ></ion-searchbar>
+
+  <div class="row">
+    <ion-item lines="none" class="select">
+      <ion-label>Category</ion-label>
+      <ion-select
+        interface="popover"
+        [value]="value.category || ''"
+        (ionChange)="setQuery({ category: $event.detail.value || undefined })"
+      >
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option *ngFor="let c of categories" [value]="c">{{ c }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item lines="none" class="select">
+      <ion-label>Tag</ion-label>
+      <ion-select
+        interface="popover"
+        [value]="value.tag || ''"
+        (ionChange)="setQuery({ tag: $event.detail.value || undefined })"
+      >
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option *ngFor="let t of tags" [value]="t">#{{ t }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="active" *ngIf="value.category || value.tag">
+    <ion-chip *ngIf="value.category" (click)="clearCategory()">
+      <ion-label>{{ value.category }}</ion-label>
+      <ion-icon name="close" aria-hidden="true"></ion-icon>
+    </ion-chip>
+
+    <ion-chip *ngIf="value.tag" (click)="clearTag()">
+      <ion-label>#{{ value.tag }}</ion-label>
+      <ion-icon name="close" aria-hidden="true"></ion-icon>
+    </ion-chip>
+  </div>
+</div>

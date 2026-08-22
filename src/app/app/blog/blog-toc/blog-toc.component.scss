@@ -1,0 +1,22 @@
+.toc {
+  position: sticky;
+  top: 10px;
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.toc-title {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.toc-item {
+  --min-height: 38px;
+}
+
+.toc-item.level-3 {
+  padding-left: 14px;
+  opacity: 0.92;
+}

@@ -1,0 +1,88 @@
+<app-header [title]="metaTitle" 
+[description]="metaDescription" 
+[keywords]="metaKeywords"
+[url]="url">
+</app-header>
+
+<ion-content [fullscreen]="false" class="main-sec">
+    <div class="container">
+        <ion-grid>
+            <ion-row class="ion-align-items-center">
+                <ion-col size-sm="6" size-xs="12">
+                    <div id="container" class="ion-padding">
+                        <h1 class="title">{{ 'HOWITWORK.ONE_TIME_SECRET_MESSAGING_TITLE' | translate }}</h1>
+                        <p class="sub-title">{{ 'HOWITWORK.ONE_TIME_SECRET_MESSAGING_SUBTITLE' | translate }}</p>
+                    </div>
+                </ion-col>
+                <ion-col size-sm="6" size-xs="12">
+                    <div class="screen-img">
+                        <img src="assets/icon/screen-img.png" class="monkeys">
+                    </div>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="ion-margin-top">
+                <ion-col size-sm="3" size-xs="12">
+                    <div class="how-white-box">
+                        <h2>{{ 'HOWITWORK.ENCRYPTED_PROTECTED_BY' | translate }}</h2>
+                        <p>{{ 'HOWITWORK.ENCRYPTED_PROTECTED_BY_DESCRIPTION' | translate }}</p>
+                    </div>
+                </ion-col>
+                <ion-col size-sm="3" size-xs="12">
+                    <div class="how-white-box">
+                        <img src="assets/icon/trace.svg" />
+                        <h3>{{ 'HOWITWORK.WITHOUT_TRACE_TITLE' | translate }}</h3>
+                        <p>{{ 'HOWITWORK.WITHOUT_TRACE_DESCRIPTION' | translate }}</p>
+                    </div>
+                </ion-col>
+                <ion-col size-sm="3" size-xs="12">
+                    <div class="how-white-box">
+                        <img src="assets/icon/privacy.svg" />
+                        <h3>{{ 'HOWITWORK.PRIVACY_PROTECTED_TITLE' | translate }}</h3>
+                        <p>{{ 'HOWITWORK.PRIVACY_PROTECTED_DESCRIPTION' | translate }}</p>
+                    </div>
+                </ion-col>
+                <ion-col size-sm="3" size-xs="12">
+                    <div class="how-white-box">
+                        <img src="assets/icon/lock.svg" />
+                        <h3>{{ 'HOWITWORK.END_TO_END_ENCRYPTED_TITLE' | translate }}</h3>
+                        <p>{{ 'HOWITWORK.END_TO_END_ENCRYPTED_DESCRIPTION' | translate }}</p>
+                    </div>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="ion-align-items-center ion-margin-top">
+                <ion-col size-sm="12" size-xs="12">
+                    <div class="how-white-box">
+                        <h2>{{ 'HOWITWORK.HOW_IT_WORKS_TITLE' | translate }}</h2>
+                        <ion-row class="ion-align-items-center">
+                            <ion-col size-sm="4" size-xs="12">
+                                <div class="how-step">
+                                    <p><span>1</span>{{ 'HOWITWORK.STEP_1_TITLE' | translate }}</p>
+                                    <img src="assets/step1.png" />
+                                </div>
+                            </ion-col>
+                            <ion-col size-sm="4" size-xs="12">
+                                <div class="how-step">
+                                    <p><span>2</span>{{ 'HOWITWORK.STEP_2_TITLE' | translate }}</p>
+                                    <img src="assets/step2.png" />
+                                </div>
+                            </ion-col>
+                            <ion-col size-sm="4" size-xs="12">
+                                <div class="how-step">
+                                    <p><span>3</span>{{ 'HOWITWORK.STEP_3_TITLE' | translate }}</p>
+                                    <img src="assets/step3.png" />
+                                </div>
+                            </ion-col>
+                        </ion-row>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+
+    <!-- <div align="center"><br><br>
+        <a href="https://stellarsecurity.com" target="_blank"><img src="assets/Company-Logo-white.png" class="logo" alt="{{ 'HOME.COMPANY_LOGO_ALT' | translate }}"></a>
+    </div> -->
+    <app-footer></app-footer>
+</ion-content>

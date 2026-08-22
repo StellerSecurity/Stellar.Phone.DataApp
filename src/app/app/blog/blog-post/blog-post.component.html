@@ -1,0 +1,53 @@
+<ion-content>
+  <div class="container">
+    <article class="article">
+      <header class="header">
+        <ion-chip class="category" color="medium">
+          <ion-label>{{ post.category }}</ion-label>
+        </ion-chip>
+
+        <h1 class="title">{{ post.title }}</h1>
+
+        <p class="excerpt" *ngIf="post.excerpt">{{ post.excerpt }}</p>
+
+        <div class="meta">
+          <span>{{ dateLabel }}</span>
+          <span class="dot" aria-hidden="true">•</span>
+          <span *ngIf="post.readingTime">{{ post.readingTime }}</span>
+          <span class="dot" aria-hidden="true" *ngIf="post.updatedISO">•</span>
+          <span *ngIf="post.updatedISO">Updated {{ post.updatedISO }}</span>
+
+          <div class="actions">
+            <ion-button fill="clear" size="small" (click)="copyLink()">
+              <ion-icon name="link" slot="start"></ion-icon>
+              Copy link
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="tags" *ngIf="post.tags?.length">
+          <ion-chip *ngFor="let t of post.tags">
+            <ion-label>#{{ t }}</ion-label>
+          </ion-chip>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <app-blog-toc [headings]="post.headings || []"></app-blog-toc>
+        </aside>
+
+        <section class="body">
+          <app-blog-content-renderer [blocks]="post.blocks || []"></app-blog-content-renderer>
+        </section>
+      </div>
+
+      <section class="related" *ngIf="related?.length">
+        <h2 class="related-title">Related</h2>
+        <div class="related-grid">
+          <app-blog-post-card *ngFor="let p of related | slice:0:3" [post]="$any(p)"></app-blog-post-card>
+        </div>
+      </section>
+    </article>
+  </div>
+</ion-content>

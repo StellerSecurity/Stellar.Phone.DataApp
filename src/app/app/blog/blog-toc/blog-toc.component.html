@@ -1,0 +1,14 @@
+<div class="toc" *ngIf="headings?.length">
+  <div class="toc-title">{{ title }}</div>
+  <ion-list lines="none">
+    <ion-item
+      *ngFor="let h of headings"
+      button
+      (click)="scrollTo(h.id)"
+      class="toc-item"
+      [class.level-3]="h.level === 3"
+    >
+      <ion-label>{{ h.text }}</ion-label>
+    </ion-item>
+  </ion-list>
+</div>

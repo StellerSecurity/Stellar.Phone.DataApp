@@ -1,0 +1,386 @@
+:host {
+  display: block;
+}
+
+/* Blue background + soft depth */
+ion-content {
+  --ion-text-color: #fff;
+  --ion-background-color: #2761FC;
+
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 14px;
+  --padding-bottom: 28px;
+
+  background: radial-gradient(1200px 700px at 20% 0%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 55%),
+  radial-gradient(900px 600px at 85% 20%, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0) 60%),
+  #2761FC;
+}
+
+
+.post-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.back-link {
+  --color: #2761FC !important;
+  color: #2761FC !important;
+
+  --background: transparent;
+  --box-shadow: none;
+
+  --padding-start: 0;
+  --padding-end: 0;
+
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.back-link ion-icon {
+  color: #2761FC !important;
+  font-size: 18px;
+}
+
+/* CTA button: force readable text */
+.cta-btn {
+  --border-radius: 999px;
+  --background: #fff;
+  --color: #0B0C19 !important; /* ionic var */
+  color: #0B0C19 !important;   /* fallback */
+
+  font-weight: 900;
+}
+
+/* Nuclear option: style the actual button element inside ion-button */
+ion-button.cta-btn::part(native) {
+  color: #0B0C19 !important;
+}
+
+/* If you ever add an icon in the CTA button */
+ion-button.cta-btn ion-icon {
+  color: #0B0C19 !important;
+}
+
+
+.post-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.cta-title,
+.cta-text {
+  color: #fff;
+}
+
+.back-link {
+  --background: transparent;
+  --box-shadow: none;
+  --padding-start: 0;
+  --padding-end: 0;
+  --color: #2761FC;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.back-link ion-icon {
+  font-size: 18px;
+}
+
+
+.blog-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* Main white article shell */
+.post-shell {
+  margin-top: 14px;
+  border-radius: 28px;
+  background: #fff;
+  color: #62636A;
+  border: 1px solid rgba(234, 234, 240, 0.9);
+  padding: 20px;
+
+  box-shadow:
+          0 18px 60px rgba(0, 0, 0, 0.18),
+          0 2px 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+/* Header spacing and hierarchy */
+.post-head {
+  border-bottom: 1px solid #EAEAF0;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 650;
+  color: #62636A;
+  font-family: 'Poppins';
+}
+
+.post-pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(39, 97, 252, 0.10);
+  color: #2761FC;
+  border: 1px solid rgba(39, 97, 252, 0.18);
+}
+
+.post-title {
+  margin: 12px 0 0;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #0B0C19;
+  font-family: 'Poppins';
+  line-height: 1.15;
+}
+
+.post-excerpt {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #62636A;
+  font-family: 'Poppins';
+  opacity: 0.95;
+}
+
+/* Content typography */
+.post-content {
+  padding-top: 6px;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3 {
+  color: #0B0C19;
+  font-family: 'Poppins';
+  letter-spacing: -0.02em;
+  margin: 18px 0 8px;
+}
+
+.post-content h1 { font-size: 22px; font-weight: 900; }
+.post-content h2 { font-size: 16px; font-weight: 900; }
+.post-content h3 { font-size: 14px; font-weight: 900; opacity: 0.92; }
+
+.post-content p {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #62636A;
+  font-family: 'Poppins';
+}
+
+.post-content ul,
+.post-content ol {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #62636A;
+  font-family: 'Poppins';
+}
+
+.post-content li {
+  margin: 7px 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Divider */
+.post-content .divider {
+  height: 1px;
+  background: #EAEAF0;
+  margin: 18px 0;
+}
+
+/* Quote block */
+.post-content .quote {
+  margin: 14px 0;
+  padding: 14px 14px;
+  border-radius: 16px;
+  background: #F6F6FD;
+  border: 1px solid #EAEAF0;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-content .quote::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px 140px at 0% 0%, rgba(39, 97, 252, 0.12), transparent 55%);
+  pointer-events: none;
+}
+
+.post-content .quote-text {
+  margin: 0;
+  font-weight: 900;
+  color: #0B0C19;
+  position: relative;
+}
+
+.post-content .quote-by {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #62636A;
+  font-weight: 800;
+  position: relative;
+}
+
+/* Callout block */
+.post-content .callout {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(39, 97, 252, 0.08);
+  border: 1px solid rgba(39, 97, 252, 0.22);
+}
+
+.post-content .callout-title {
+  font-weight: 900;
+  color: #2761FC;
+  margin-bottom: 6px;
+  font-family: 'Poppins';
+}
+
+.post-content .callout-text {
+  color: #62636A;
+  font-size: 14px;
+  line-height: 1.65;
+  font-family: 'Poppins';
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.back-link {
+  --background: transparent;
+  --box-shadow: none;
+  --padding-start: 0;
+  --padding-end: 0;
+  --color: #2761FC;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.back-link ion-icon {
+  font-size: 18px;
+}
+
+/* Code block */
+.post-content .code {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: #0B0C19;
+  color: #fff;
+  overflow: auto;
+
+  box-shadow: 0 10px 30px rgba(11, 12, 25, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+}
+
+/* CTA block */
+.post-content .cta {
+  margin-top: 18px;
+  border-radius: 18px;
+  padding: 16px;
+  background: linear-gradient(135deg, #2761FC 0%, #1E4DE0 60%, #163AB5 100%);
+  color: #fff;
+  box-shadow: 0 18px 50px rgba(39, 97, 252, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.post-content .cta-title {
+  font-weight: 900;
+  font-size: 14px;
+  font-family: 'Poppins';
+}
+
+.post-content .cta-text {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.95;
+  font-family: 'Poppins';
+}
+
+/* Make ion-button inside CTA look premium */
+.post-content .cta-btn {
+  margin-top: 12px;
+  --border-radius: 999px;
+  --background: #fff;
+  --color: #000;
+  --box-shadow: 0 12px 28px rgba(0, 0, 0, 0.20);
+  font-weight: 900;
+}
+
+/* Missing state: glass on blue */
+.missing {
+  margin-top: 14px;
+  border-radius: 22px;
+  padding: 18px;
+
+  background: rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.missing h2,
+.missing p {
+  color: #fff;
+}
+
+.back-btn {
+  margin-top: 10px;
+}
+
+/* Skeleton lines with shimmer-ish vibe */
+.skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  margin-bottom: 10px;
+}
+
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-90 { width: 90%; }
+.skeleton-line.w-75 { width: 75%; }
+
+/* Desktop polish */
+@media (min-width: 768px) {
+  ion-content {
+    --padding-start: var(--ion-padding, 100px);
+    --padding-end: var(--ion-padding, 100px);
+    --padding-top: var(--ion-padding, 26px);
+    --padding-bottom: var(--ion-padding, 46px);
+
+    padding-top: var(--ion-padding, 26px);
+    padding-bottom: var(--ion-padding, 46px);
+  }
+
+  .post-shell {
+    padding: 26px;
+    border-radius: 32px;
+  }
+
+  .post-title {
+    font-size: 28px;
+  }
+}

@@ -1,35 +1,12 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'stellar.phone.dataApp',
-  appName: 'Data',
+  appId: 'stellar.secret.app',
+  appName: 'Secret',
   webDir: 'www',
-  android: { allowMixedContent: true },
   server: {
     androidScheme: 'https'
-  },
-  plugins: {
-    Keyboard: {
-      resize: "ionic", // or "body"
-      resizeOnFullScreen: true, // Needed for edge-to-edge apps
-    },
-    LocalNotifications: {
-      smallIcon: "ic_stat_icon_config_sample",
-      iconColor: "#488AFF",
-      sound: "beep.wav",
-    },
-    CapacitorHttp: {
-      enabled: true,
-    },
-    BackgroundRunner: {
-      label: "stellar.phone.dataApp",
-      src: "runners/runner.js",
-      event: "checkIn",
-      repeat: true,
-      interval: 30,
-      autoStart: true,
-    },
-  },
+  }
 };
 
 export default config;

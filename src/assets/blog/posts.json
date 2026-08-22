@@ -1,0 +1,2489 @@
+[
+  {
+    "slug": "send-password-securely",
+    "title": "How to send a password securely",
+    "excerpt": "Stop sending credentials in chat apps. Use one-time secrets with expiry and view limits.",
+    "category": "Passwords",
+    "tags": [
+      "credentials",
+      "one-time",
+      "ttl",
+      "workflow",
+      "teams"
+    ],
+    "dateISO": "2025-12-29",
+    "readingTime": "7 min",
+    "featured": true,
+    "content": [
+      {
+        "type": "p",
+        "text": "How to send a password securely sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Why passwords leak in normal workflows"
+      },
+      {
+        "type": "p",
+        "text": "Chats, emails, and tickets are built to keep information around. That’s great for collaboration, but it’s the opposite of what you want for credentials. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Chat history gets backed up and synced across devices",
+          "Notifications can preview secrets on lock screens",
+          "People forward messages without thinking",
+          "Screenshots turn 'temporary' into 'forever'",
+          "Password reuse multiplies the blast radius"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A safer pattern: one-time delivery + short expiry"
+      },
+      {
+        "type": "p",
+        "text": "Use a one-time secret link with an expiry and a single view. That way, even if the link is forwarded later, it’s useless after the first open. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h3",
+        "text": "Recommended defaults"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View limit: 1",
+          "Expiry: 15–60 minutes (shorter for production access)",
+          "Add a passphrase for high-risk credentials",
+          "Never deliver passphrase in the same channel as the link",
+          "Rotate the password after the task is done"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Security that depends on perfect behavior is wishful thinking with a budget.",
+        "by": "Everyone who learned it the hard way"
+      },
+      {
+        "type": "h2",
+        "text": "Checklist before you send anything"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Does this credential have least privilege?",
+          "Can it be rotated quickly?",
+          "Will the recipient open it immediately?",
+          "Is the channel split (link vs passphrase) if needed?",
+          "Will this end up in a ticketing system or shared inbox?"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Try Stellar Secret",
+        "text": "Create a one-time link with expiry and view limits in seconds.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "share-api-keys-without-regret",
+    "title": "How to share API keys without regret",
+    "excerpt": "A practical workflow for sharing keys without turning Slack into your secret store.",
+    "category": "API Keys",
+    "tags": [
+      "api-keys",
+      "devops",
+      "ttl",
+      "rotation",
+      "least-privilege"
+    ],
+    "dateISO": "2025-12-28",
+    "readingTime": "7 min",
+    "featured": true,
+    "content": [
+      {
+        "type": "p",
+        "text": "How to share API keys without regret sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "API keys are not passwords. They’re worse."
+      },
+      {
+        "type": "p",
+        "text": "API keys often represent broad, programmatic access that never expires by default. That means a single leak can turn into silent, long-term abuse that’s hard to detect. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Threat model: where keys actually leak"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Copied into Slack/Teams for 'quick help'",
+          "Left in .env files committed to git",
+          "Printed in logs, crash reports, or monitoring dashboards",
+          "Stored in CI variables with too-wide access",
+          "Shared between multiple services or people"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Safer workflow"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Issue a scoped key (permissions + environment)",
+          "Deliver it via a one-time secret link (view-once + expiry)",
+          "Add a separate passphrase for production keys",
+          "Rotate after use or after a fixed window",
+          "Monitor for anomalous requests and revoke fast"
+        ]
+      },
+      {
+        "type": "h3",
+        "text": "Example: sending a key to a contractor"
+      },
+      {
+        "type": "p",
+        "text": "Contractors should never get a permanent key unless you enjoy mystery invoices. Use a short-lived key or restrict by IP, permissions, and time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "code",
+        "text": "# Good-enough pattern (conceptual)\n# 1) issue scoped key for staging\n# 2) deliver view-once link\n# 3) rotate after task\nKEY_SCOPE=staging:read-only\nTTL_MINUTES=30"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share API keys safely",
+        "text": "Stop pasting keys in chat. Use one-time delivery with expiry.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "one-time-secrets-for-teams",
+    "title": "One-time secrets for teams",
+    "excerpt": "Make secure sharing the default so people stop improvising risky workflows.",
+    "category": "Teams",
+    "tags": [
+      "teams",
+      "workflow",
+      "policies",
+      "least-friction",
+      "sharing"
+    ],
+    "dateISO": "2025-12-27",
+    "readingTime": "7 min",
+    "featured": true,
+    "content": [
+      {
+        "type": "p",
+        "text": "One-time secrets for teams sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "privacy-basics-not-paranoia",
+    "title": "Privacy basics that aren’t paranoia",
+    "excerpt": "A boring checklist of habits that prevent most privacy leaks.",
+    "category": "Privacy Basics",
+    "tags": [
+      "privacy",
+      "habits",
+      "notifications",
+      "backups",
+      "clipboard"
+    ],
+    "dateISO": "2025-12-26",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Privacy basics that aren’t paranoia sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Privacy isn’t paranoia. It’s basic hygiene."
+      },
+      {
+        "type": "p",
+        "text": "Most privacy leaks are everyday conveniences: autofill, cloud backups, shared accounts, and ‘remember me’ everywhere. You don’t need to live in a bunker. You need fewer permanent copies of sensitive data. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "What to stop doing today"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Stop sending secrets in chat threads",
+          "Stop reusing passwords (yes, still)",
+          "Stop storing recovery codes in screenshots",
+          "Stop letting notifications preview sensitive content",
+          "Stop leaving secrets in clipboard history"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A simple model: minimize, compartmentalize, expire"
+      },
+      {
+        "type": "p",
+        "text": "Minimize what you store, compartmentalize what you must store, and expire what you share. This reduces blast radius and makes accidents survivable. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "One-time secrets for real life",
+        "text": "Share sensitive data without creating permanent chat history.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "incident-response-for-leaked-secrets",
+    "title": "Incident response for leaked secrets",
+    "excerpt": "What to do when a secret leaks: rotate fast, check logs, and fix the workflow.",
+    "category": "Incident Response",
+    "tags": [
+      "incident-response",
+      "rotation",
+      "tokens",
+      "monitoring",
+      "playbooks"
+    ],
+    "dateISO": "2025-12-25",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Incident response for leaked secrets sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "When a secret leaks, speed beats perfection."
+      },
+      {
+        "type": "p",
+        "text": "The first minutes matter because leaked credentials get copied, indexed, and automated fast. You don’t need a flawless postmortem first. You need containment. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Immediate steps (do these in order)"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Revoke or rotate the credential",
+          "Invalidate sessions/tokens that depend on it",
+          "Check logs for suspicious usage during the window",
+          "Notify impacted parties with clear guidance",
+          "Fix the workflow that caused the leak"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Prevention you can deploy tomorrow"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Use view-once links for any secret delivery",
+          "Short expiries by default",
+          "Separate channels for passphrases",
+          "Least privilege for keys and accounts",
+          "Rotation playbooks that anyone can execute"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Incidents are inevitable. Chaos is optional.",
+        "by": "People who run systems for a living"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Reduce incident impact",
+        "text": "Make leaks less permanent with one-time delivery.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "stop-pasting-secrets-in-tickets",
+    "title": "Stop pasting secrets into tickets",
+    "excerpt": "Tickets are forever. Your credentials shouldn’t be.",
+    "category": "Secure Sharing",
+    "tags": [
+      "tickets",
+      "support",
+      "workflow",
+      "credentials",
+      "risk"
+    ],
+    "dateISO": "2025-12-24",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Stop pasting secrets into tickets sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "passphrases-done-right",
+    "title": "Passphrases done right",
+    "excerpt": "How to use passphrases without making them pointless.",
+    "category": "Passwords",
+    "tags": [
+      "passphrases",
+      "channels",
+      "workflow",
+      "opsec",
+      "teams"
+    ],
+    "dateISO": "2025-12-23",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Passphrases done right sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Why passwords leak in normal workflows"
+      },
+      {
+        "type": "p",
+        "text": "Chats, emails, and tickets are built to keep information around. That’s great for collaboration, but it’s the opposite of what you want for credentials. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Chat history gets backed up and synced across devices",
+          "Notifications can preview secrets on lock screens",
+          "People forward messages without thinking",
+          "Screenshots turn 'temporary' into 'forever'",
+          "Password reuse multiplies the blast radius"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A safer pattern: one-time delivery + short expiry"
+      },
+      {
+        "type": "p",
+        "text": "Use a one-time secret link with an expiry and a single view. That way, even if the link is forwarded later, it’s useless after the first open. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h3",
+        "text": "Recommended defaults"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View limit: 1",
+          "Expiry: 15–60 minutes (shorter for production access)",
+          "Add a passphrase for high-risk credentials",
+          "Never deliver passphrase in the same channel as the link",
+          "Rotate the password after the task is done"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Security that depends on perfect behavior is wishful thinking with a budget.",
+        "by": "Everyone who learned it the hard way"
+      },
+      {
+        "type": "h2",
+        "text": "Checklist before you send anything"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Does this credential have least privilege?",
+          "Can it be rotated quickly?",
+          "Will the recipient open it immediately?",
+          "Is the channel split (link vs passphrase) if needed?",
+          "Will this end up in a ticketing system or shared inbox?"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Try Stellar Secret",
+        "text": "Create a one-time link with expiry and view limits in seconds.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-sharing-for-contractors",
+    "title": "Secure sharing for contractors",
+    "excerpt": "Give access without giving away your whole house keys.",
+    "category": "Teams",
+    "tags": [
+      "contractors",
+      "access",
+      "least-privilege",
+      "expiry",
+      "rotation"
+    ],
+    "dateISO": "2025-12-22",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure sharing for contractors sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "why-expiry-beats-deletion",
+    "title": "Why expiry beats deletion",
+    "excerpt": "Deletion is a promise. Expiry is a control.",
+    "category": "Secure Sharing",
+    "tags": [
+      "ttl",
+      "expiry",
+      "deletion",
+      "workflow",
+      "risk"
+    ],
+    "dateISO": "2025-12-21",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Why expiry beats deletion sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "how-to-rotate-credentials-fast",
+    "title": "How to rotate credentials fast",
+    "excerpt": "Rotation should be routine, not a crisis task.",
+    "category": "Incident Response",
+    "tags": [
+      "rotation",
+      "playbooks",
+      "tokens",
+      "keys",
+      "ops"
+    ],
+    "dateISO": "2025-12-20",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "How to rotate credentials fast sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "When a secret leaks, speed beats perfection."
+      },
+      {
+        "type": "p",
+        "text": "The first minutes matter because leaked credentials get copied, indexed, and automated fast. You don’t need a flawless postmortem first. You need containment. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Immediate steps (do these in order)"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Revoke or rotate the credential",
+          "Invalidate sessions/tokens that depend on it",
+          "Check logs for suspicious usage during the window",
+          "Notify impacted parties with clear guidance",
+          "Fix the workflow that caused the leak"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Prevention you can deploy tomorrow"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Use view-once links for any secret delivery",
+          "Short expiries by default",
+          "Separate channels for passphrases",
+          "Least privilege for keys and accounts",
+          "Rotation playbooks that anyone can execute"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Incidents are inevitable. Chaos is optional.",
+        "by": "People who run systems for a living"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Reduce incident impact",
+        "text": "Make leaks less permanent with one-time delivery.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "avoid-secret-leaks-from-notifications",
+    "title": "Avoid secret leaks from notifications",
+    "excerpt": "Lock screen previews and notifications are a stealth data leak.",
+    "category": "Privacy Basics",
+    "tags": [
+      "notifications",
+      "lock-screen",
+      "mobile",
+      "privacy",
+      "settings"
+    ],
+    "dateISO": "2025-12-19",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Avoid secret leaks from notifications sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Privacy isn’t paranoia. It’s basic hygiene."
+      },
+      {
+        "type": "p",
+        "text": "Most privacy leaks are everyday conveniences: autofill, cloud backups, shared accounts, and ‘remember me’ everywhere. You don’t need to live in a bunker. You need fewer permanent copies of sensitive data. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "What to stop doing today"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Stop sending secrets in chat threads",
+          "Stop reusing passwords (yes, still)",
+          "Stop storing recovery codes in screenshots",
+          "Stop letting notifications preview sensitive content",
+          "Stop leaving secrets in clipboard history"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A simple model: minimize, compartmentalize, expire"
+      },
+      {
+        "type": "p",
+        "text": "Minimize what you store, compartmentalize what you must store, and expire what you share. This reduces blast radius and makes accidents survivable. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "One-time secrets for real life",
+        "text": "Share sensitive data without creating permanent chat history.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "clipboard-is-not-a-vault",
+    "title": "Your clipboard is not a vault",
+    "excerpt": "Clipboard history, sync, and paste suggestions are underrated leak paths.",
+    "category": "Privacy Basics",
+    "tags": [
+      "clipboard",
+      "mobile",
+      "desktop",
+      "sync",
+      "privacy"
+    ],
+    "dateISO": "2025-12-18",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Your clipboard is not a vault sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Privacy isn’t paranoia. It’s basic hygiene."
+      },
+      {
+        "type": "p",
+        "text": "Most privacy leaks are everyday conveniences: autofill, cloud backups, shared accounts, and ‘remember me’ everywhere. You don’t need to live in a bunker. You need fewer permanent copies of sensitive data. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "What to stop doing today"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Stop sending secrets in chat threads",
+          "Stop reusing passwords (yes, still)",
+          "Stop storing recovery codes in screenshots",
+          "Stop letting notifications preview sensitive content",
+          "Stop leaving secrets in clipboard history"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A simple model: minimize, compartmentalize, expire"
+      },
+      {
+        "type": "p",
+        "text": "Minimize what you store, compartmentalize what you must store, and expire what you share. This reduces blast radius and makes accidents survivable. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "One-time secrets for real life",
+        "text": "Share sensitive data without creating permanent chat history.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "least-privilege-explained",
+    "title": "Least privilege explained (without buzzwords)",
+    "excerpt": "Scope access so one leak doesn’t become a full takeover.",
+    "category": "API Keys",
+    "tags": [
+      "least-privilege",
+      "scope",
+      "permissions",
+      "security",
+      "devops"
+    ],
+    "dateISO": "2025-12-17",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Least privilege explained (without buzzwords) sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "API keys are not passwords. They’re worse."
+      },
+      {
+        "type": "p",
+        "text": "API keys often represent broad, programmatic access that never expires by default. That means a single leak can turn into silent, long-term abuse that’s hard to detect. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Threat model: where keys actually leak"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Copied into Slack/Teams for 'quick help'",
+          "Left in .env files committed to git",
+          "Printed in logs, crash reports, or monitoring dashboards",
+          "Stored in CI variables with too-wide access",
+          "Shared between multiple services or people"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Safer workflow"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Issue a scoped key (permissions + environment)",
+          "Deliver it via a one-time secret link (view-once + expiry)",
+          "Add a separate passphrase for production keys",
+          "Rotate after use or after a fixed window",
+          "Monitor for anomalous requests and revoke fast"
+        ]
+      },
+      {
+        "type": "h3",
+        "text": "Example: sending a key to a contractor"
+      },
+      {
+        "type": "p",
+        "text": "Contractors should never get a permanent key unless you enjoy mystery invoices. Use a short-lived key or restrict by IP, permissions, and time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "code",
+        "text": "# Good-enough pattern (conceptual)\n# 1) issue scoped key for staging\n# 2) deliver view-once link\n# 3) rotate after task\nKEY_SCOPE=staging:read-only\nTTL_MINUTES=30"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share API keys safely",
+        "text": "Stop pasting keys in chat. Use one-time delivery with expiry.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-onboarding-for-new-hires",
+    "title": "Secure onboarding for new hires",
+    "excerpt": "Onboarding is when secrets spread the fastest. Control it.",
+    "category": "Teams",
+    "tags": [
+      "onboarding",
+      "teams",
+      "workflow",
+      "credentials",
+      "process"
+    ],
+    "dateISO": "2025-12-16",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure onboarding for new hires sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "sharing-recovery-codes-safely",
+    "title": "Sharing recovery codes safely",
+    "excerpt": "Recovery codes are basically master keys. Treat them like it.",
+    "category": "Passwords",
+    "tags": [
+      "2fa",
+      "recovery-codes",
+      "credentials",
+      "one-time",
+      "ttl"
+    ],
+    "dateISO": "2025-12-15",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Sharing recovery codes safely sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Why passwords leak in normal workflows"
+      },
+      {
+        "type": "p",
+        "text": "Chats, emails, and tickets are built to keep information around. That’s great for collaboration, but it’s the opposite of what you want for credentials. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Chat history gets backed up and synced across devices",
+          "Notifications can preview secrets on lock screens",
+          "People forward messages without thinking",
+          "Screenshots turn 'temporary' into 'forever'",
+          "Password reuse multiplies the blast radius"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A safer pattern: one-time delivery + short expiry"
+      },
+      {
+        "type": "p",
+        "text": "Use a one-time secret link with an expiry and a single view. That way, even if the link is forwarded later, it’s useless after the first open. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h3",
+        "text": "Recommended defaults"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View limit: 1",
+          "Expiry: 15–60 minutes (shorter for production access)",
+          "Add a passphrase for high-risk credentials",
+          "Never deliver passphrase in the same channel as the link",
+          "Rotate the password after the task is done"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Security that depends on perfect behavior is wishful thinking with a budget.",
+        "by": "Everyone who learned it the hard way"
+      },
+      {
+        "type": "h2",
+        "text": "Checklist before you send anything"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Does this credential have least privilege?",
+          "Can it be rotated quickly?",
+          "Will the recipient open it immediately?",
+          "Is the channel split (link vs passphrase) if needed?",
+          "Will this end up in a ticketing system or shared inbox?"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Try Stellar Secret",
+        "text": "Create a one-time link with expiry and view limits in seconds.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "avoid-env-file-leaks",
+    "title": "Avoid .env leaks",
+    "excerpt": "Why .env files keep showing up in repos and how to stop it.",
+    "category": "API Keys",
+    "tags": [
+      "dotenv",
+      "git",
+      "secrets",
+      "devops",
+      "prevention"
+    ],
+    "dateISO": "2025-12-14",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Avoid .env leaks sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "API keys are not passwords. They’re worse."
+      },
+      {
+        "type": "p",
+        "text": "API keys often represent broad, programmatic access that never expires by default. That means a single leak can turn into silent, long-term abuse that’s hard to detect. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Threat model: where keys actually leak"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Copied into Slack/Teams for 'quick help'",
+          "Left in .env files committed to git",
+          "Printed in logs, crash reports, or monitoring dashboards",
+          "Stored in CI variables with too-wide access",
+          "Shared between multiple services or people"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Safer workflow"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Issue a scoped key (permissions + environment)",
+          "Deliver it via a one-time secret link (view-once + expiry)",
+          "Add a separate passphrase for production keys",
+          "Rotate after use or after a fixed window",
+          "Monitor for anomalous requests and revoke fast"
+        ]
+      },
+      {
+        "type": "h3",
+        "text": "Example: sending a key to a contractor"
+      },
+      {
+        "type": "p",
+        "text": "Contractors should never get a permanent key unless you enjoy mystery invoices. Use a short-lived key or restrict by IP, permissions, and time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "code",
+        "text": "# Good-enough pattern (conceptual)\n# 1) issue scoped key for staging\n# 2) deliver view-once link\n# 3) rotate after task\nKEY_SCOPE=staging:read-only\nTTL_MINUTES=30"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share API keys safely",
+        "text": "Stop pasting keys in chat. Use one-time delivery with expiry.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "how-view-once-links-work",
+    "title": "How view-once links work",
+    "excerpt": "The concept, the limitations, and the sane way to use them.",
+    "category": "Secure Sharing",
+    "tags": [
+      "one-time",
+      "view-once",
+      "ttl",
+      "threat-model",
+      "sharing"
+    ],
+    "dateISO": "2025-12-13",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "How view-once links work sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "threat-model-your-sharing",
+    "title": "Threat model your sharing",
+    "excerpt": "Match your sharing method to the actual risk, not vibes.",
+    "category": "Secure Sharing",
+    "tags": [
+      "threat-model",
+      "risk",
+      "workflow",
+      "ttl",
+      "channels"
+    ],
+    "dateISO": "2025-12-12",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Threat model your sharing sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-sharing-in-sales",
+    "title": "Secure sharing in sales teams",
+    "excerpt": "Yes, sales shares secrets too. No, they shouldn’t in email threads.",
+    "category": "Teams",
+    "tags": [
+      "sales",
+      "workflow",
+      "sharing",
+      "privacy",
+      "risk"
+    ],
+    "dateISO": "2025-12-11",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure sharing in sales teams sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "password-managers-vs-one-time-links",
+    "title": "Password managers vs one-time links",
+    "excerpt": "They solve different problems. Use both like an adult.",
+    "category": "Passwords",
+    "tags": [
+      "password-manager",
+      "one-time",
+      "workflow",
+      "sharing",
+      "best-practices"
+    ],
+    "dateISO": "2025-12-10",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Password managers vs one-time links sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Why passwords leak in normal workflows"
+      },
+      {
+        "type": "p",
+        "text": "Chats, emails, and tickets are built to keep information around. That’s great for collaboration, but it’s the opposite of what you want for credentials. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Chat history gets backed up and synced across devices",
+          "Notifications can preview secrets on lock screens",
+          "People forward messages without thinking",
+          "Screenshots turn 'temporary' into 'forever'",
+          "Password reuse multiplies the blast radius"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A safer pattern: one-time delivery + short expiry"
+      },
+      {
+        "type": "p",
+        "text": "Use a one-time secret link with an expiry and a single view. That way, even if the link is forwarded later, it’s useless after the first open. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h3",
+        "text": "Recommended defaults"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View limit: 1",
+          "Expiry: 15–60 minutes (shorter for production access)",
+          "Add a passphrase for high-risk credentials",
+          "Never deliver passphrase in the same channel as the link",
+          "Rotate the password after the task is done"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Security that depends on perfect behavior is wishful thinking with a budget.",
+        "by": "Everyone who learned it the hard way"
+      },
+      {
+        "type": "h2",
+        "text": "Checklist before you send anything"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Does this credential have least privilege?",
+          "Can it be rotated quickly?",
+          "Will the recipient open it immediately?",
+          "Is the channel split (link vs passphrase) if needed?",
+          "Will this end up in a ticketing system or shared inbox?"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Try Stellar Secret",
+        "text": "Create a one-time link with expiry and view limits in seconds.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "what-to-do-after-you-share",
+    "title": "What to do after you share a secret",
+    "excerpt": "Sharing is step one. Rotation and cleanup are step two.",
+    "category": "Incident Response",
+    "tags": [
+      "rotation",
+      "cleanup",
+      "audit",
+      "monitoring",
+      "workflow"
+    ],
+    "dateISO": "2025-12-09",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "What to do after you share a secret sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "When a secret leaks, speed beats perfection."
+      },
+      {
+        "type": "p",
+        "text": "The first minutes matter because leaked credentials get copied, indexed, and automated fast. You don’t need a flawless postmortem first. You need containment. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Immediate steps (do these in order)"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Revoke or rotate the credential",
+          "Invalidate sessions/tokens that depend on it",
+          "Check logs for suspicious usage during the window",
+          "Notify impacted parties with clear guidance",
+          "Fix the workflow that caused the leak"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Prevention you can deploy tomorrow"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Use view-once links for any secret delivery",
+          "Short expiries by default",
+          "Separate channels for passphrases",
+          "Least privilege for keys and accounts",
+          "Rotation playbooks that anyone can execute"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Incidents are inevitable. Chaos is optional.",
+        "by": "People who run systems for a living"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Reduce incident impact",
+        "text": "Make leaks less permanent with one-time delivery.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-sharing-for-finance",
+    "title": "Secure sharing for finance teams",
+    "excerpt": "Invoices, bank details, and vendor access deserve real controls.",
+    "category": "Teams",
+    "tags": [
+      "finance",
+      "vendors",
+      "workflow",
+      "sharing",
+      "risk"
+    ],
+    "dateISO": "2025-12-08",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure sharing for finance teams sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "how-to-share-wifi-passwords",
+    "title": "How to share Wi‑Fi passwords safely",
+    "excerpt": "Stop writing it on sticky notes and texting it to everyone.",
+    "category": "Passwords",
+    "tags": [
+      "wifi",
+      "credentials",
+      "ttl",
+      "one-time",
+      "sharing"
+    ],
+    "dateISO": "2025-12-07",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "How to share Wi‑Fi passwords safely sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Why passwords leak in normal workflows"
+      },
+      {
+        "type": "p",
+        "text": "Chats, emails, and tickets are built to keep information around. That’s great for collaboration, but it’s the opposite of what you want for credentials. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Chat history gets backed up and synced across devices",
+          "Notifications can preview secrets on lock screens",
+          "People forward messages without thinking",
+          "Screenshots turn 'temporary' into 'forever'",
+          "Password reuse multiplies the blast radius"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A safer pattern: one-time delivery + short expiry"
+      },
+      {
+        "type": "p",
+        "text": "Use a one-time secret link with an expiry and a single view. That way, even if the link is forwarded later, it’s useless after the first open. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h3",
+        "text": "Recommended defaults"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View limit: 1",
+          "Expiry: 15–60 minutes (shorter for production access)",
+          "Add a passphrase for high-risk credentials",
+          "Never deliver passphrase in the same channel as the link",
+          "Rotate the password after the task is done"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Security that depends on perfect behavior is wishful thinking with a budget.",
+        "by": "Everyone who learned it the hard way"
+      },
+      {
+        "type": "h2",
+        "text": "Checklist before you send anything"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Does this credential have least privilege?",
+          "Can it be rotated quickly?",
+          "Will the recipient open it immediately?",
+          "Is the channel split (link vs passphrase) if needed?",
+          "Will this end up in a ticketing system or shared inbox?"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Try Stellar Secret",
+        "text": "Create a one-time link with expiry and view limits in seconds.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-links-in-email",
+    "title": "Secure links in email without drama",
+    "excerpt": "Email is fine if you don’t embed the secret in the email.",
+    "category": "Secure Sharing",
+    "tags": [
+      "email",
+      "links",
+      "ttl",
+      "workflow",
+      "best-practices"
+    ],
+    "dateISO": "2025-12-06",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure links in email without drama sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "rotating-api-keys-with-ci",
+    "title": "Rotating API keys with CI",
+    "excerpt": "Make rotation part of deployment so it’s not scary.",
+    "category": "API Keys",
+    "tags": [
+      "ci",
+      "cd",
+      "rotation",
+      "devops",
+      "keys"
+    ],
+    "dateISO": "2025-12-05",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Rotating API keys with CI sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "API keys are not passwords. They’re worse."
+      },
+      {
+        "type": "p",
+        "text": "API keys often represent broad, programmatic access that never expires by default. That means a single leak can turn into silent, long-term abuse that’s hard to detect. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Threat model: where keys actually leak"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Copied into Slack/Teams for 'quick help'",
+          "Left in .env files committed to git",
+          "Printed in logs, crash reports, or monitoring dashboards",
+          "Stored in CI variables with too-wide access",
+          "Shared between multiple services or people"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Safer workflow"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Issue a scoped key (permissions + environment)",
+          "Deliver it via a one-time secret link (view-once + expiry)",
+          "Add a separate passphrase for production keys",
+          "Rotate after use or after a fixed window",
+          "Monitor for anomalous requests and revoke fast"
+        ]
+      },
+      {
+        "type": "h3",
+        "text": "Example: sending a key to a contractor"
+      },
+      {
+        "type": "p",
+        "text": "Contractors should never get a permanent key unless you enjoy mystery invoices. Use a short-lived key or restrict by IP, permissions, and time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "code",
+        "text": "# Good-enough pattern (conceptual)\n# 1) issue scoped key for staging\n# 2) deliver view-once link\n# 3) rotate after task\nKEY_SCOPE=staging:read-only\nTTL_MINUTES=30"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share API keys safely",
+        "text": "Stop pasting keys in chat. Use one-time delivery with expiry.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "handling-secrets-in-support",
+    "title": "Handling secrets in support chats",
+    "excerpt": "Support workflows leak secrets constantly. Fix the flow.",
+    "category": "Secure Sharing",
+    "tags": [
+      "support",
+      "tickets",
+      "workflow",
+      "credentials",
+      "privacy"
+    ],
+    "dateISO": "2025-12-04",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Handling secrets in support chats sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Secure sharing is mostly about limiting copies"
+      },
+      {
+        "type": "p",
+        "text": "Encryption in transit is table stakes. The bigger risk is the number of places a secret ends up living after it arrives. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "The three controls that actually help"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "View-once delivery (reduce replay)",
+          "Expiry (reduce lifetime)",
+          "Least privilege / scope (reduce blast radius)"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Practical tips"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Avoid sending secrets where history is permanent",
+          "Split channels when stakes are high",
+          "Rotate after use instead of trusting ‘delete’",
+          "Treat screenshots as exfiltration"
+        ]
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share safely",
+        "text": "Use one-time links so a forward doesn’t become a breach.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "privacy-for-shared-devices",
+    "title": "Privacy for shared devices",
+    "excerpt": "Shared iPads and family laptops are data-leak machines.",
+    "category": "Privacy Basics",
+    "tags": [
+      "shared-devices",
+      "privacy",
+      "sessions",
+      "autofill",
+      "lock"
+    ],
+    "dateISO": "2025-12-03",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Privacy for shared devices sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Privacy isn’t paranoia. It’s basic hygiene."
+      },
+      {
+        "type": "p",
+        "text": "Most privacy leaks are everyday conveniences: autofill, cloud backups, shared accounts, and ‘remember me’ everywhere. You don’t need to live in a bunker. You need fewer permanent copies of sensitive data. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "What to stop doing today"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Stop sending secrets in chat threads",
+          "Stop reusing passwords (yes, still)",
+          "Stop storing recovery codes in screenshots",
+          "Stop letting notifications preview sensitive content",
+          "Stop leaving secrets in clipboard history"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "A simple model: minimize, compartmentalize, expire"
+      },
+      {
+        "type": "p",
+        "text": "Minimize what you store, compartmentalize what you must store, and expire what you share. This reduces blast radius and makes accidents survivable. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "One-time secrets for real life",
+        "text": "Share sensitive data without creating permanent chat history.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "responding-to-phishing-credential-loss",
+    "title": "Responding to phishing credential loss",
+    "excerpt": "If someone got phished, containment and rotation come first.",
+    "category": "Incident Response",
+    "tags": [
+      "phishing",
+      "rotation",
+      "sessions",
+      "incident-response",
+      "recovery"
+    ],
+    "dateISO": "2025-12-02",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Responding to phishing credential loss sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "When a secret leaks, speed beats perfection."
+      },
+      {
+        "type": "p",
+        "text": "The first minutes matter because leaked credentials get copied, indexed, and automated fast. You don’t need a flawless postmortem first. You need containment. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Immediate steps (do these in order)"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Revoke or rotate the credential",
+          "Invalidate sessions/tokens that depend on it",
+          "Check logs for suspicious usage during the window",
+          "Notify impacted parties with clear guidance",
+          "Fix the workflow that caused the leak"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Prevention you can deploy tomorrow"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Use view-once links for any secret delivery",
+          "Short expiries by default",
+          "Separate channels for passphrases",
+          "Least privilege for keys and accounts",
+          "Rotation playbooks that anyone can execute"
+        ]
+      },
+      {
+        "type": "quote",
+        "text": "Incidents are inevitable. Chaos is optional.",
+        "by": "People who run systems for a living"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Reduce incident impact",
+        "text": "Make leaks less permanent with one-time delivery.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "secure-sharing-for-dev-teams",
+    "title": "Secure sharing for dev teams",
+    "excerpt": "Stop treating Slack like a secrets manager.",
+    "category": "Teams",
+    "tags": [
+      "developers",
+      "workflow",
+      "api-keys",
+      "ttl",
+      "rotation"
+    ],
+    "dateISO": "2025-12-01",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Secure sharing for dev teams sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "Your team doesn’t need more rules. It needs better defaults."
+      },
+      {
+        "type": "p",
+        "text": "Teams fail at security when the secure path is slower than the insecure one. So people optimize for speed and quietly create shadow processes. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Build a workflow that survives busy days"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Standardize one-time links for credentials and tokens",
+          "Use short expiries (minutes, not days)",
+          "Keep passphrase delivery separate for high-risk items",
+          "Document rotation steps in the same place every time",
+          "Make incident response fast: revoke, rotate, notify"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Common failure modes"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Someone pastes a secret into a ticket ‘temporarily’",
+          "A senior person bypasses the process ‘just this once’",
+          "Secrets get stored in shared notes or wikis",
+          "Nobody knows who has access, so nobody rotates"
+        ]
+      },
+      {
+        "type": "callout",
+        "title": "Reality check",
+        "text": "If it’s annoying, it won’t be followed. Security has to be friction-aware."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Make sharing boring",
+        "text": "The safest workflows are the ones nobody thinks about.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  },
+  {
+    "slug": "why-logs-shouldnt-contain-secrets",
+    "title": "Why logs shouldn’t contain secrets",
+    "excerpt": "Logs are copied everywhere. Don’t feed them secrets.",
+    "category": "API Keys",
+    "tags": [
+      "logging",
+      "observability",
+      "secrets",
+      "devops",
+      "prevention"
+    ],
+    "dateISO": "2025-11-30",
+    "readingTime": "7 min",
+    "featured": false,
+    "content": [
+      {
+        "type": "p",
+        "text": "Why logs shouldn’t contain secrets sounds simple until you remember how real life works. Most breaches are not movie-hacker moments; they’re normal workflows that quietly leak data over time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "p",
+        "text": "The goal is practical control, not perfect behavior. If your policy assumes everyone is disciplined 100% of the time, you’re building a museum exhibit, not a system. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "callout",
+        "title": "Principle",
+        "text": "Design for humans. Minimize copies. Limit time. Limit access. Rotate when it matters."
+      },
+      {
+        "type": "h2",
+        "text": "API keys are not passwords. They’re worse."
+      },
+      {
+        "type": "p",
+        "text": "API keys often represent broad, programmatic access that never expires by default. That means a single leak can turn into silent, long-term abuse that’s hard to detect. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "h2",
+        "text": "Threat model: where keys actually leak"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Copied into Slack/Teams for 'quick help'",
+          "Left in .env files committed to git",
+          "Printed in logs, crash reports, or monitoring dashboards",
+          "Stored in CI variables with too-wide access",
+          "Shared between multiple services or people"
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "Safer workflow"
+      },
+      {
+        "type": "ol",
+        "items": [
+          "Issue a scoped key (permissions + environment)",
+          "Deliver it via a one-time secret link (view-once + expiry)",
+          "Add a separate passphrase for production keys",
+          "Rotate after use or after a fixed window",
+          "Monitor for anomalous requests and revoke fast"
+        ]
+      },
+      {
+        "type": "h3",
+        "text": "Example: sending a key to a contractor"
+      },
+      {
+        "type": "p",
+        "text": "Contractors should never get a permanent key unless you enjoy mystery invoices. Use a short-lived key or restrict by IP, permissions, and time. This is mostly about reducing the number of ways humans can accidentally create a permanent copy: screenshots, forwarding, sync backups, shared devices, browser history, and the classic 'I’ll paste it here just for a second'. Good security keeps working even when someone is tired, rushed, or slightly overconfident."
+      },
+      {
+        "type": "code",
+        "text": "# Good-enough pattern (conceptual)\n# 1) issue scoped key for staging\n# 2) deliver view-once link\n# 3) rotate after task\nKEY_SCOPE=staging:read-only\nTTL_MINUTES=30"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "cta",
+        "title": "Share API keys safely",
+        "text": "Stop pasting keys in chat. Use one-time delivery with expiry.",
+        "buttonText": "Create secret",
+        "href": "/"
+      }
+    ]
+  }
+]

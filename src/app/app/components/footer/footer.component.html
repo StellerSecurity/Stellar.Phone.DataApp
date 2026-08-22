@@ -1,0 +1,76 @@
+<!-- footer.component.html -->
+<div class="stellar-footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="opensource-by-text">Open source by</div>
+            <div class="stellar-footer-logo">
+                <a href="http://stellarsecurity.com" target="_blank" rel="noopener noreferrer">
+                    <img src="/assets/footer-images/Company-Logo-blue.png" width="200" />
+                </a>
+                <p class="mission">
+                    Stellar Security is a Swiss company with one mission: to protect everyone’s privacy and security.
+                    We build simple, trustworthy tools with modern cryptography and an uncompromising Swiss approach
+                    to data protection.
+                </p>
+                <hr />
+            </div>
+        </div>
+
+        <!-- PRODUCTS (hidden on iOS native app) -->
+        <div class="footer-links" *ngIf="showFooterLinks">
+            <div class="footer-links-header">Products</div>
+            <a href="https://stellarsecurity.com/stellar-phone" target="_blank" rel="noopener noreferrer" class="footer-links-item">Stellar Phone</a>
+            <a href="https://stellarsecurity.com/stellar-antivirus" target="_blank" rel="noopener noreferrer" class="footer-links-item">Stellar Antivirus</a>
+            <a href="https://stellarvpn.org" target="_blank" rel="noopener noreferrer" class="footer-links-item">Stellar VPN</a>
+            <a href="https://stellarsecurity.com/stellar-esim" target="_blank" rel="noopener noreferrer" class="footer-links-item">Stellar eSim</a>
+            <a href="https://stellarsecurity.com/stellar-notes" target="_blank" rel="noopener noreferrer" class="footer-links-item">Stellar Private Notes</a>
+        </div>
+
+        <!-- INFO (hidden on iOS native app) -->
+        <div class="footer-links" *ngIf="showFooterLinks">
+            <div class="footer-links-header">Info</div>
+            <a href="/how-it-works" class="footer-links-item">About Stellar Secret</a>
+            <a href="/privacy-policy" class="footer-links-item">Privacy Policy</a>
+            <a href="/terms-and-conditions" class="footer-links-item">Terms & Conditions</a>
+            <a href="/blog" class="footer-links-item">Guides & Updates</a>
+            <a href="https://github.com/StellerSecurity/Stellar.Secret.UIAPP" target="_blank" rel="noopener noreferrer" class="footer-links-item">Github</a>
+        </div>
+    </div>
+
+    <div class="footer-copyright-container">
+        <!-- SOCIAL ICONS (hidden on iOS native app) -->
+        <div class="social-media-icons" *ngIf="showFooterLinks">
+            <a href="https://github.com/StellerSecurity/Stellar.Secret.UIAPP" target="_blank" rel="noopener noreferrer">
+                <img src="/assets/footer-images/github.png" title="Github | Stellar Secret" />
+            </a>
+
+            <!--
+            <a href="https://telegram.me/Stellar_Security" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/footer-images/telegram.png" title="Telegram | Stellar Secret"/>
+            </a>
+            -->
+
+            <!--
+            <a href="https://www.instagram.com/stellar.security/" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/footer-images/instagram.png" title="Instagram | Stellar Secret"/>
+            </a>
+            -->
+
+            <!--
+            <a href="https://www.youtube.com/@Stellar-Security" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/footer-images/youtube.png" title="Youtube | Stellar Secret"/>
+            </a>
+            -->
+
+            <!--
+            <a href="https://signal.me/#eu/lYzHmm7l8zyPKtLVu8pgM0wKa-vpVSdVwMVkpoxhEWcyNmocMjhFhJrmYhE23MA-" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/footer-images/signal.png" title="Signal | Stellar Secret"/>
+            </a>
+            -->
+        </div>
+
+        <div class="copyright-text">
+            © 2026 Stellar Technology AG, Switzerland. All rights reserved
+        </div>
+    </div>
+</div>

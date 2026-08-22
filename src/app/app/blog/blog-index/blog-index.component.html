@@ -1,0 +1,31 @@
+<ion-content>
+  <div class="container">
+    <section class="hero">
+      <h1 class="title">{{ title }}</h1>
+      <p class="subtitle">{{ subtitle }}</p>
+    </section>
+
+    <app-blog-filter-bar
+      [categories]="categories"
+      [tags]="tags"
+      [value]="query"
+      (valueChange)="onFilterChange($event)"
+    ></app-blog-filter-bar>
+
+    <div class="grid">
+      <app-blog-post-card *ngFor="let p of posts" [post]="p"></app-blog-post-card>
+    </div>
+
+    <div class="empty" *ngIf="!posts?.length">
+      <ion-icon name="search" aria-hidden="true"></ion-icon>
+      <p>No posts match your filters.</p>
+    </div>
+
+    <app-blog-pagination
+      [page]="query.page || 1"
+      [pageSize]="query.pageSize || 12"
+      [total]="total"
+      (pageChange)="onPageChange($event)"
+    ></app-blog-pagination>
+  </div>
+</ion-content>
