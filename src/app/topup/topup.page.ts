@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { DataServiceAPIService } from '../services/data-service-api.service';
 
@@ -22,6 +22,7 @@ export class TopupPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dataServiceAPIService: DataServiceAPIService,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
@@ -49,14 +50,12 @@ export class TopupPage implements OnInit {
       return;
     }
 
+    this.warmCheckoutConnections();
     this.loading = true;
-    const loader = await this.loadingCtrl.create({ cssClass: 'loader-popup' });
-    await loader.present();
 
     this.dataServiceAPIService.resolveTopupToken(this.token).subscribe({
-      next: async (response) => {
+      next: (response) => {
         this.loading = false;
-        await loader.dismiss();
 
         this.resolved = response || {};
         this.sim = this.pickSim(this.resolved);
@@ -66,11 +65,11 @@ export class TopupPage implements OnInit {
 
         if (this.plans.length > 0) {
           this.selectedPlan = this.plans[0];
+          this.preloadStripeJsBestEffort();
         }
       },
-      error: async (error) => {
+      error: (error) => {
         this.loading = false;
-        await loader.dismiss();
         this.errorMessage = this.readErrorMessage(error);
       },
     });
@@ -134,7 +133,7 @@ export class TopupPage implements OnInit {
         const redirectUrl = this.pickCheckoutUrl(response);
         if (redirectUrl) {
           this.rememberCheckoutResponse(response);
-          window.location.href = redirectUrl;
+          this.navigateToCheckout(redirectUrl);
           return;
         }
 
@@ -374,6 +373,81 @@ export class TopupPage implements OnInit {
     });
 
     return checkoutUrl || '';
+  }
+
+  private navigateToCheckout(target: string): void {
+    const internalTarget = this.getInternalCheckoutRoute(target);
+    if (!internalTarget) {
+      window.location.assign(target);
+      return;
+    }
+
+    this.router.navigateByUrl(internalTarget).then((navigated) => {
+      if (!navigated) {
+        window.location.assign(target);
+      }
+    }).catch(() => window.location.assign(target));
+  }
+
+  private getInternalCheckoutRoute(target: string): string {
+    try {
+      const url = new URL(target, window.location.href);
+      const isSameOrigin = url.origin === window.location.origin;
+      const isCheckoutRoute = /^\/topup-checkout\/?$/i.test(url.pathname);
+
+      if (!isSameOrigin || !isCheckoutRoute) {
+        return '';
+      }
+
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      return '';
+    }
+  }
+
+  private warmCheckoutConnections(): void {
+    [
+      'https://js.stripe.com',
+      'https://api.stripe.com',
+      'https://checkoutapiprod.stellarsecurity.com',
+    ].forEach((origin) => this.ensurePreconnect(origin));
+  }
+
+  private ensurePreconnect(origin: string): void {
+    if (document.querySelector(`link[rel="preconnect"][href="${origin}"]`)) {
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = origin;
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  }
+
+  private preloadStripeJsBestEffort(): void {
+    if ((window as any).Stripe) {
+      return;
+    }
+
+    const src = 'https://js.stripe.com/v3/';
+    const existing = document.querySelector(`script[src="${src}"]`) as HTMLScriptElement | null;
+    if (existing) {
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.dataset['stellarState'] = 'loading';
+    script.addEventListener('load', () => {
+      script.dataset['stellarState'] = 'loaded';
+    }, { once: true });
+    script.addEventListener('error', () => {
+      script.dataset['stellarState'] = 'error';
+      script.remove();
+    }, { once: true });
+    document.head.appendChild(script);
   }
 
   private formatDate(value: string): string {

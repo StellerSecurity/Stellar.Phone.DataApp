@@ -6,6 +6,26 @@
   </div>
 
   <div class="topup-container">
+    <div class="topup-loading" *ngIf="loading && !errorMessage" aria-hidden="true">
+      <div class="status-card skeleton-card">
+        <div class="skeleton-line skeleton-label"></div>
+        <div class="skeleton-line skeleton-title"></div>
+        <div class="skeleton-line skeleton-row"></div>
+        <div class="skeleton-line skeleton-row short"></div>
+      </div>
+
+      <div class="plans-section skeleton-plans">
+        <div class="skeleton-line skeleton-heading"></div>
+        <div class="plan-card skeleton-plan" *ngFor="let item of [1, 2, 3]">
+          <div class="skeleton-plan-copy">
+            <div class="skeleton-line skeleton-plan-title"></div>
+            <div class="skeleton-line skeleton-plan-meta"></div>
+          </div>
+          <div class="skeleton-line skeleton-price"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="status-card error-card" *ngIf="errorMessage">
       <h2>Top-up link unavailable</h2>
       <p>{{ errorMessage }}</p>

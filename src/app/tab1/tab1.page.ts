@@ -634,11 +634,13 @@ export class Tab1Page {
     const existingTopupToken = this.extractExistingTopupToken();
 
     if (existingTopupUrl) {
+      this.prefetchTopupFromTarget(existingTopupUrl);
       this.redirectToTopup(existingTopupUrl);
       return;
     }
 
     if (existingTopupToken) {
+      this.dataServiceAPIService.prefetchTopupToken(existingTopupToken);
       this.redirectToTopup(`/topup/${encodeURIComponent(existingTopupToken)}`);
       return;
     }
@@ -673,11 +675,13 @@ export class Tab1Page {
         const topupToken = this.extractTopupTokenFromTokenResponse(response);
 
         if (topupUrl) {
+          this.prefetchTopupFromTarget(topupUrl);
           this.redirectToTopup(topupUrl);
           return;
         }
 
         if (topupToken) {
+          this.dataServiceAPIService.prefetchTopupToken(topupToken);
           this.redirectToTopup(`/topup/${encodeURIComponent(topupToken)}`);
           return;
         }
@@ -776,7 +780,51 @@ export class Tab1Page {
       return;
     }
 
+    const internalTarget = this.getInternalTopupRoute(target);
+    if (internalTarget) {
+      this.navCtrl.navigateForward(internalTarget).then((navigated) => {
+        if (!navigated) {
+          window.location.assign(target);
+        }
+      }).catch(() => window.location.assign(target));
+      return;
+    }
+
     window.location.assign(target);
+  }
+
+  private prefetchTopupFromTarget(target: string): void {
+    const internalTarget = this.getInternalTopupRoute(target);
+    if (!internalTarget) {
+      return;
+    }
+
+    const match = internalTarget.match(/^\/topup\/([^/?#]+)/i);
+    if (!match?.[1]) {
+      return;
+    }
+
+    try {
+      this.dataServiceAPIService.prefetchTopupToken(decodeURIComponent(match[1]));
+    } catch {
+      // If decoding fails, normal top-up navigation remains unchanged.
+    }
+  }
+
+  private getInternalTopupRoute(target: string): string {
+    try {
+      const url = new URL(target, window.location.href);
+      const isSameOrigin = url.origin === window.location.origin;
+      const isTopupRoute = /^\/topup\/[^/]+/i.test(url.pathname);
+
+      if (!isSameOrigin || !isTopupRoute) {
+        return '';
+      }
+
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      return '';
+    }
   }
 
   public async presentAlert(): Promise<void> {

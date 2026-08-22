@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, finalize, of, shareReplay, tap } from 'rxjs';
 
 export interface AutoTopupStatus {
   visible: boolean;
@@ -36,6 +37,11 @@ export interface AutoTopupResponse {
 })
 export class DataServiceAPIService {
   private readonly API_URL = 'https://stellardatauiapiappprod.azurewebsites.net/api/';
+  // Only long enough to bridge dashboard -> top-up route navigation.
+  // Checkout still performs its own fresh server-side validation.
+  private readonly TOPUP_RESOLVE_CACHE_TTL_MS = 15_000;
+  private readonly topupResolveCache = new Map<string, { expiresAt: number; response: any }>();
+  private readonly topupResolveInflight = new Map<string, Observable<any>>();
 
   constructor(private readonly httpClient: HttpClient) {}
 
@@ -59,8 +65,52 @@ export class DataServiceAPIService {
     });
   }
 
-  resolveTopupToken(token: string) {
-    return this.httpClient.get<any>(`${this.API_URL}v1/topupcontroller/resolve/${encodeURIComponent(token)}`);
+  resolveTopupToken(token: string): Observable<any> {
+    const normalizedToken = String(token || '').trim();
+    const cached = this.topupResolveCache.get(normalizedToken);
+
+    if (cached && cached.expiresAt > Date.now()) {
+      return of(cached.response);
+    }
+
+    if (cached) {
+      this.topupResolveCache.delete(normalizedToken);
+    }
+
+    const existingRequest = this.topupResolveInflight.get(normalizedToken);
+    if (existingRequest) {
+      return existingRequest;
+    }
+
+    const request = this.httpClient
+      .get<any>(`${this.API_URL}v1/topupcontroller/resolve/${encodeURIComponent(normalizedToken)}`)
+      .pipe(
+        tap((response) => {
+          this.topupResolveCache.set(normalizedToken, {
+            expiresAt: Date.now() + this.TOPUP_RESOLVE_CACHE_TTL_MS,
+            response,
+          });
+        }),
+        finalize(() => this.topupResolveInflight.delete(normalizedToken)),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+
+    this.topupResolveInflight.set(normalizedToken, request);
+
+    return request;
+  }
+
+  prefetchTopupToken(token: string): void {
+    const normalizedToken = String(token || '').trim();
+    if (!normalizedToken) {
+      return;
+    }
+
+    this.resolveTopupToken(normalizedToken).subscribe({
+      error: () => {
+        // Prefetch is best-effort. The top-up page will use the normal request path if needed.
+      },
+    });
   }
 
   createTopupToken(simId: string, reason: string = 'app_requested') {
