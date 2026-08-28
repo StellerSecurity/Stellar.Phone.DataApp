@@ -510,6 +510,10 @@ export class TopupPage implements OnInit {
   }
 
   private readErrorMessage(error: any): string {
-    return error?.error?.message || error?.error?.error || error?.message || 'Could not load this top-up link. It may be expired or invalid.';
+    return error?.error?.response_message
+      || error?.error?.message
+      || error?.error?.error
+      || error?.message
+      || 'Could not load this top-up link. It may be expired or invalid.';
   }
 }
