@@ -120,6 +120,14 @@
           <span class="vpn-topup-price">+{{ getVpnTopupPrice() }}</span>
         </label>
 
+        <div class="checkout-total" aria-live="polite">
+          <span>
+            Total due now
+            <small *ngIf="vpnTopupSelected">Includes the VPN top-up</small>
+          </span>
+          <strong>{{ getCheckoutTotal() }}</strong>
+        </div>
+
         <ion-button expand="block" class="primary-button checkout-button" [disabled]="!selectedPlan || checkoutLoading" (click)="checkout()">
           Continue to checkout
         </ion-button>

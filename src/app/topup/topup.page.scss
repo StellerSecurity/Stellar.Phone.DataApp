@@ -195,6 +195,36 @@ ion-content.topup-page {
   white-space: nowrap;
 }
 
+.checkout-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 2px 0;
+  color: #172033;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.checkout-total span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.checkout-total small {
+  color: #697084;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.checkout-total strong {
+  color: #172033;
+  font-size: 20px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .show-more-button,
 .show-less-button {
   width: 100%;

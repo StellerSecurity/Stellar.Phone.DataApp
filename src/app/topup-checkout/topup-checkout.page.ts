@@ -28,6 +28,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   public errorMessage = '';
   public paymentMessage = '';
   public paymentLoading = false;
+  public paymentElementLoading = true;
   public stripeReady = false;
   public expressWalletsAvailable = false;
   public paymentSucceeded = false;
@@ -65,6 +66,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.checkoutType = (params.get('type') || 'esim_topup').trim();
       this.loadStoredCheckout();
       this.prepareStripePayment().catch((error) => {
+        this.paymentElementLoading = false;
         this.errorMessage = this.readErrorMessage(error) || 'Payment could not be initialized.';
       });
     });
@@ -327,6 +329,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.paymentElementLoading = true;
     this.destroyPaymentElements();
     this.stripeReady = false;
     this.expressWalletsAvailable = false;
@@ -334,11 +337,13 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.paymentIntentId = '';
 
     if (!this.orderId) {
+      this.paymentElementLoading = false;
       return;
     }
 
     const publishableKey = this.stripePublishableKey;
     if (!publishableKey) {
+      this.paymentElementLoading = false;
       this.errorMessage = 'Stripe publishable key is missing.';
       return;
     }
@@ -351,6 +356,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.paymentIntentId = this.pickPaymentIntentId(intent);
 
     if (!this.paymentIntentClientSecret) {
+      this.paymentElementLoading = false;
       this.errorMessage = 'Payment intent was created, but no client secret was returned.';
       return;
     }
@@ -478,8 +484,22 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       },
     });
 
+    this.cardElement.on('ready', () => {
+      this.ngZone.run(() => {
+        this.stripeReady = true;
+        this.paymentElementLoading = false;
+      });
+    });
+
+    this.cardElement.on('loaderror', (event: any) => {
+      this.ngZone.run(() => {
+        this.stripeReady = false;
+        this.paymentElementLoading = false;
+        this.errorMessage = event?.error?.message || 'The secure payment form could not be loaded.';
+      });
+    });
+
     this.cardElement.mount(target);
-    this.stripeReady = true;
   }
 
 

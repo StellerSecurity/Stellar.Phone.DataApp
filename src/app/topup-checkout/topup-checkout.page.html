@@ -75,18 +75,30 @@
           Pay securely with Apple Pay, Google Pay, or card. The top-up is applied automatically after Stripe confirms the payment.
         </p>
 
-        <div class="express-checkout-shell" [class.express-checkout-shell-visible]="expressWalletsAvailable">
-          <div class="express-checkout-label" *ngIf="expressWalletsAvailable">Express checkout</div>
-          <div id="stellar-topup-express-checkout" class="express-checkout-mount"></div>
-          <div class="express-checkout-divider" *ngIf="expressWalletsAvailable">
-            <span>or pay by card</span>
+        <div class="payment-element-stage" [class.payment-element-stage-loading]="paymentElementLoading" [attr.aria-busy]="paymentElementLoading">
+          <div class="payment-element-skeleton" *ngIf="paymentElementLoading" role="status" aria-label="Loading secure payment form">
+            <span class="skeleton-line skeleton-label"></span>
+            <span class="skeleton-field">
+              <span class="skeleton-line skeleton-card-number"></span>
+              <span class="skeleton-line skeleton-card-detail"></span>
+            </span>
+          </div>
+
+          <div class="payment-elements-live">
+            <div class="express-checkout-shell" [class.express-checkout-shell-visible]="expressWalletsAvailable">
+              <div class="express-checkout-label" *ngIf="expressWalletsAvailable">Express checkout</div>
+              <div id="stellar-topup-express-checkout" class="express-checkout-mount"></div>
+              <div class="express-checkout-divider" *ngIf="expressWalletsAvailable">
+                <span>or pay by card</span>
+              </div>
+            </div>
+
+            <div id="stellar-topup-card-element" class="stripe-card-element"></div>
           </div>
         </div>
 
-        <div id="stellar-topup-card-element" class="stripe-card-element"></div>
-
-        <ion-button expand="block" class="primary-button" [disabled]="!paymentReady || paymentLoading || paymentLocked" (click)="payWithCard()">
-          {{ paymentLoading || paymentLocked ? 'Processing payment...' : 'Pay ' + totalFormatted }}
+        <ion-button expand="block" class="primary-button" [disabled]="paymentElementLoading || !paymentReady || paymentLoading || paymentLocked" (click)="payWithCard()">
+          {{ paymentElementLoading ? 'Loading secure payment...' : (paymentLoading || paymentLocked ? 'Processing payment...' : 'Pay ' + totalFormatted) }}
         </ion-button>
 
         <button type="button" class="config-link" *ngIf="!paymentReady && errorMessage === 'Stripe publishable key is missing.'" (click)="showPaymentConfigHelp()">

@@ -200,6 +200,20 @@ export class TopupPage implements OnInit {
     return Math.max(0, Number(this.vpnTopupOffer?.days || 0));
   }
 
+  public getCheckoutTotal(): string {
+    const planPriceCents = this.getPlanPriceCents(this.selectedPlan);
+    if (planPriceCents === null) {
+      return 'Price shown at checkout';
+    }
+
+    const vpnPriceCents = this.vpnTopupSelected
+      ? Math.max(0, Number(this.vpnTopupOffer?.price_cents || 0))
+      : 0;
+    const currency = String(this.selectedPlan?.currency || this.selectedPlan?.price_currency || this.vpnTopupOffer?.currency || 'EUR');
+
+    return this.formatMoney((planPriceCents + vpnPriceCents) / 100, currency);
+  }
+
   public getPlanCode(plan: any): string {
     return String(plan?.package_code || plan?.code || plan?.sku || plan?.id || plan?.plan_id || '').trim();
   }
@@ -234,6 +248,22 @@ export class TopupPage implements OnInit {
     }
 
     return 'Price shown at checkout';
+  }
+
+  private getPlanPriceCents(plan: any): number | null {
+    const cents = plan?.price_cents ?? plan?.unit_price_cents ?? plan?.amount_cents;
+    if (cents !== null && cents !== undefined && cents !== '') {
+      const value = Number(cents);
+      return Number.isFinite(value) ? Math.max(0, Math.round(value)) : null;
+    }
+
+    const price = plan?.price ?? plan?.unit_price ?? plan?.amount;
+    if (price !== null && price !== undefined && price !== '') {
+      const value = Number(price);
+      return Number.isFinite(value) ? Math.max(0, Math.round(value * 100)) : null;
+    }
+
+    return null;
   }
 
   public getSimLabel(): string {

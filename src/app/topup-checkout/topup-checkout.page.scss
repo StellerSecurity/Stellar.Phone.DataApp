@@ -184,6 +184,91 @@ h1 {
   min-width: 0;
 }
 
+.payment-element-stage {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.payment-element-stage-loading {
+  min-height: 84px;
+}
+
+.payment-element-stage-loading .payment-elements-live {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.payment-element-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 14px 0 16px;
+}
+
+.skeleton-line,
+.skeleton-field {
+  position: relative;
+  overflow: hidden;
+  background: #e5eaf5;
+}
+
+.skeleton-line::after,
+.skeleton-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+  animation: paymentSkeletonShimmer 1.25s ease-in-out infinite;
+}
+
+.skeleton-label {
+  width: 31%;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.skeleton-field {
+  height: 50px;
+  border: 1px solid #dce4ff;
+  border-radius: 14px;
+}
+
+.skeleton-card-number,
+.skeleton-card-detail {
+  position: absolute;
+  top: 20px;
+  height: 10px;
+  border-radius: 999px;
+  background: #d1d8e8;
+}
+
+.skeleton-card-number {
+  left: 14px;
+  width: 42%;
+}
+
+.skeleton-card-detail {
+  right: 14px;
+  width: 22%;
+}
+
+@keyframes paymentSkeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line::after,
+  .skeleton-field::after {
+    animation: none;
+  }
+}
+
 .express-checkout-shell-visible {
   margin: 14px 0 4px;
 }
