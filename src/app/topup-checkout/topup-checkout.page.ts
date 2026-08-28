@@ -112,6 +112,31 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     return this.firstItem?.name || 'Stellar eSIM Top-up';
   }
 
+  public get orderItems(): any[] {
+    const items = this.order?.items || this.checkout?.order?.items || [];
+    return Array.isArray(items) ? items : [];
+  }
+
+  public get hasVpnTopup(): boolean {
+    return this.orderItems.some((item) => String(item?.meta?.source || '') === 'esim_vpn_topup');
+  }
+
+  public getOrderItemName(item: any): string {
+    return item?.name || item?.sku || 'Order item';
+  }
+
+  public getOrderItemPrice(item: any): string {
+    const cents = Number(item?.line_total_cents ?? item?.unit_price_cents ?? 0);
+    try {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: this.currency,
+      }).format(cents / 100);
+    } catch {
+      return `${(cents / 100).toFixed(2)} ${this.currency}`;
+    }
+  }
+
   public get packageCode(): string {
     return this.firstItem?.sku || this.firstItem?.meta?.package_code || this.order?.meta?.package_code || this.checkout?.package_code || '';
   }
@@ -263,8 +288,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   private get firstItem(): any {
-    const items = this.order?.items || this.checkout?.order?.items || [];
-    return Array.isArray(items) && items.length > 0 ? items[0] : null;
+    return this.orderItems[0] || null;
   }
 
   private loadStoredCheckout(): void {

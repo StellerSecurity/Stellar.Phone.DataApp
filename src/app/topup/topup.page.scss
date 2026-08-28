@@ -155,6 +155,46 @@ ion-content.topup-page {
   margin: 8px 0 6px;
 }
 
+.vpn-topup-offer {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #cbd8ff;
+  border-radius: 18px;
+  background: #f5f8ff;
+  cursor: pointer;
+}
+
+.vpn-topup-offer input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: #2761fc;
+}
+
+.vpn-topup-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #5b6475;
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.vpn-topup-copy strong {
+  color: #172033;
+  font-size: 15px;
+}
+
+.vpn-topup-price {
+  color: #2761fc;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .show-more-button,
 .show-less-button {
   width: 100%;

@@ -120,11 +120,19 @@ export class DataServiceAPIService {
     });
   }
 
-  createTopupCheckout(token: string, packageCode: string, plan: any = {}) {
+  createTopupCheckout(
+    token: string,
+    packageCode: string,
+    plan: any = {},
+    vpnTopupRequested: boolean = false,
+    vpnTopupConsentVersion: string = ''
+  ) {
     return this.httpClient.post<any>(`${this.API_URL}v1/topupcontroller/checkout`, {
       token,
       package_code: packageCode,
       plan,
+      vpn_topup_requested: vpnTopupRequested,
+      vpn_topup_consent_version: vpnTopupRequested ? vpnTopupConsentVersion : undefined,
     });
   }
 }

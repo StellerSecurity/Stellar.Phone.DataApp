@@ -11,7 +11,7 @@
         Your top-up order has been created. Complete payment to apply the package to your eSIM.
       </p>
       <p class="intro" *ngIf="paymentSucceeded">
-        Your payment is confirmed. We are applying the top-up and will send you back to your data dashboard with a fresh usage check.
+        Your payment is confirmed. We are applying the data top-up<span *ngIf="hasVpnTopup"> and adding the VPN days</span> now, then we will send you back to your data dashboard.
       </p>
 
       <div class="status-pill" [class.status-pending]="status === 'PENDING_PAYMENT'" [class.status-success]="paymentSucceeded">
@@ -24,9 +24,9 @@
           <button type="button" class="copy-button" (click)="copyOrderId()">{{ orderId }}</button>
         </div>
 
-        <div class="summary-row">
-          <span>Package</span>
-          <strong>{{ itemName }}</strong>
+        <div class="summary-row" *ngFor="let item of orderItems">
+          <span>{{ getOrderItemName(item) }}</span>
+          <strong>{{ getOrderItemPrice(item) }}</strong>
         </div>
 
         <div class="summary-row" *ngIf="packageCode">

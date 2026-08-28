@@ -18,6 +18,8 @@ export class TopupPage implements OnInit {
   public visiblePlanLimit = 5;
   public selectedPlan: any = null;
   public currentPlan: any = null;
+  public vpnTopupOffer: any = null;
+  public vpnTopupSelected = false;
   public errorMessage = '';
 
   constructor(
@@ -43,6 +45,8 @@ export class TopupPage implements OnInit {
     this.plans = [];
     this.selectedPlan = null;
     this.currentPlan = null;
+    this.vpnTopupOffer = null;
+    this.vpnTopupSelected = false;
     this.visiblePlanLimit = 5;
 
     if (!this.token) {
@@ -62,6 +66,7 @@ export class TopupPage implements OnInit {
         const allPlans = this.pickPlans(this.resolved);
         this.currentPlan = this.pickCurrentPlan(this.resolved, allPlans);
         this.plans = this.filterPlansForCurrentPlan(allPlans, this.currentPlan);
+        this.vpnTopupOffer = this.pickVpnTopupOffer(this.resolved);
 
         if (this.plans.length > 0) {
           this.selectedPlan = this.plans[0];
@@ -125,7 +130,13 @@ export class TopupPage implements OnInit {
     const loader = await this.loadingCtrl.create({ cssClass: 'loader-popup' });
     await loader.present();
 
-    this.dataServiceAPIService.createTopupCheckout(this.token, packageCode, this.selectedPlan).subscribe({
+    this.dataServiceAPIService.createTopupCheckout(
+      this.token,
+      packageCode,
+      this.selectedPlan,
+      this.vpnTopupSelected,
+      this.vpnTopupSelected ? String(this.vpnTopupOffer?.consent_version || '') : ''
+    ).subscribe({
       next: async (response) => {
         this.checkoutLoading = false;
         await loader.dismiss();
@@ -160,6 +171,33 @@ export class TopupPage implements OnInit {
 
   public getPlanName(plan: any): string {
     return plan?.name || plan?.title || plan?.label || plan?.package_name || plan?.sku || plan?.package_code || 'Top-up package';
+  }
+
+  public get vpnTopupAvailable(): boolean {
+    return !!this.vpnTopupOffer?.available
+      && Number(this.vpnTopupOffer?.days || 0) > 0
+      && Number(this.vpnTopupOffer?.price_cents || 0) > 0
+      && !!String(this.vpnTopupOffer?.consent_version || '').trim();
+  }
+
+  public setVpnTopupSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    this.vpnTopupSelected = this.vpnTopupAvailable && !!input?.checked;
+  }
+
+  public getVpnTopupPrice(): string {
+    if (!this.vpnTopupAvailable) {
+      return '';
+    }
+
+    return this.formatMoney(
+      Number(this.vpnTopupOffer.price_cents) / 100,
+      String(this.vpnTopupOffer.currency || 'EUR')
+    );
+  }
+
+  public getVpnTopupDays(): number {
+    return Math.max(0, Number(this.vpnTopupOffer?.days || 0));
   }
 
   public getPlanCode(plan: any): string {
@@ -264,6 +302,11 @@ export class TopupPage implements OnInit {
     }
 
     return plans.find((plan) => this.getPlanCode(plan) === currentCode) || null;
+  }
+
+  private pickVpnTopupOffer(response: any): any {
+    const offer = response?.vpn_topup_offer || response?.data?.vpn_topup_offer || null;
+    return offer?.available ? offer : null;
   }
 
   private filterPlansForCurrentPlan(plans: any[], currentPlan: any): any[] {

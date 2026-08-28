@@ -106,6 +106,20 @@
           </button>
         </div>
 
+        <label class="vpn-topup-offer" *ngIf="vpnTopupAvailable">
+          <input
+            type="checkbox"
+            [checked]="vpnTopupSelected"
+            (change)="setVpnTopupSelected($event)" />
+          <span class="vpn-topup-copy">
+            <strong>Add {{ getVpnTopupDays() }} days to Stellar VPN</strong>
+            <span>
+              {{ getVpnTopupPrice() }} is charged now with this checkout. The days are added to your existing VPN subscription after payment.
+            </span>
+          </span>
+          <span class="vpn-topup-price">+{{ getVpnTopupPrice() }}</span>
+        </label>
+
         <ion-button expand="block" class="primary-button checkout-button" [disabled]="!selectedPlan || checkoutLoading" (click)="checkout()">
           Continue to checkout
         </ion-button>
