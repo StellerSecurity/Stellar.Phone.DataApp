@@ -5,11 +5,11 @@ describe('SimInputPage', () => {
   let component: SimInputPage;
   let fixture: ComponentFixture<SimInputPage>;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(SimInputPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

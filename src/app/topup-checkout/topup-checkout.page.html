@@ -71,11 +71,14 @@
 
       <div class="payment-box" *ngIf="!paymentSucceeded">
         <h2>Payment method</h2>
-        <p>
+        <p *ngIf="paymentProvider === 'stripe'">
           Pay securely with Apple Pay, Google Pay, or card. The top-up is applied automatically after Stripe confirms the payment.
         </p>
+        <p *ngIf="paymentProvider === 'mollie'">
+          Continue to Mollie's secure checkout to complete your top-up payment.
+        </p>
 
-        <div class="payment-element-stage" [class.payment-element-stage-loading]="paymentElementLoading" [attr.aria-busy]="paymentElementLoading">
+        <div class="payment-element-stage" *ngIf="paymentProvider === 'stripe'" [class.payment-element-stage-loading]="paymentElementLoading" [attr.aria-busy]="paymentElementLoading">
           <div class="payment-element-skeleton" *ngIf="paymentElementLoading" role="status" aria-label="Loading secure payment form">
             <span class="skeleton-line skeleton-label"></span>
             <span class="skeleton-field">
@@ -97,8 +100,12 @@
           </div>
         </div>
 
-        <ion-button expand="block" class="primary-button" [disabled]="paymentElementLoading || !paymentReady || paymentLoading || paymentLocked" (click)="payWithCard()">
+        <ion-button *ngIf="paymentProvider === 'stripe'" expand="block" class="primary-button" [disabled]="paymentElementLoading || !paymentReady || paymentLoading || paymentLocked" (click)="payWithCard()">
           {{ paymentElementLoading ? 'Loading secure payment...' : (paymentLoading || paymentLocked ? 'Processing payment...' : 'Pay ' + totalFormatted) }}
+        </ion-button>
+
+        <ion-button *ngIf="paymentProvider === 'mollie'" expand="block" class="primary-button" [disabled]="!mollieReady || paymentLoading" (click)="payWithMollie()">
+          {{ paymentLoading ? 'Opening secure checkout...' : 'Continue with Mollie · ' + totalFormatted }}
         </ion-button>
 
         <button type="button" class="config-link" *ngIf="!paymentReady && errorMessage === 'Stripe publishable key is missing.'" (click)="showPaymentConfigHelp()">

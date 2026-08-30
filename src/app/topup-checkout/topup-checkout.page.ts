@@ -10,6 +10,9 @@ declare global {
     STELLAR_TOPUP_CHECKOUT?: {
       websiteApiBaseUrl?: string;
       paymentIntentPath?: string;
+      mollieFallbackPath?: string;
+      molliePaymentPath?: string;
+      orderStatusPath?: string;
       stripePublishableKey?: string;
     };
   }
@@ -35,6 +38,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   public paymentLocked = false;
   public topupProcessing = false;
   public redirectCountdown = 4;
+  public paymentProvider: 'stripe' | 'mollie' = 'stripe';
 
 
   private stripe: any = null;
@@ -48,6 +52,9 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
   private readonly defaultWebsiteApiBaseUrl = 'https://stellaruiwebsiteapiprod.azurewebsites.net/api/';
   private readonly defaultPaymentIntentPath = 'v1/checkoutcontroller/createpaymentintent';
+  private readonly defaultMollieFallbackPath = 'v1/checkoutcontroller/activate-mollie-topup-fallback';
+  private readonly defaultMolliePaymentPath = 'v1/mollie/payments';
+  private readonly defaultOrderStatusPath = 'v1/checkoutcontroller/order';
   private readonly defaultStripePublishableKey = '';
 
   constructor(
@@ -65,6 +72,13 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.orderId = (params.get('order_id') || '').trim();
       this.checkoutType = (params.get('type') || 'esim_topup').trim();
       this.loadStoredCheckout();
+      if (params.get('payment_provider') === 'mollie') {
+        this.restoreMollieReturn().catch((error) => {
+          this.paymentElementLoading = false;
+          this.errorMessage = this.readErrorMessage(error) || 'We could not verify the Mollie payment yet. Please try again.';
+        });
+        return;
+      }
       this.prepareStripePayment().catch((error) => {
         this.paymentElementLoading = false;
         this.errorMessage = this.readErrorMessage(error) || 'Payment could not be initialized.';
@@ -148,7 +162,11 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   public get paymentReady(): boolean {
-    return !this.paymentSucceeded && !this.paymentLocked && this.stripeReady && !!this.paymentIntentClientSecret && !!this.stripe && !!this.cardElement;
+    return this.paymentProvider === 'stripe' && !this.paymentSucceeded && !this.paymentLocked && this.stripeReady && !!this.paymentIntentClientSecret && !!this.stripe && !!this.cardElement;
+  }
+
+  public get mollieReady(): boolean {
+    return this.paymentProvider === 'mollie' && !this.paymentSucceeded && !this.paymentLocked;
   }
 
   public async backToTopup(): Promise<void> {
@@ -191,7 +209,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
       if (result?.error) {
         this.paymentLocked = false;
-        this.errorMessage = result.error.message || 'The card payment failed.';
+        await this.handleStripeFailure(result.error.message || 'The card payment failed.');
         return;
       }
 
@@ -210,7 +228,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.errorMessage = 'Payment was not completed. Please try again.';
     } catch (error: any) {
       this.paymentLocked = false;
-      this.errorMessage = this.readErrorMessage(error) || 'Payment could not be completed.';
+      await this.handleStripeFailure(this.readErrorMessage(error) || 'Payment could not be completed.');
     } finally {
       this.paymentLoading = false;
       await loader.dismiss();
@@ -249,7 +267,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
       if (result?.error) {
         this.paymentLocked = false;
-        this.errorMessage = result.error.message || 'The wallet payment failed.';
+        await this.handleStripeFailure(result.error.message || 'The wallet payment failed.');
         return;
       }
 
@@ -273,7 +291,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.errorMessage = `Payment status: ${status || 'not completed'}. Please try again.`;
     } catch (error: any) {
       this.paymentLocked = false;
-      this.errorMessage = this.readErrorMessage(error) || 'Wallet payment could not be completed.';
+      await this.handleStripeFailure(this.readErrorMessage(error) || 'Wallet payment could not be completed.');
     } finally {
       this.paymentLoading = false;
     }
@@ -289,6 +307,42 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
+  public async payWithMollie(): Promise<void> {
+    if (!this.mollieReady || this.paymentLoading || !this.isManualTopupCheckout) {
+      return;
+    }
+
+    this.paymentLoading = true;
+    this.paymentLocked = true;
+    this.errorMessage = '';
+
+    try {
+      const payment = await firstValueFrom(
+        this.http.post<any>(this.apiUrl(this.runtimeConfig.molliePaymentPath || this.defaultMolliePaymentPath), {
+          order_id: this.orderId,
+        })
+      );
+
+      if (payment?.already_paid === true) {
+        await this.handleSuccessfulPayment();
+        return;
+      }
+
+      const checkoutUrl = String(payment?.checkout_url || payment?.data?.checkout_url || '').trim();
+      const destination = new URL(checkoutUrl);
+      if (destination.protocol !== 'https:') {
+        throw new Error('Mollie returned an invalid checkout URL.');
+      }
+
+      window.location.assign(destination.toString());
+    } catch (error: any) {
+      this.paymentLocked = false;
+      this.errorMessage = this.readErrorMessage(error) || 'Mollie payment could not be started.';
+    } finally {
+      this.paymentLoading = false;
+    }
+  }
+
   private get firstItem(): any {
     return this.orderItems[0] || null;
   }
@@ -299,6 +353,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.order = null;
     this.paymentSucceeded = false;
     this.paymentLocked = false;
+    this.paymentProvider = 'stripe';
     this.topupProcessing = false;
     this.redirectCountdown = 4;
     this.clearRedirectTimer();
@@ -365,6 +420,81 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.mountExpressCheckoutElement();
       this.mountCardElement();
     }, 0);
+  }
+
+  private async handleStripeFailure(message: string): Promise<void> {
+    this.errorMessage = message;
+
+    if (!this.isManualTopupCheckout || !this.paymentIntentId) {
+      return;
+    }
+
+    try {
+      const fallback = await firstValueFrom(
+        this.http.post<any>(this.apiUrl(this.runtimeConfig.mollieFallbackPath || this.defaultMollieFallbackPath), {
+          order_id: this.orderId,
+          payment_intent_id: this.paymentIntentId,
+        })
+      );
+
+      if (fallback?.fallback_activated !== true) {
+        return;
+      }
+
+      this.paymentProvider = 'mollie';
+      this.paymentLocked = false;
+      this.paymentElementLoading = false;
+      this.paymentMessage = 'We switched you to another secure payment provider so you can complete your top-up.';
+      this.errorMessage = '';
+      this.destroyPaymentElements();
+    } catch {
+      // Keep the actionable Stripe error visible when fallback is unavailable
+      // or the server-verified failed-attempt threshold has not been reached.
+    }
+  }
+
+  private async restoreMollieReturn(): Promise<void> {
+    if (!this.isManualTopupCheckout || !this.orderId) {
+      await this.prepareStripePayment();
+      return;
+    }
+
+    this.paymentProvider = 'mollie';
+    this.paymentLocked = true;
+    this.paymentElementLoading = false;
+    this.destroyPaymentElements();
+
+    let status = '';
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const response = await firstValueFrom(
+        this.http.get<any>(`${this.apiUrl(this.runtimeConfig.orderStatusPath || this.defaultOrderStatusPath)}/${encodeURIComponent(this.orderId)}`)
+      );
+      status = String(response?.status || response?.data?.status || response?.data?.data?.status || '').toUpperCase();
+
+      if (status === 'PAID' || status === 'FULFILLED') {
+        await this.handleSuccessfulPayment();
+        return;
+      }
+
+      if (attempt < 5 && (status === '' || status === 'CREATED' || status === 'PENDING_PAYMENT')) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        continue;
+      }
+
+      break;
+    }
+
+    this.paymentLocked = false;
+    this.paymentMessage = status === 'PENDING_PAYMENT'
+      ? 'Mollie is still confirming your payment. You can retry if the payment was canceled.'
+      : `Payment status: ${status || 'not completed'}.`;
+  }
+
+  private get isManualTopupCheckout(): boolean {
+    const source = String(this.order?.meta?.source || this.checkout?.order?.meta?.source || '').toUpperCase();
+    const type = String(this.order?.meta?.checkout_type || this.checkoutType || '').toLowerCase();
+
+    return source === 'SIMCARD_TOPUP' && type === 'esim_topup';
   }
 
 
@@ -668,9 +798,13 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   private get paymentIntentUrl(): string {
-    const base = this.normalizedBaseUrl(this.runtimeConfig.websiteApiBaseUrl || this.defaultWebsiteApiBaseUrl);
     const path = (this.runtimeConfig.paymentIntentPath || this.defaultPaymentIntentPath).replace(/^\/+/, '');
-    return base + path;
+    return this.apiUrl(path);
+  }
+
+  private apiUrl(path: string): string {
+    const base = this.normalizedBaseUrl(this.runtimeConfig.websiteApiBaseUrl || this.defaultWebsiteApiBaseUrl);
+    return base + String(path || '').replace(/^\/+|\/+$/g, '');
   }
 
   private get stripePublishableKey(): string {

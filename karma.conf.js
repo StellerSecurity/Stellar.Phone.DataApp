@@ -2,6 +2,8 @@
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
 module.exports = function (config) {
+  const singleRun = process.env.KARMA_SINGLE_RUN === '1';
+
   config.set({
     basePath: 'myApp',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -19,7 +21,7 @@ module.exports = function (config) {
         // for example, you can disable the random execution with `random: false`
         // or set a specific seed with `seed: 4321`
       },
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+      clearContext: singleRun // keep the Jasmine runner visible only in watch mode
     },
     jasmineHtmlReporter: {
       suppressAll: true // removes the duplicated traces
@@ -36,9 +38,9 @@ module.exports = function (config) {
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: !singleRun,
     browsers: ['Chrome'],
-    singleRun: false,
-    restartOnFileChange: true
+    singleRun,
+    restartOnFileChange: !singleRun
   });
 };
