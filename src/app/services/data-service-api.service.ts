@@ -16,6 +16,10 @@ export interface AutoTopupStatus {
   saved_card_available: boolean;
   authorization_source?: string | null;
   amount_cents?: number | null;
+  service_fee_cents?: number | null;
+  total_amount_cents?: number | null;
+  service_fee_basis_points?: number | null;
+  service_fee_type?: 'fixed' | 'percentage' | string | null;
   currency?: string | null;
   data_bytes: number;
   duration_days?: number | null;

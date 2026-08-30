@@ -7,6 +7,7 @@ import { COUNTRY_CODES } from '../data/country-code';
 import { TranslateService } from '@ngx-translate/core';
 import { Preferences } from '@capacitor/preferences';
 import { firstValueFrom } from 'rxjs';
+import { autoTopupPayableAmountCents } from '../services/auto-topup-pricing';
 
 @Component({
   selector: 'app-tab1',
@@ -148,10 +149,10 @@ export class Tab1Page {
   }
 
   get autoTopupPriceLabel(): string {
-    const amountCents = Number(this.autoTopupStatus?.amount_cents);
+    const amountCents = autoTopupPayableAmountCents(this.autoTopupStatus);
     const currency = String(this.autoTopupStatus?.currency || '').toUpperCase();
 
-    if (!Number.isFinite(amountCents) || amountCents < 0 || !/^[A-Z]{3}$/.test(currency)) {
+    if (amountCents === null || !/^[A-Z]{3}$/.test(currency)) {
       return '';
     }
 
