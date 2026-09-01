@@ -87,6 +87,11 @@
         </div>
       </div>
 
+      <div class="data-delay-notice" *ngIf="data !== null" role="note">
+        <span class="data-delay-notice-icon" aria-hidden="true">i</span>
+        <span>{{ 'DATA_DELAY_NOTICE' | translate }}</span>
+      </div>
+
       <div class="stat-grid" *ngIf="data !== null">
         <div class="stat-card glass-card">
           <div class="stat-label">SIM ID</div>
