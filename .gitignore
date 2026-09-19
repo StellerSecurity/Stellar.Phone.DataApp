@@ -1251,3 +1251,6 @@ Thumbs.db
 /stellar-data-usage/node_modules/yocto-queue/license
 /stellar-data-usage/node_modules/yocto-queue/package.json
 /stellar-data-usage/node_modules/yocto-queue/readme.md
+
+# Markdown documentation stays local and must not be committed to GitHub.
+*.[mM][dD]
