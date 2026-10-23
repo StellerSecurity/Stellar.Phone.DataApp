@@ -1,8 +1,8 @@
 {
-  "name": "app",
-  "short_name": "app",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "Stellar Data",
+  "short_name": "Stellar Data",
+  "theme_color": "#EDECF2",
+  "background_color": "#EDECF2",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

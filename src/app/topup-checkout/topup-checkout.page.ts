@@ -2,6 +2,7 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 
 declare global {
@@ -64,7 +65,8 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    public translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -75,13 +77,13 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       if (params.get('payment_provider') === 'mollie') {
         this.restoreMollieReturn().catch((error) => {
           this.paymentElementLoading = false;
-          this.errorMessage = this.readErrorMessage(error) || 'We could not verify the Mollie payment yet. Please try again.';
+          this.errorMessage = this.readErrorMessage(error) || this.translate.instant('PAYMENT_ERROR');
         });
         return;
       }
       this.prepareStripePayment().catch((error) => {
         this.paymentElementLoading = false;
-        this.errorMessage = this.readErrorMessage(error) || 'Payment could not be initialized.';
+        this.errorMessage = this.readErrorMessage(error) || this.translate.instant('PAYMENT_ERROR');
       });
     });
   }
@@ -111,11 +113,11 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
   public get totalFormatted(): string {
     if (!this.totalCents) {
-      return 'Payment total unavailable';
+      return this.translate.instant('PAYMENT_TOTAL_UNAVAILABLE');
     }
 
     try {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat(this.translate.currentLang || 'en', {
         style: 'currency',
         currency: this.currency,
       }).format(this.totalCents / 100);
@@ -138,13 +140,13 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   public getOrderItemName(item: any): string {
-    return item?.name || item?.sku || 'Order item';
+    return item?.name || item?.sku || this.translate.instant('TOPUP_PACKAGE');
   }
 
   public getOrderItemPrice(item: any): string {
     const cents = Number(item?.line_total_cents ?? item?.unit_price_cents ?? 0);
     try {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat(this.translate.currentLang || 'en', {
         style: 'currency',
         currency: this.currency,
       }).format(cents / 100);
@@ -170,7 +172,14 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   public async backToTopup(): Promise<void> {
-    await this.router.navigateByUrl('/');
+    if (this.paymentLoading || this.paymentLocked) return;
+    let target = '/sim-input';
+    try {
+      const saved = sessionStorage.getItem('stellar_topup_back') || '';
+      if (/^\/topup\/[^/?#]+$/.test(saved)) target = saved;
+      else if (localStorage.getItem('sim_id')) target = '/tabs/tab1';
+    } catch { /* Fall back to the SIM entry page. */ }
+    await this.router.navigateByUrl(target);
   }
 
   public async goToDataNow(): Promise<void> {
@@ -197,8 +206,6 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.paymentMessage = '';
     this.errorMessage = '';
 
-    const loader = await this.loadingCtrl.create({ cssClass: 'loader-popup' });
-    await loader.present();
 
     try {
       const result = await this.stripe.confirmCardPayment(this.paymentIntentClientSecret, {
@@ -209,7 +216,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
       if (result?.error) {
         this.paymentLocked = false;
-        await this.handleStripeFailure(result.error.message || 'The card payment failed.');
+        await this.handleStripeFailure(result.error.message || this.translate.instant('PAYMENT_ERROR'));
         return;
       }
 
@@ -220,18 +227,17 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       }
 
       if (status === 'processing') {
-        this.paymentMessage = 'Payment is processing. Your top-up will be applied after confirmation.';
+        this.paymentMessage = this.translate.instant('PAYMENT_PROCESSING_HINT');
         return;
       }
 
       this.paymentLocked = false;
-      this.errorMessage = 'Payment was not completed. Please try again.';
+      this.errorMessage = this.translate.instant('PAYMENT_ERROR');
     } catch (error: any) {
       this.paymentLocked = false;
-      await this.handleStripeFailure(this.readErrorMessage(error) || 'Payment could not be completed.');
+      await this.handleStripeFailure(this.readErrorMessage(error) || this.translate.instant('PAYMENT_ERROR'));
     } finally {
       this.paymentLoading = false;
-      await loader.dismiss();
     }
   }
 
@@ -242,7 +248,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     }
 
     if (!this.stripe || !this.walletElements || !this.paymentIntentClientSecret) {
-      this.errorMessage = 'Wallet payment is not ready. Please try again.';
+      this.errorMessage = this.translate.instant('PAYMENT_ERROR');
       return;
     }
 
@@ -267,7 +273,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
       if (result?.error) {
         this.paymentLocked = false;
-        await this.handleStripeFailure(result.error.message || 'The wallet payment failed.');
+        await this.handleStripeFailure(result.error.message || this.translate.instant('PAYMENT_ERROR'));
         return;
       }
 
@@ -278,33 +284,23 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       }
 
       if (status === 'processing') {
-        this.paymentMessage = 'Payment is processing. Your top-up will be applied after confirmation.';
+        this.paymentMessage = this.translate.instant('PAYMENT_PROCESSING_HINT');
         return;
       }
 
       if (!result?.paymentIntent) {
-        this.paymentMessage = 'Payment confirmation is in progress.';
+        this.paymentMessage = this.translate.instant('PAYMENT_PROCESSING_HINT');
         return;
       }
 
       this.paymentLocked = false;
-      this.errorMessage = `Payment status: ${status || 'not completed'}. Please try again.`;
+      this.errorMessage = this.translate.instant('PAYMENT_ERROR');
     } catch (error: any) {
       this.paymentLocked = false;
-      await this.handleStripeFailure(this.readErrorMessage(error) || 'Wallet payment could not be completed.');
+      await this.handleStripeFailure(this.readErrorMessage(error) || this.translate.instant('PAYMENT_ERROR'));
     } finally {
       this.paymentLoading = false;
     }
-  }
-
-  public async showPaymentConfigHelp(): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Payment configuration missing',
-      message: 'Set window.STELLAR_TOPUP_CHECKOUT.stripePublishableKey and websiteApiBaseUrl in src/index.html, or replace the defaults in topup-checkout.page.ts.',
-      buttons: ['OK'],
-      cssClass: 'general-popup',
-    });
-    await alert.present();
   }
 
   public async payWithMollie(): Promise<void> {
@@ -337,7 +333,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       window.location.assign(destination.toString());
     } catch (error: any) {
       this.paymentLocked = false;
-      this.errorMessage = this.readErrorMessage(error) || 'Mollie payment could not be started.';
+      this.errorMessage = this.readErrorMessage(error) || this.translate.instant('PAYMENT_ERROR');
     } finally {
       this.paymentLoading = false;
     }
@@ -359,7 +355,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.clearRedirectTimer();
 
     if (!this.orderId) {
-      this.errorMessage = 'Missing top-up order id.';
+      this.errorMessage = this.translate.instant('ORDER_ERROR');
       return;
     }
 
@@ -367,7 +363,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     const raw = sessionStorage.getItem(key) || localStorage.getItem(key) || '';
 
     if (!raw) {
-      this.errorMessage = 'The top-up order was created, but order details are not available in this browser session.';
+      this.errorMessage = this.translate.instant('ORDER_ERROR');
       return;
     }
 
@@ -375,7 +371,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.checkout = JSON.parse(raw);
       this.order = this.checkout?.order || this.checkout?.data?.order || null;
     } catch {
-      this.errorMessage = 'The stored top-up checkout details could not be read.';
+      this.errorMessage = this.translate.instant('ORDER_ERROR');
     }
   }
 
@@ -399,7 +395,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     const publishableKey = this.stripePublishableKey;
     if (!publishableKey) {
       this.paymentElementLoading = false;
-      this.errorMessage = 'Stripe publishable key is missing.';
+      this.errorMessage = this.translate.instant('PAYMENT_ERROR');
       return;
     }
 
@@ -412,7 +408,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
     if (!this.paymentIntentClientSecret) {
       this.paymentElementLoading = false;
-      this.errorMessage = 'Payment intent was created, but no client secret was returned.';
+      this.errorMessage = this.translate.instant('PAYMENT_ERROR');
       return;
     }
 
@@ -444,7 +440,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.paymentProvider = 'mollie';
       this.paymentLocked = false;
       this.paymentElementLoading = false;
-      this.paymentMessage = 'We switched you to another secure payment provider so you can complete your top-up.';
+      this.paymentMessage = this.translate.instant('PAYMENT_PROVIDER_CHANGED');
       this.errorMessage = '';
       this.destroyPaymentElements();
     } catch {
@@ -486,8 +482,8 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
     this.paymentLocked = false;
     this.paymentMessage = status === 'PENDING_PAYMENT'
-      ? 'Mollie is still confirming your payment. You can retry if the payment was canceled.'
-      : `Payment status: ${status || 'not completed'}.`;
+      ? this.translate.instant('PAYMENT_PROCESSING_HINT')
+      : this.translate.instant('PAYMENT_ERROR');
   }
 
   private get isManualTopupCheckout(): boolean {
@@ -512,6 +508,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.destroyWalletElements();
 
     this.walletElements = this.stripe.elements({
+      locale: 'auto',
       clientSecret: this.paymentIntentClientSecret,
       appearance: {
         theme: 'flat',
@@ -600,15 +597,15 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
 
     this.destroyCardElement();
 
-    const elements = this.stripe.elements();
+    const elements = this.stripe.elements({ locale: 'auto' });
     this.cardElement = elements.create('card', {
       hidePostalCode: true,
       style: {
         base: {
           fontSize: '16px',
-          color: '#172033',
+          color: '#0B0C19',
           '::placeholder': {
-            color: '#8b93a7',
+            color: '#62636A',
           },
         },
       },
@@ -625,7 +622,7 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
       this.ngZone.run(() => {
         this.stripeReady = false;
         this.paymentElementLoading = false;
-        this.errorMessage = event?.error?.message || 'The secure payment form could not be loaded.';
+        this.errorMessage = event?.error?.message || this.translate.instant('PAYMENT_ERROR');
       });
     });
 
@@ -639,14 +636,14 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
     this.topupProcessing = true;
     this.paymentLoading = false;
     this.stripeReady = false;
-    this.paymentMessage = 'Payment succeeded. Your top-up is being applied.';
+    this.paymentMessage = this.translate.instant('PAYMENT_SUCCESS');
     this.errorMessage = '';
 
     this.destroyPaymentElements();
     this.markTopupCompletedForTabRefresh();
 
     const toast = await this.toastController.create({
-      message: 'Payment succeeded. Applying top-up and refreshing your dashboard shortly.',
+      message: this.translate.instant('PAYMENT_SUCCESS'),
       duration: 3000,
       position: 'bottom',
     });
@@ -825,6 +822,6 @@ export class TopupCheckoutPage implements OnInit, OnDestroy {
   }
 
   private readErrorMessage(error: any): string {
-    return error?.error?.response_message || error?.error?.message || error?.message || '';
+    return this.translate.instant('PAYMENT_ERROR');
   }
 }

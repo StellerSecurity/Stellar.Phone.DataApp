@@ -1,19 +1,17 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { inject, NgModule } from '@angular/core';
+import { CanActivateFn, Router, RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
-const hasStoredSimId = (): boolean => {
-  try {
-    return !!localStorage.getItem('sim_id');
-  } catch {
-    return false;
-  }
-};
+import { SimSessionService } from '../services/sim-session.service';
+
+export const requireSim: CanActivateFn = () => inject(SimSessionService).currentId
+  ? true : inject(Router).createUrlTree(['/sim-input']);
 
 const routes: Routes = [
   {
     path: 'tabs',
     component: TabsPage,
+    canActivate: [requireSim],
     children: [
       {
         path: 'tab1',
@@ -32,7 +30,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: hasStoredSimId() ? '/tabs/tab1' : '/sim-input',
+    redirectTo: '/sim-input',
     pathMatch: 'full',
   },
 ];

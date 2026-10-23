@@ -1,341 +1,54 @@
-ion-content.topup-page {
-  --background: #f4f6fb;
-}
+ion-content { --background: var(--stellar-background); }
+.topup-shell { max-width: 1040px; margin: auto; padding: calc(28px + var(--ion-safe-area-top, 0px)) 32px 64px; }
+.topup-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 52px; }
+.topup-nav img { width: 158px; }
+.topup-heading { margin-bottom: 36px; }
+.section-label { color: var(--stellar-primary); font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -.04em; line-height: 1.2; margin: 0 0 14px; }
+.topup-heading p, .section-hint { color: var(--stellar-text-muted); font-size: 14px; line-height: 1.7; margin: 0; }
+.topup-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 28px; align-items: flex-start; }
+.status-card, .plans-section { background: var(--stellar-surface); border: 1px solid var(--stellar-border); border-radius: 24px; padding: 30px; box-shadow: var(--stellar-shadow); min-width: 0; }
+h2 { font-size: 20px; line-height: 1.4; font-weight: 600; letter-spacing: -.02em; margin: 0 0 10px; }
+.sim-card-icon { width: 46px; height: 46px; background: var(--stellar-primary-soft); color: var(--stellar-primary); border-radius: 14px; display: grid; place-items: center; font-size: 23px; margin-bottom: 22px; }
+.sim-summary h2 { margin-bottom: 26px; }
+.sim-detail { display: flex; justify-content: space-between; gap: 18px; padding: 16px 0; border-top: 1px solid var(--stellar-border); font-size: 12px; line-height: 1.6; }
+.sim-detail span { color: var(--stellar-text-muted); }
+.sim-detail strong { text-align: right; font-weight: 500; max-width: 60%; overflow-wrap: anywhere; }
+.plan-list { display: grid; gap: 10px; margin-top: 24px; }
+.plan-card { display: flex; align-items: center; gap: 14px; width: 100%; padding: 17px; border: 1px solid var(--stellar-border); border-radius: 14px; background: var(--stellar-surface); text-align: left; transition: background .15s, border-color .15s; color: var(--stellar-text); }
+.plan-card:hover { border-color: var(--stellar-primary); }
+.plan-card.selected { background: var(--stellar-primary-soft); border-color: var(--stellar-primary); box-shadow: inset 0 0 0 1px var(--stellar-primary); }
+.plan-radio { flex: 0 0 22px; height: 22px; border: 1px solid var(--stellar-border); border-radius: 50%; display: grid; place-items: center; font-size: 15px; }
+.selected .plan-radio { background: var(--stellar-primary); border-color: var(--stellar-primary); color: white; }
+.plan-copy { flex: 1; min-width: 0; }
+.plan-copy strong { display: block; font-size: 18px; font-weight: 600; }
+.plan-copy small { display: block; color: var(--stellar-text-muted); margin-top: 4px; font-size: 12px; }
+.plan-price { font-size: 15px; font-weight: 600; }
+.plans-actions button { background: transparent; color: var(--stellar-primary); font-size: 12px; padding: 14px 0; }
+.vpn-topup-offer { display: flex; align-items: flex-start; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--stellar-border); font-size: 12px; line-height: 1.6; }
+.vpn-topup-offer input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--stellar-primary); margin-top: 3px; }
+.vpn-topup-copy { flex: 1; }
+.vpn-topup-copy strong, .vpn-topup-copy span { display: block; }
+.vpn-topup-copy span { color: var(--stellar-text-muted); margin-top: 5px; }
+.vpn-topup-price { color: var(--stellar-primary); font-weight: 600; }
+.checkout-total { display: flex; justify-content: space-between; gap: 16px; align-items: center; border-top: 1px solid var(--stellar-border); margin-top: 24px; padding-top: 24px; font-size: 13px; }
+.checkout-total strong { font-size: 24px; font-weight: 600; letter-spacing: -.03em; }
+.checkout-total small { display: block; color: var(--stellar-text-muted); font-size: 11px; margin-top: 4px; }
+.primary-button { --background: var(--stellar-primary); --background-hover: var(--stellar-primary-hover); --border-radius: 12px; --box-shadow: none; font-weight: 600; text-transform: none; font-size: 14px; letter-spacing: 0; min-height: 52px; margin-top: 20px; }
+.secure-note { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--stellar-text-muted); font-size: 11px; margin: 16px 0 0; }
+.error-card { max-width: 540px; text-align: center; margin: 0 auto; }
+.error-card p { color: var(--stellar-text-muted); line-height: 1.7; font-size: 14px; }
+.state-icon { font-size: 36px; color: var(--stellar-primary); margin-bottom: 18px; }
+.topup-loading { background: var(--stellar-surface); border: 1px solid var(--stellar-border); border-radius: 24px; padding: 56px 24px; min-height: 280px; display: flex; flex-direction: column; justify-content: center; text-align: center; gap: 10px; }
+.topup-loading p { color: var(--stellar-text-muted); margin: 0; font-size: 13px; }
+.loading-orbit { position: relative; width: 60px; height: 60px; display: grid; place-items: center; margin-bottom: 14px; color: var(--stellar-primary); }
+.loading-orbit ion-icon { font-size: 24px; }
+.loading-orbit ion-spinner { position: absolute; inset: 0; width: 60px; height: 60px; }
+@media (max-width: 700px) { .topup-shell { padding: calc(18px + var(--ion-safe-area-top, 0px)) 18px 40px; } .topup-nav { margin-bottom: 36px; } .topup-nav img { width: 138px; } .topup-layout { grid-template-columns: 1fr; gap: 18px; } .status-card, .plans-section { padding: 22px; border-radius: 20px; } .sim-summary h2 { margin-bottom: 16px; } .sim-card-icon { display: none; } .topup-heading { margin-bottom: 26px; } }
 
-.topup-hero {
-  background: #2152d4;
-  color: #ffffff;
-  padding: calc(var(--ion-safe-area-top, 0px) + 24px) 22px 32px;
-  border-radius: 0 0 28px 28px;
-}
-
-.topup-logo {
-  width: 132px;
-  display: block;
-  margin-bottom: 22px;
-}
-
-.topup-hero h1 {
-  margin: 0;
-  font-size: 28px;
-  line-height: 1.15;
-  font-weight: 700;
-}
-
-.topup-hero p {
-  margin: 10px 0 0;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.topup-container {
-  padding: 20px;
-}
-
-.status-card,
-.plan-card {
-  width: 100%;
-  border: 0;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 14px 36px rgba(25, 42, 80, 0.08);
-}
-
-.status-card {
-  padding: 20px;
-  margin-bottom: 18px;
-}
-
-.status-card .card-label {
-  color: #2761fc;
-  font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 8px;
-}
-
-.status-card h2,
-.plans-section h2 {
-  margin: 0 0 14px;
-  color: #18213d;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.status-card p {
-  margin: 0 0 16px;
-  color: #5f6472;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.error-card {
-  border: 1px solid rgba(205, 60, 20, 0.18);
-}
-
-.sim-detail {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0;
-  border-top: 1px solid #edf0f7;
-  color: #5f6472;
-  font-size: 14px;
-}
-
-.sim-detail strong {
-  color: #18213d;
-  text-align: right;
-  word-break: break-word;
-}
-
-.plans-section h2 {
-  margin-top: 6px;
-}
-
-.plan-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  padding: 18px;
-  margin-bottom: 12px;
-  text-align: left;
-  border: 2px solid transparent;
-}
-
-.plan-card.selected {
-  border-color: #2761fc;
-}
-
-.plan-card h3 {
-  margin: 0 0 6px;
-  color: #18213d;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.plan-card p {
-  margin: 0;
-  color: #697084;
-  font-size: 13px;
-}
-
-.plan-price {
-  flex: 0 0 auto;
-  color: #18213d;
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.primary-button {
-  --background: #2761fc;
-  --border-radius: 40px;
-  --box-shadow: none;
-  height: 48px;
-  font-weight: 700;
-  text-transform: none;
-}
-
-.checkout-button {
-  margin-top: 18px;
-}
-
-.section-hint {
-  margin: -6px 0 14px;
-  color: #697084;
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-
-.plans-actions {
-  margin: 8px 0 6px;
-}
-
-.vpn-topup-offer {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: start;
-  margin: 18px 0;
-  padding: 16px;
-  border: 1px solid #cbd8ff;
-  border-radius: 18px;
-  background: #f5f8ff;
-  cursor: pointer;
-}
-
-.vpn-topup-offer input {
-  width: 20px;
-  height: 20px;
-  margin: 1px 0 0;
-  accent-color: #2761fc;
-}
-
-.vpn-topup-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  color: #5b6475;
-  font-size: 13px;
-  line-height: 1.42;
-}
-
-.vpn-topup-copy strong {
-  color: #172033;
-  font-size: 15px;
-}
-
-.vpn-topup-price {
-  color: #2761fc;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.checkout-total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 18px 2px 0;
-  color: #172033;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.checkout-total span {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.checkout-total small {
-  color: #697084;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.checkout-total strong {
-  color: #172033;
-  font-size: 20px;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.show-more-button,
-.show-less-button {
-  width: 100%;
-  border: 1px solid #dce4ff;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #2761fc;
-  padding: 14px 16px;
-  font-size: 14px;
-  font-weight: 800;
-  text-align: center;
-}
-
-.show-more-button span {
-  display: block;
-  margin-top: 4px;
-  color: #697084;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.topup-loading {
-  pointer-events: none;
-}
-
-.skeleton-card,
-.skeleton-plan {
-  overflow: hidden;
-}
-
-.skeleton-line {
-  position: relative;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #e9edf5;
-}
-
-.skeleton-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
-  animation: topup-skeleton-shimmer 1.25s ease-in-out infinite;
-}
-
-.skeleton-label {
-  width: 54px;
-  height: 10px;
-  margin-bottom: 12px;
-}
-
-.skeleton-title {
-  width: min(220px, 72%);
-  height: 21px;
-  margin-bottom: 22px;
-}
-
-.skeleton-row {
-  width: 100%;
-  height: 13px;
-  margin-top: 16px;
-}
-
-.skeleton-row.short {
-  width: 78%;
-}
-
-.skeleton-plans {
-  margin-top: 24px;
-}
-
-.skeleton-heading {
-  width: 190px;
-  height: 19px;
-  margin: 0 0 16px;
-}
-
-.skeleton-plan {
-  min-height: 82px;
-}
-
-.skeleton-plan-copy {
-  flex: 1 1 auto;
-}
-
-.skeleton-plan-title {
-  width: min(190px, 82%);
-  height: 15px;
-  margin-bottom: 11px;
-}
-
-.skeleton-plan-meta {
-  width: 118px;
-  height: 11px;
-}
-
-.skeleton-price {
-  flex: 0 0 62px;
-  width: 62px;
-  height: 15px;
-}
-
-@keyframes topup-skeleton-shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton-line::after {
-    animation: none;
-  }
+@media (max-width: 700px) {
+  .sim-summary { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+  .sim-summary > .section-label, .sim-summary h2 { grid-column: 1 / -1; }
+  .sim-detail { flex-direction: column; gap: 4px; padding: 10px 0; }
+  .sim-detail strong { max-width: 100%; text-align: left; }
 }

@@ -1,142 +1,64 @@
 <ion-content class="topup-page" [fullscreen]="true">
-  <div class="topup-hero">
-    <img class="topup-logo" src="assets/stellar-data-Logo.svg" alt="Stellar Data" />
-    <h1>Top up your Stellar eSIM</h1>
-    <p>Add more data to the eSIM from your secure top-up link.</p>
-  </div>
-
-  <div class="topup-container">
-    <div class="topup-loading" *ngIf="loading && !errorMessage" aria-hidden="true">
-      <div class="status-card skeleton-card">
-        <div class="skeleton-line skeleton-label"></div>
-        <div class="skeleton-line skeleton-title"></div>
-        <div class="skeleton-line skeleton-row"></div>
-        <div class="skeleton-line skeleton-row short"></div>
-      </div>
-
-      <div class="plans-section skeleton-plans">
-        <div class="skeleton-line skeleton-heading"></div>
-        <div class="plan-card skeleton-plan" *ngFor="let item of [1, 2, 3]">
-          <div class="skeleton-plan-copy">
-            <div class="skeleton-line skeleton-plan-title"></div>
-            <div class="skeleton-line skeleton-plan-meta"></div>
-          </div>
-          <div class="skeleton-line skeleton-price"></div>
-        </div>
-      </div>
+  <div class="topup-shell">
+    <header class="topup-nav">
+      <button class="stellar-back" type="button" (click)="backToData()"><ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>{{ 'BACK' | translate }}</button>
+      <img src="assets/stellar-data-logo-dark.svg" alt="Stellar Data" />
+    </header>
+    <div class="topup-heading">
+      <div class="section-label">{{ 'AUTO_TOPUP_EYEBROW' | translate }}</div>
+      <h1>{{ 'TOPUP_TITLE' | translate }}</h1>
+      <p>{{ 'TOPUP_INTRO' | translate }}</p>
     </div>
-
-    <div class="status-card error-card" *ngIf="errorMessage">
-      <h2>Top-up link unavailable</h2>
+    <div class="stellar-loading topup-loading" *ngIf="loading" role="status" aria-live="polite">
+      <div class="loading-orbit"><ion-icon name="cellular-outline" aria-hidden="true"></ion-icon><ion-spinner name="crescent" aria-hidden="true"></ion-spinner></div>
+      <h2>{{ 'LOADING_PLANS' | translate }}</h2>
+      <p>{{ 'LOADING_PLANS_HINT' | translate }}</p>
+    </div>
+    <div class="status-card error-card" *ngIf="errorMessage && !loading" role="alert">
+      <ion-icon class="state-icon" name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      <h2>{{ 'TOPUP_UNAVAILABLE' | translate }}</h2>
       <p>{{ errorMessage }}</p>
-      <ion-button expand="block" class="primary-button" (click)="loadTopup()">Try again</ion-button>
+      <ion-button class="primary-button" (click)="loadTopup()">{{ 'RETRY' | translate }}</ion-button>
     </div>
-
-    <ng-container *ngIf="!errorMessage && !loading">
-      <div class="status-card" *ngIf="sim">
-        <div class="card-label">eSIM</div>
+    <div class="topup-layout" *ngIf="!errorMessage && !loading">
+      <aside class="status-card sim-summary" *ngIf="sim">
+        <div class="sim-card-icon"><ion-icon name="cellular-outline" aria-hidden="true"></ion-icon></div>
+        <div class="section-label">{{ 'YOUR_ESIM' | translate }}</div>
         <h2>{{ getSimLabel() }}</h2>
-
-        <div class="sim-detail" *ngIf="getCurrentPlanName()">
-          <span>Current plan</span>
-          <strong>{{ getCurrentPlanName() }}</strong>
+        <div class="sim-detail" *ngIf="getCurrentPlanName()"><span>{{ 'CURRENT_PLAN' | translate }}</span><strong>{{ getCurrentPlanName() }}</strong></div>
+        <div class="sim-detail" *ngIf="getRemainingData()"><span>{{ 'REMAINING_DATA' | translate }}</span><strong>{{ getRemainingData() }}</strong></div>
+        <div class="sim-detail" *ngIf="getExpiresAt()"><span>{{ 'EXPIRES_SHORT' | translate }}</span><strong>{{ getExpiresAt() }}</strong></div>
+      </aside>
+      <section class="plans-section" *ngIf="plans.length > 0">
+        <h2>{{ 'CHOOSE_PACKAGE' | translate }}</h2>
+        <p class="section-hint">{{ 'PACKAGE_HINT' | translate }}</p>
+        <div class="plan-list" role="group" [attr.aria-label]="'CHOOSE_PACKAGE' | translate">
+          <button type="button" class="plan-card" *ngFor="let plan of getVisiblePlans()" [class.selected]="selectedPlan === plan"
+            [attr.aria-pressed]="selectedPlan === plan" [disabled]="checkoutLoading" (click)="selectPlan(plan)">
+            <span class="plan-radio" aria-hidden="true"><ion-icon *ngIf="selectedPlan === plan" name="checkmark-outline"></ion-icon></span>
+            <span class="plan-copy"><strong>{{ getPlanData(plan) || getPlanName(plan) }}</strong><small>{{ getPlanValidity(plan) }}</small></span>
+            <span class="plan-price">{{ getPlanPrice(plan) }}</span>
+          </button>
         </div>
-
-        <div class="sim-detail" *ngIf="getCurrentPlanArea()">
-          <span>Coverage</span>
-          <strong>{{ getCurrentPlanArea() }}</strong>
-        </div>
-
-        <div class="sim-detail" *ngIf="getTotalData()">
-          <span>Total data</span>
-          <strong>{{ getTotalData() }}</strong>
-        </div>
-
-        <div class="sim-detail" *ngIf="getRemainingData()">
-          <span>Remaining</span>
-          <strong>{{ getRemainingData() }}</strong>
-        </div>
-
-        <div class="sim-detail" *ngIf="getUsedData()">
-          <span>Used</span>
-          <strong>{{ getUsedData() }}</strong>
-        </div>
-
-        <div class="sim-detail" *ngIf="getExpiresAt()">
-          <span>Expires</span>
-          <strong>{{ getExpiresAt() }}</strong>
-        </div>
-
-        <div class="sim-detail" *ngIf="getActivatedAt()">
-          <span>Activated</span>
-          <strong>{{ getActivatedAt() }}</strong>
-        </div>
-      </div>
-
-      <div class="plans-section" *ngIf="plans.length > 0">
-        <h2>Choose top-up package</h2>
-        <p class="section-hint" *ngIf="getCurrentPlanArea()">Showing top-ups available for {{ getCurrentPlanArea() }}.</p>
-
-        <button
-          type="button"
-          class="plan-card"
-          *ngFor="let plan of getVisiblePlans()"
-          [class.selected]="selectedPlan === plan"
-          (click)="selectPlan(plan)">
-          <div>
-            <h3>{{ getPlanName(plan) }}</h3>
-            <p>
-              <span *ngIf="getPlanData(plan)">{{ getPlanData(plan) }}</span>
-              <span *ngIf="getPlanData(plan) && getPlanValidity(plan)"> · </span>
-              <span *ngIf="getPlanValidity(plan)">{{ getPlanValidity(plan) }}</span>
-            </p>
-          </div>
-
-          <div class="plan-price">{{ getPlanPrice(plan) }}</div>
-        </button>
-
         <div class="plans-actions" *ngIf="plans.length > 5">
-          <button type="button" class="show-more-button" *ngIf="hasMorePlans()" (click)="showMorePlans()">
-            Show {{ getHiddenPlansCount() > 5 ? 5 : getHiddenPlansCount() }} more
-            <span>{{ getHiddenPlansCount() }} remaining</span>
-          </button>
-
-          <button type="button" class="show-less-button" *ngIf="!hasMorePlans()" (click)="showLessPlans()">
-            Show fewer packages
-          </button>
+          <button type="button" *ngIf="hasMorePlans()" (click)="showMorePlans()">{{ 'SHOW_MORE' | translate }}</button>
+          <button type="button" *ngIf="!hasMorePlans()" (click)="showLessPlans()">{{ 'SHOW_LESS' | translate }}</button>
         </div>
-
         <label class="vpn-topup-offer" *ngIf="vpnTopupAvailable">
-          <input
-            type="checkbox"
-            [checked]="vpnTopupSelected"
-            (change)="setVpnTopupSelected($event)" />
-          <span class="vpn-topup-copy">
-            <strong>Add {{ getVpnTopupDays() }} days to Stellar VPN</strong>
-            <span>
-              {{ getVpnTopupPrice() }} is charged now with this checkout. The days are added to your existing VPN subscription after payment.
-            </span>
-          </span>
+          <input type="checkbox" [checked]="vpnTopupSelected" [disabled]="checkoutLoading" (change)="setVpnTopupSelected($event)" />
+          <span class="vpn-topup-copy"><strong>{{ 'VPN_ADD' | translate:{days: getVpnTopupDays()} }}</strong><span>{{ 'VPN_DESCRIPTION' | translate:{price: getVpnTopupPrice()} }}</span></span>
           <span class="vpn-topup-price">+{{ getVpnTopupPrice() }}</span>
         </label>
-
-        <div class="checkout-total" aria-live="polite">
-          <span>
-            Total due now
-            <small *ngIf="vpnTopupSelected">Includes the VPN top-up</small>
-          </span>
-          <strong>{{ getCheckoutTotal() }}</strong>
-        </div>
-
+        <div class="checkout-total" aria-live="polite"><span>{{ 'TOTAL_NOW' | translate }}<small *ngIf="vpnTopupSelected">{{ 'VPN_INCLUDED' | translate }}</small></span><strong>{{ getCheckoutTotal() }}</strong></div>
+        <div class="input-error" role="alert" *ngIf="checkoutError">{{ checkoutError }}</div>
         <ion-button expand="block" class="primary-button checkout-button" [disabled]="!selectedPlan || checkoutLoading" (click)="checkout()">
-          Continue to checkout
+          <ion-spinner name="crescent" *ngIf="checkoutLoading" aria-hidden="true"></ion-spinner>
+          {{ (checkoutLoading ? 'PREPARING_CHECKOUT' : 'CONTINUE_CHECKOUT') | translate }}
+          <ion-icon name="arrow-forward-outline" *ngIf="!checkoutLoading" slot="end" aria-hidden="true"></ion-icon>
         </ion-button>
-      </div>
-
-      <div class="status-card" *ngIf="sim && plans.length === 0">
-        <h2>No top-up packages available</h2>
-        <p>This eSIM does not currently have any available top-up packages.</p>
-      </div>
-    </ng-container>
+        <p class="secure-note"><ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>{{ 'SECURE_CHECKOUT' | translate }}</p>
+      </section>
+      <div class="status-card" *ngIf="sim && plans.length === 0"><h2>{{ 'NO_PACKAGES' | translate }}</h2><p>{{ 'NO_PACKAGES_HINT' | translate }}</p></div>
+    </div>
   </div>
 </ion-content>

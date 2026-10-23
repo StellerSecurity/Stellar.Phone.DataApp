@@ -1,3 +1,4 @@
+import en from '../i18n/en';
 import { of } from 'rxjs';
 
 import { TopupCheckoutPage } from './topup-checkout.page';
@@ -11,7 +12,8 @@ describe('TopupCheckoutPage Mollie fallback', () => {
       { run: (callback: () => void) => callback() } as any,
       {} as any,
       {} as any,
-      {} as any
+      {} as any,
+      { instant: (key: string) => (en as Record<string, string>)[key] || key } as any
     );
   }
 
@@ -46,7 +48,7 @@ describe('TopupCheckoutPage Mollie fallback', () => {
     );
     expect(page.paymentProvider).toBe('mollie');
     expect(page.errorMessage).toBe('');
-    expect(page.paymentMessage).toContain('another secure payment provider');
+    expect(page.paymentMessage).toBe(en.PAYMENT_PROVIDER_CHANGED);
     expect(destroyPaymentElements).toHaveBeenCalled();
   });
 
