@@ -1,12 +1,12 @@
+import { internalAppRoute } from '../services/app-links';
 import { Component } from '@angular/core';
 import { AutoTopupStatus, DataServiceAPIService } from '../services/data-service-api.service';
 import { AlertController, LoadingController, NavController, ToastController } from '@ionic/angular';
 import { Clipboard } from '@capacitor/clipboard';
-import { LocalNotifications } from '@capacitor/local-notifications';
 import { COUNTRY_CODES } from '../data/country-code';
 import { TranslateService } from '@ngx-translate/core';
-import { Preferences } from '@capacitor/preferences';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject, timeout } from 'rxjs';
+import { SimSessionService } from '../services/sim-session.service';
 import { autoTopupPayableAmountCents } from '../services/auto-topup-pricing';
 
 @Component({
@@ -39,6 +39,8 @@ export class Tab1Page {
   public showAutoTopupModal = false;
   public autoTopupModalMode: 'learn' | 'enable' | 'disable' = 'learn';
 
+  private overviewCancel = new Subject<void>();
+  private viewActive = false;
   private topupRefreshTimers: any[] = [];
   private topupRefreshHideTimer: any = null;
 
@@ -85,17 +87,12 @@ export class Tab1Page {
     private loadingCtrl: LoadingController,
     public alertController: AlertController,
     private navCtrl: NavController,
-    public _translate: TranslateService
+    public _translate: TranslateService,
+    private session: SimSessionService
   ) {
-    this.localNotifications().catch(() => {});
-
-    this.sim_id = localStorage.getItem('sim_id') || '';
+    this.sim_id = this.session.currentId;
     this.bindTranslations();
 
-    Preferences.set({
-      key: 'sim_id',
-      value: this.sim_id,
-    }).catch(() => {});
   }
 
   get isDataReady(): boolean {
@@ -270,12 +267,13 @@ export class Tab1Page {
   }
 
   get remainingSummaryText(): string {
-    const remaining = this.data?.remaining || this.data?.remaining_data || this.formatGb(this.remainingGb);
-    return remaining || '0 GB';
+    const remaining = this.data?.remaining ?? this.data?.remaining_data;
+    if (typeof remaining === 'string' && !/^[\d.,\s]+(?:[GMT]B)?$/i.test(remaining)) return remaining;
+    return this.formatGb(this.remainingGb) || '0 GB';
   }
 
   get usedTotalSummaryText(): string {
-    const used = this.formatGb(this.usedGb);
+    const used = this.formatGb(this.usedGb) || '0 GB';
     return used ? `${used} ${this.USED_LABEL || 'used'}` : '';
   }
 
@@ -357,28 +355,23 @@ export class Tab1Page {
   }
 
   private get usedGb(): number {
-    const totalUsage = this.numberFromPossibleGb(this.data?.total_usage ?? this.data?.used_data ?? this.data?.used_gb ?? this.data?.order_usage_gb);
-    if (totalUsage > 0) {
-      return totalUsage;
-    }
-
-    const total = this.totalGb;
-    const remaining = this.remainingGb;
-    return total > 0 && remaining >= 0 ? Math.max(0, total - remaining) : 0;
+    const value = this.data?.total_usage ?? this.data?.used_data ?? this.data?.used_gb ?? this.data?.order_usage_gb;
+    if (value !== undefined && value !== null && value !== '') return Math.max(0, this.numberFromPossibleGb(value));
+    const remaining = this.data?.remaining ?? this.data?.remaining_data ?? this.data?.remaining_gb;
+    return remaining !== undefined && remaining !== null
+      ? Math.max(0, this.totalGb - this.numberFromPossibleGb(remaining)) : 0;
   }
 
   private get remainingGb(): number {
-    const direct = this.numberFromPossibleGb(this.data?.remaining ?? this.data?.remaining_data ?? this.data?.remaining_gb);
-    if (direct > 0) {
-      return direct;
-    }
-
-    const total = this.totalGb;
-    const used = this.usedGb;
-    return total > 0 ? Math.max(0, total - used) : 0;
+    const value = this.data?.remaining ?? this.data?.remaining_data ?? this.data?.remaining_gb;
+    return value !== undefined && value !== null && value !== ''
+      ? Math.max(0, this.numberFromPossibleGb(value)) : Math.max(0, this.totalGb - this.usedGb);
   }
 
   public ionViewWillEnter(): void {
+    this.viewActive = true;
+    if (this.sim_id !== this.session.currentId) { this.data = null; this.autoTopupStatus = null; }
+    this.sim_id = this.session.currentId;
     this.loadAutoTopupStatus().catch(() => {});
 
     const topupRefreshRequired = localStorage.getItem('stellar_topup_refresh_required') === '1';
@@ -392,6 +385,8 @@ export class Tab1Page {
   }
 
   public ionViewWillLeave(): void {
+    this.viewActive = false;
+    this.overviewCancel.next();
     this.clearTopupRefreshTimers();
   }
 
@@ -403,10 +398,11 @@ export class Tab1Page {
 
     this.clearTopupRefreshTimers();
     this.topupRefreshNotice = true;
-    this.topupRefreshText = 'Top-up confirmed. Updating your data usage now...';
+    this.topupRefreshText = this._translate.instant('TOPUP_UPDATING');
 
     await this.getData(true);
 
+    if (!this.viewActive) return;
     this.scheduleTopupRefresh(900);
     this.scheduleTopupRefresh(6000);
     this.scheduleTopupRefresh(15000);
@@ -426,7 +422,7 @@ export class Tab1Page {
       return;
     }
 
-    this.topupRefreshText = 'Top-up applied. Data usage updated.';
+    this.topupRefreshText = this._translate.instant('REFRESH_SUCCESS');
     this.clearTopupRefreshTimers();
     this.scheduleTopupNoticeHide(3500);
   }
@@ -480,7 +476,7 @@ export class Tab1Page {
     this.isCopying = true;
 
     const toast = await this.toastController.create({
-      message: this.SIM_ID_COPIED || 'SIM ID copied',
+      message: this.SIM_ID_COPIED || this._translate.instant('SIM_ID_COPIED'),
       duration: 2000,
       position: 'bottom',
     });
@@ -493,7 +489,12 @@ export class Tab1Page {
   }
 
   public getCountryFullName(countryCode: string): string {
-    return COUNTRY_CODES[String(countryCode || '').toLowerCase()] || countryCode || 'Unknown';
+    try {
+      const DisplayNames = (Intl as any).DisplayNames;
+      if (DisplayNames) return new DisplayNames([this._translate.currentLang || 'en'], { type: 'region' }).of(countryCode.toUpperCase());
+    } catch { /* Keep the country code readable on older WebViews. */ }
+    return COUNTRY_CODES[String(countryCode || '').toLowerCase()] || countryCode;
+
   }
 
   public toggleModal(open?: boolean): void {
@@ -597,7 +598,7 @@ export class Tab1Page {
     this.autoTopupError = '';
 
     try {
-      const response = await firstValueFrom(this.dataServiceAPIService.getAutoTopupStatus(simId));
+      const response = await firstValueFrom(this.dataServiceAPIService.getAutoTopupStatus(simId).pipe(timeout(15000)));
       this.autoTopupStatus = response.data;
     } catch (error: any) {
       this.autoTopupError = this.extractAutoTopupError(error);
@@ -614,9 +615,7 @@ export class Tab1Page {
 
   private extractAutoTopupError(error: any): string {
     return String(
-      error?.error?.response_message
-      || error?.error?.message
-      || this._translate.instant('AUTO_TOPUP_TEMPORARY_ERROR')
+      this._translate.instant('AUTO_TOPUP_TEMPORARY_ERROR')
     ).trim();
   }
 
@@ -631,6 +630,7 @@ export class Tab1Page {
   }
 
   public async upgradePlan(): Promise<void> {
+    if (this.isTopupRedirecting) return;
     const existingTopupUrl = this.extractExistingTopupUrl();
     const existingTopupToken = this.extractExistingTopupToken();
 
@@ -650,7 +650,7 @@ export class Tab1Page {
 
     if (!simId) {
       const toast = await this.toastController.create({
-        message: 'Top-up is not available for this eSIM yet.',
+        message: this._translate.instant('TOPUP_UNAVAILABLE'),
         duration: 3500,
         position: 'bottom',
       });
@@ -660,16 +660,8 @@ export class Tab1Page {
 
     this.isTopupRedirecting = true;
 
-    const loading = await this.loadingCtrl.create({
-      cssClass: 'loader-popup',
-      message: 'Preparing secure top-up...',
-    });
-
-    await loading.present();
-
     this.dataServiceAPIService.createTopupToken(simId, 'app_requested').subscribe({
       next: async (response) => {
-        await loading.dismiss();
         this.isTopupRedirecting = false;
 
         const topupUrl = this.extractTopupUrlFromTokenResponse(response);
@@ -688,19 +680,16 @@ export class Tab1Page {
         }
 
         const toast = await this.toastController.create({
-          message: 'Top-up link could not be created.',
+          message: this._translate.instant('TOPUP_ERROR'),
           duration: 4500,
           position: 'bottom',
         });
         await toast.present();
       },
       error: async (error) => {
-        await loading.dismiss();
         this.isTopupRedirecting = false;
 
-        const message = error?.error?.response_message
-          || error?.error?.message
-          || 'Top-up link could not be created. Please try again.';
+        const message = this._translate.instant('TOPUP_ERROR');
 
         const toast = await this.toastController.create({
           message,
@@ -722,7 +711,7 @@ export class Tab1Page {
 
     const simId = String(rawValue || '').replace(/\s+/g, '').trim();
 
-    if (!/^[A-Za-z0-9]{16}$/.test(simId)) {
+    if (!/^[0-9]{16}$/.test(simId)) {
       return '';
     }
 
@@ -813,19 +802,7 @@ export class Tab1Page {
   }
 
   private getInternalTopupRoute(target: string): string {
-    try {
-      const url = new URL(target, window.location.href);
-      const isSameOrigin = url.origin === window.location.origin;
-      const isTopupRoute = /^\/topup\/[^/]+/i.test(url.pathname);
-
-      if (!isSameOrigin || !isTopupRoute) {
-        return '';
-      }
-
-      return `${url.pathname}${url.search}${url.hash}`;
-    } catch {
-      return '';
-    }
+    return internalAppRoute(target, window.location.origin, 'topup');
   }
 
   public async presentAlert(): Promise<void> {
@@ -835,7 +812,7 @@ export class Tab1Page {
       cssClass: 'logout-popup general-popup',
       buttons: [
         {
-          text: 'Cancel',
+          text: this._translate.instant('CANCEL'),
           role: 'cancel',
           cssClass: 'secondary',
         },
@@ -852,8 +829,7 @@ export class Tab1Page {
   }
 
   public async logout(): Promise<void> {
-    localStorage.clear();
-    await Preferences.clear();
+    this.session.clear();
     await this.navCtrl.navigateForward('/sim-input?clear=1');
   }
 
@@ -863,93 +839,33 @@ export class Tab1Page {
   }
 
   private async getData(forceRefresh = false): Promise<void> {
+    if (this.isLoading || !this.viewActive) return;
     this.hasError = false;
     this.errorMessage = '';
-
-    if (this.sim_id === '1977' || this.sim_id === '1988') {
-      const totalData = this.sim_id === '1988' ? 40 : 20;
-      this.data = {
-        id: this.sim_id,
-        total_data: totalData,
-        total_usage: 0,
-        remaining: `${totalData} GB`,
-        expires_at: 'Check Protect App',
-        location: 'NO,RS,DE,RU,BE,FI,PT,BG,DK,LT,LU,LV,HR,UA,FR,HU,SE,SI,SK,GB,IE,MK,GG,EE,GI,IM,CH,MT,IS,IT,GR,ES,AT,CY,AX,CZ,JE,PL,RO,LI,NL,TR',
-      };
-      this.format(this.data);
+    this.isLoading = true;
+    const id = this.sim_id;
+    try {
+      const verified = this.session.takeOverview(id);
+      const response = !forceRefresh && verified ? verified : await this.session.lookup(id, this.overviewCancel);
+      if (!this.viewActive || id !== this.sim_id) return;
+      this.data = response;
+      this.session.remember(id, response);
+      this.session.takeOverview(id);
+      this.showingCachedData = false;
+      this.format(response);
       this.getPercentOfData();
-      return;
-    }
-
-    const storedData = localStorage.getItem('stored_data');
-
-    if (!forceRefresh && storedData !== null) {
-      try {
-        const parsed = JSON.parse(storedData);
-        this.data = parsed;
-        this.showingCachedData = true;
-        this.format(parsed);
-        this.getPercentOfData();
-      } catch {
-        localStorage.removeItem('stored_data');
+      if (forceRefresh) {
+        // A successful usage refresh does not prove that the provider has applied a purchase yet.
+        this.topupRefreshText = this._translate.instant('TOPUP_UPDATING');
       }
+    } catch (error) {
+      if (!this.viewActive) return;
+      this.data = null;
+      this.session.returnToLogin(id, error);
+      await this.navCtrl.navigateRoot('/sim-input');
+    } finally {
+      this.isLoading = false;
     }
-
-    let loading: HTMLIonLoadingElement | null = null;
-
-    if (this.data === null) {
-      this.isLoading = true;
-      loading = await this.loadingCtrl.create({ cssClass: 'loader-popup' });
-      await loading.present();
-    }
-
-    this.dataServiceAPIService.getOverview(this.sim_id).subscribe({
-      next: async (response) => {
-        if (loading !== null) {
-          await loading.dismiss();
-        }
-
-        this.isLoading = false;
-        this.hasError = false;
-        this.errorMessage = '';
-        this.showingCachedData = false;
-        this.data = response;
-
-        localStorage.setItem('stored_data', JSON.stringify(response));
-        localStorage.setItem('stored_data_updated_at', new Date().toISOString());
-
-        this.format(this.data);
-        this.getPercentOfData();
-
-        if (forceRefresh) {
-          this.markTopupRefreshUpdated();
-
-          const toast = await this.toastController.create({
-            message: 'Usage updated just now.',
-            duration: 2500,
-            position: 'bottom',
-          });
-          await toast.present();
-        }
-      },
-      error: async () => {
-        if (loading !== null) {
-          await loading.dismiss();
-        }
-
-        this.isLoading = false;
-        this.hasError = true;
-        this.errorMessage = 'Could not load data. Check your internet connection.';
-
-        const toast = await this.toastController.create({
-          message: this.errorMessage,
-          duration: 6500,
-          position: 'bottom',
-        });
-
-        await toast.present();
-      },
-    });
   }
 
   public format(response: any): void {
@@ -983,13 +899,6 @@ export class Tab1Page {
     }
 
     this.strokes = `${this.value} ,100`;
-  }
-
-  private async localNotifications(): Promise<void> {
-    const permissions = await LocalNotifications.checkPermissions();
-    if (permissions.display !== 'granted') {
-      await LocalNotifications.requestPermissions();
-    }
   }
 
   private bindTranslations(): void {
@@ -1062,10 +971,7 @@ export class Tab1Page {
   }
 
   private trimNumber(value: number): string {
-    return value
-      .toFixed(2)
-      .replace(/\.00$/, '')
-      .replace(/(\.\d)0$/, '$1');
+    return new Intl.NumberFormat(this._translate.currentLang || 'en', { maximumFractionDigits: 2 }).format(value);
   }
 
   private numberFromPossibleGb(value: any): number {
@@ -1078,7 +984,10 @@ export class Tab1Page {
     }
 
     const match = String(value).replace(',', '.').match(/[0-9]+(?:\.[0-9]+)?/);
-    return match ? Number(match[0]) : 0;
+    const number = match ? Number(match[0]) : 0;
+    if (/MB/i.test(String(value))) return number / 1024;
+    if (/TB/i.test(String(value))) return number * 1024;
+    return number;
   }
 
   private formatGb(value: number): string {
@@ -1086,7 +995,15 @@ export class Tab1Page {
       return '';
     }
 
-    return `${value.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1')} GB`;
+    return `${this.trimNumber(value)} GB`;
+  }
+
+  public formatExpiry(value: any): string {
+    if (!value) return '';
+    const dateOnly = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const date = dateOnly ? new Date(+dateOnly[1], +dateOnly[2] - 1, +dateOnly[3]) : new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return new Intl.DateTimeFormat(this._translate.currentLang || 'en', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
   }
 
   private formatDateTime(value: any): string {
@@ -1099,7 +1016,7 @@ export class Tab1Page {
       return String(value);
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(this._translate.currentLang || 'en', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',

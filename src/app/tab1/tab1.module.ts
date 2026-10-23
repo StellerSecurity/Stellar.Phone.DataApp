@@ -1,3 +1,4 @@
+import { EsimPromoComponent } from '../esim-promo/esim-promo.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +11,7 @@ import { Tab1Page } from './tab1.page';
 @NgModule({
   imports: [
     CommonModule,
+    EsimPromoComponent,
     FormsModule,
     IonicModule,
     TranslateModule,

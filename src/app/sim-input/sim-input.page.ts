@@ -1,173 +1,78 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonContent, NavController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, ViewChild } from '@angular/core';
+import { IonInput, NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
+import { Subject } from 'rxjs';
+import { SimSessionService, isSimId, normalizeSimId, lookupErrorKey } from '../services/sim-session.service';
 
 @Component({
   selector: 'app-sim-input',
   templateUrl: './sim-input.page.html',
   styleUrls: ['./sim-input.page.scss'],
 })
-export class SimInputPage implements OnInit {
-  @ViewChild(IonContent, { static: false }) content?: IonContent;
+export class SimInputPage {
+  @ViewChild(IonInput) input?: IonInput;
+  userInput = '';
+  isSubmitting = false;
+  errorKey = '';
+  savedSimId = '';
+  private cancel = new Subject<void>();
+  private attempt = 0;
 
-  public userInput = '';
-  public isSubmitting = false;
-  public validationMessage = '';
+  constructor(private navCtrl: NavController, private route: ActivatedRoute, private session: SimSessionService) {}
 
-  private sim_id: string | null = '';
-
-  public HOME_WELCOME = '';
-  public HOME_ENTER_SIM_ID = '';
-  public HOME_INPUT = '';
-  public HOME_BUTTON_LOGIN = '';
-  public HOME_HELP = '';
-  public HOME_HELP_CONTACT_LINK = '';
-  public HOME_INPUT_HINT = '';
-  public HOME_INPUT_ERROR = '';
-  public HOME_CONTINUE_SAVED = '';
-  public HOME_USE_DIFFERENT = '';
-  public HOME_SAVED_SIM = '';
-  public HOME_EMPTY_ALERT_TITLE = '';
-  public HOME_EMPTY_ALERT_MESSAGE = '';
-  public HOME_OK = '';
-
-  public savedSimId: string | null = null;
-
-  constructor(
-    public alertController: AlertController,
-    private navCtrl: NavController,
-    public _translate: TranslateService,
-    private route: ActivatedRoute
-  ) {
-    this.bindTranslations();
-
-    this.route.queryParams.subscribe((params) => {
-      if (params && params['clear'] == 1) {
-        localStorage.removeItem('sim_id');
-        localStorage.removeItem('stored_data');
-        this.savedSimId = null;
-        this.userInput = '';
-        this.validationMessage = '';
-      }
-    });
+  ionViewWillEnter(): void {
+    if (this.route.snapshot.queryParamMap.get('clear') === '1') this.session.clear();
+    const notice = this.session.takeNotice();
+    this.savedSimId = this.session.currentId;
+    this.userInput = notice?.id || this.savedSimId;
+    this.errorKey = notice?.key || '';
   }
 
-  async ngOnInit(): Promise<void> {
-    this.savedSimId = localStorage.getItem('sim_id');
-    if (this.savedSimId) {
-      this.userInput = this.savedSimId;
-    }
+  ionViewWillLeave(): void { this.cancelLookup(); }
+
+  get isValidInput(): boolean { return isSimId(this.userInput); }
+
+  onInputChange(event: Event): void {
+    const input = event.target as HTMLIonInputElement;
+    this.userInput = normalizeSimId(String(input.value ?? ''));
+    input.value = this.userInput;
+    this.errorKey = this.userInput.length > 16 ? 'HOME_INPUT_ERROR' : '';
   }
 
-  get isValidInput(): boolean {
-    return this.getNormalizedSimId(this.userInput).length >= 4;
-  }
-
-  get hasSavedSim(): boolean {
-    return !!this.savedSimId;
-  }
-
-  onInputChange(value: string | number | null | undefined): void {
-    this.userInput = String(value ?? '');
-    this.validationMessage = '';
-
-    if (this.userInput.trim().length > 0 && !this.isValidInput) {
-      this.validationMessage = this.HOME_INPUT_ERROR;
-    }
-  }
-
-  async useSavedSim(): Promise<void> {
-    if (!this.savedSimId) return;
-    await this.navCtrl.navigateRoot('/tabs/tab1');
+  validateInput(): void {
+    if (this.userInput && !this.isValidInput) this.errorKey = 'HOME_INPUT_ERROR';
   }
 
   useDifferentSim(): void {
+    this.session.clear();
     this.userInput = '';
-    this.validationMessage = '';
-    this.savedSimId = null;
-    localStorage.removeItem('sim_id');
-    localStorage.removeItem('stored_data');
+    this.savedSimId = '';
+    this.errorKey = '';
+    void this.input?.setFocus();
+  }
+
+  cancelLookup(): void {
+    this.attempt++;
+    this.cancel.next();
+    this.isSubmitting = false;
   }
 
   async saveInput(): Promise<void> {
-    const trimmed = this.getNormalizedSimId(this.userInput);
-
-    if (trimmed === '') {
-      const alert = await this.alertController.create({
-        header: this.HOME_EMPTY_ALERT_TITLE,
-        message: this.HOME_EMPTY_ALERT_MESSAGE,
-        buttons: [this.HOME_OK],
-        cssClass: 'general-popup',
-      });
-      await alert.present();
-      return;
-    }
-
-    if (!this.isValidInput) {
-      this.validationMessage = this.HOME_INPUT_ERROR;
-      return;
-    }
-
+    if (this.isSubmitting) return;
+    if (!this.isValidInput) { this.errorKey = 'HOME_INPUT_ERROR'; return; }
+    const id = this.userInput;
+    const attempt = ++this.attempt;
+    this.errorKey = '';
     this.isSubmitting = true;
-
     try {
-      this.sim_id = localStorage.getItem('sim_id');
-
-      if (this.sim_id !== trimmed) {
-        localStorage.setItem('sim_id', trimmed);
-        localStorage.removeItem('stored_data');
-      }
-
-      await Preferences.set({
-        key: 'sim_id',
-        value: trimmed,
-      });
-
+      const overview = await this.session.lookup(id, this.cancel);
+      if (attempt !== this.attempt) return;
+      this.session.remember(id, overview);
       await this.navCtrl.navigateRoot('/tabs/tab1');
+    } catch (error) {
+      if (attempt === this.attempt) this.errorKey = lookupErrorKey(error);
     } finally {
-      this.isSubmitting = false;
+      if (attempt === this.attempt) this.isSubmitting = false;
     }
-  }
-
-  private getNormalizedSimId(value: string): string {
-    return (value || '').trim();
-  }
-
-  private bindTranslations(): void {
-    this._translate
-      .stream([
-        'HOME_WELCOME',
-        'HOME_ENTER_SIM_ID',
-        'HOME_INPUT',
-        'HOME_BUTTON_LOGIN',
-        'HOME_HELP',
-        'HOME_HELP_CONTACT_LINK',
-        'HOME_INPUT_HINT',
-        'HOME_INPUT_ERROR',
-        'HOME_CONTINUE_SAVED',
-        'HOME_USE_DIFFERENT',
-        'HOME_SAVED_SIM',
-        'HOME_EMPTY_ALERT_TITLE',
-        'HOME_EMPTY_ALERT_MESSAGE',
-        'HOME_OK',
-      ])
-      .subscribe((t: any) => {
-        this.HOME_WELCOME = t.HOME_WELCOME;
-        this.HOME_ENTER_SIM_ID = t.HOME_ENTER_SIM_ID;
-        this.HOME_INPUT = t.HOME_INPUT;
-        this.HOME_BUTTON_LOGIN = t.HOME_BUTTON_LOGIN;
-        this.HOME_HELP = t.HOME_HELP;
-        this.HOME_HELP_CONTACT_LINK = t.HOME_HELP_CONTACT_LINK;
-        this.HOME_INPUT_HINT = t.HOME_INPUT_HINT;
-        this.HOME_INPUT_ERROR = t.HOME_INPUT_ERROR;
-        this.HOME_CONTINUE_SAVED = t.HOME_CONTINUE_SAVED;
-        this.HOME_USE_DIFFERENT = t.HOME_USE_DIFFERENT;
-        this.HOME_SAVED_SIM = t.HOME_SAVED_SIM;
-        this.HOME_EMPTY_ALERT_TITLE = t.HOME_EMPTY_ALERT_TITLE;
-        this.HOME_EMPTY_ALERT_MESSAGE = t.HOME_EMPTY_ALERT_MESSAGE;
-        this.HOME_OK = t.HOME_OK;
-      });
   }
 }

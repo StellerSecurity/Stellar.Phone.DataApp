@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +7,7 @@ import { TopupCheckoutPageRoutingModule } from './topup-checkout-routing.module'
 import { TopupCheckoutPage } from './topup-checkout.page';
 
 @NgModule({
-  imports: [
+  imports: [TranslateModule,
     CommonModule,
     FormsModule,
     IonicModule,

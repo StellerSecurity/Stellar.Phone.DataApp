@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { Preferences } from '@capacitor/preferences';
+import { resolveLanguage } from './services/locale';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AppComponent } from './app.component';
@@ -14,22 +14,14 @@ import { APP_TRANSLATIONS } from './app-translations';
 
 export function initTranslations(translate: TranslateService): () => Promise<void> {
   return async () => {
-    const supportedLanguages = ['en', 'da', 'sv', 'es', 'fr', 'de'];
-
     Object.keys(APP_TRANSLATIONS).forEach((language) => {
       translate.setTranslation(language, APP_TRANSLATIONS[language], true);
     });
 
     translate.setDefaultLang('en');
 
-    const savedLanguage = await Preferences.get({ key: 'language' });
-    const browserLanguage = (translate.getBrowserLang() || 'en').toLowerCase();
-
-    const resolvedLanguage = supportedLanguages.includes(savedLanguage.value || '')
-      ? (savedLanguage.value as string)
-      : supportedLanguages.includes(browserLanguage)
-        ? browserLanguage
-        : 'en';
+    const resolvedLanguage = resolveLanguage(navigator.languages?.length ? navigator.languages : [navigator.language]);
+    document.documentElement.lang = resolvedLanguage;
 
     await firstValueFrom(translate.use(resolvedLanguage));
   };

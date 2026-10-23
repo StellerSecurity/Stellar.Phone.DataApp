@@ -1,6 +1,10 @@
+import { internalAppRoute } from '../services/app-links';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { timeout } from 'rxjs';
+import { SimSessionService } from '../services/sim-session.service';
 import { DataServiceAPIService } from '../services/data-service-api.service';
 
 @Component({
@@ -21,6 +25,7 @@ export class TopupPage implements OnInit {
   public vpnTopupOffer: any = null;
   public vpnTopupSelected = false;
   public errorMessage = '';
+  public checkoutError = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -28,7 +33,9 @@ export class TopupPage implements OnInit {
     private dataServiceAPIService: DataServiceAPIService,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    public translate: TranslateService,
+    private session: SimSessionService
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +45,10 @@ export class TopupPage implements OnInit {
     });
   }
 
+  public backToData(): void { void this.router.navigateByUrl(this.session.currentId ? '/tabs/tab1' : '/sim-input'); }
+
   public async loadTopup(): Promise<void> {
+    if (this.loading) return;
     this.errorMessage = '';
     this.resolved = null;
     this.sim = null;
@@ -50,19 +60,20 @@ export class TopupPage implements OnInit {
     this.visiblePlanLimit = 5;
 
     if (!this.token) {
-      this.errorMessage = 'This top-up link is missing a token.';
+      this.errorMessage = this.translate.instant('TOPUP_ERROR');
       return;
     }
 
     this.warmCheckoutConnections();
     this.loading = true;
 
-    this.dataServiceAPIService.resolveTopupToken(this.token).subscribe({
+    this.dataServiceAPIService.resolveTopupToken(this.token).pipe(timeout(15000)).subscribe({
       next: (response) => {
         this.loading = false;
 
         this.resolved = response || {};
         this.sim = this.pickSim(this.resolved);
+        if (!this.sim) { this.errorMessage = this.translate.instant('TOPUP_ERROR'); return; }
         const allPlans = this.pickPlans(this.resolved);
         this.currentPlan = this.pickCurrentPlan(this.resolved, allPlans);
         this.plans = this.filterPlansForCurrentPlan(allPlans, this.currentPlan);
@@ -117,9 +128,9 @@ export class TopupPage implements OnInit {
 
     if (!packageCode) {
       const alert = await this.alertController.create({
-        header: 'Top-up unavailable',
-        message: 'This top-up package is missing a package code.',
-        buttons: ['OK'],
+        header: this.translate.instant('TOPUP_UNAVAILABLE'),
+        message: this.translate.instant('TOPUP_ERROR'),
+        buttons: [this.translate.instant('HOME_OK')],
         cssClass: 'general-popup',
       });
       await alert.present();
@@ -127,8 +138,8 @@ export class TopupPage implements OnInit {
     }
 
     this.checkoutLoading = true;
-    const loader = await this.loadingCtrl.create({ cssClass: 'loader-popup' });
-    await loader.present();
+    this.checkoutError = '';
+    try { sessionStorage.setItem('stellar_topup_back', `/topup/${encodeURIComponent(this.token)}`); } catch { /* Optional navigation history. */ }
 
     this.dataServiceAPIService.createTopupCheckout(
       this.token,
@@ -139,7 +150,6 @@ export class TopupPage implements OnInit {
     ).subscribe({
       next: async (response) => {
         this.checkoutLoading = false;
-        await loader.dismiss();
 
         const redirectUrl = this.pickCheckoutUrl(response);
         if (redirectUrl) {
@@ -148,29 +158,17 @@ export class TopupPage implements OnInit {
           return;
         }
 
-        const toast = await this.toastController.create({
-          message: 'Top-up checkout created, but no checkout URL was returned.',
-          duration: 4500,
-          position: 'bottom',
-        });
-        await toast.present();
+        this.checkoutError = this.translate.instant('CHECKOUT_ERROR');
       },
-      error: async (error) => {
+      error: async () => {
         this.checkoutLoading = false;
-        await loader.dismiss();
-
-        const toast = await this.toastController.create({
-          message: this.readErrorMessage(error),
-          duration: 6500,
-          position: 'bottom',
-        });
-        await toast.present();
+        this.checkoutError = this.translate.instant('CHECKOUT_ERROR');
       },
     });
   }
 
   public getPlanName(plan: any): string {
-    return plan?.name || plan?.title || plan?.label || plan?.package_name || plan?.sku || plan?.package_code || 'Top-up package';
+    return plan?.name || plan?.title || plan?.label || plan?.package_name || plan?.sku || plan?.package_code || this.translate.instant('TOPUP_PACKAGE');
   }
 
   public get vpnTopupAvailable(): boolean {
@@ -203,7 +201,7 @@ export class TopupPage implements OnInit {
   public getCheckoutTotal(): string {
     const planPriceCents = this.getPlanPriceCents(this.selectedPlan);
     if (planPriceCents === null) {
-      return 'Price shown at checkout';
+      return this.translate.instant('PRICE_AT_CHECKOUT');
     }
 
     const vpnPriceCents = this.vpnTopupSelected
@@ -232,7 +230,7 @@ export class TopupPage implements OnInit {
     if (!days) {
       return '';
     }
-    return `${days} days`;
+    return this.translate.instant('VALID_DAYS', { days });
   }
 
   public getPlanPrice(plan: any): string {
@@ -247,7 +245,7 @@ export class TopupPage implements OnInit {
       return this.formatMoney(Number(price), currency);
     }
 
-    return 'Price shown at checkout';
+    return this.translate.instant('PRICE_AT_CHECKOUT');
   }
 
   private getPlanPriceCents(plan: any): number | null {
@@ -267,11 +265,11 @@ export class TopupPage implements OnInit {
   }
 
   public getSimLabel(): string {
-    return this.sim?.label || this.sim?.name || this.sim?.sim_name || this.sim?.country || 'Your Stellar eSIM';
+    return this.sim?.label || this.sim?.name || this.sim?.sim_name || this.sim?.country || this.translate.instant('YOUR_ESIM');
   }
 
   public getCurrentPlanName(): string {
-    return this.sim?.current_plan_name || this.getPlanName(this.currentPlan) || this.sim?.package_code || '';
+    return this.sim?.current_plan_name || (this.currentPlan ? this.getPlanName(this.currentPlan) : '') || this.sim?.package_code || '';
   }
 
   public getCurrentPlanArea(): string {
@@ -287,7 +285,7 @@ export class TopupPage implements OnInit {
     const total = this.getTotalData();
 
     if (remaining && total) {
-      return `${remaining} of ${total}`;
+      return this.translate.instant('REMAINING_OF', { remaining, total });
     }
 
     return remaining || '';
@@ -365,7 +363,7 @@ export class TopupPage implements OnInit {
   }
 
   private locationNameFromPlan(plan: any): string {
-    return String(plan?.location_name || plan?.locationName || plan?.raw?.locationName || plan?.raw?.locationNetworkList?.[0]?.locationName || '').trim();
+    return String(plan?.location_name || plan?.locationName || plan?.raw?.locationName || '').trim();
   }
 
   private locationSetFromPlan(plan: any): string[] {
@@ -463,19 +461,7 @@ export class TopupPage implements OnInit {
   }
 
   private getInternalCheckoutRoute(target: string): string {
-    try {
-      const url = new URL(target, window.location.href);
-      const isSameOrigin = url.origin === window.location.origin;
-      const isCheckoutRoute = /^\/topup-checkout\/?$/i.test(url.pathname);
-
-      if (!isSameOrigin || !isCheckoutRoute) {
-        return '';
-      }
-
-      return `${url.pathname}${url.search}${url.hash}`;
-    } catch {
-      return '';
-    }
+    return internalAppRoute(target, window.location.origin, 'checkout');
   }
 
   private warmCheckoutConnections(): void {
@@ -528,18 +514,17 @@ export class TopupPage implements OnInit {
       return '';
     }
 
-    const date = new Date(value);
+    const dateOnly = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const date = dateOnly ? new Date(+dateOnly[1], +dateOnly[2] - 1, +dateOnly[3]) : new Date(value);
     if (Number.isNaN(date.getTime())) {
       return value;
     }
 
     try {
-      return new Intl.DateTimeFormat('en-US', {
+      return new Intl.DateTimeFormat(this.translate.currentLang || 'en', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
       }).format(date);
     } catch {
       return date.toLocaleString();
@@ -547,6 +532,7 @@ export class TopupPage implements OnInit {
   }
 
   private formatBytes(bytes: any): string {
+    if (bytes === null || bytes === undefined || bytes === '') return '';
     const value = Number(bytes);
     if (!Number.isFinite(value) || value < 0) {
       return '';
@@ -560,7 +546,7 @@ export class TopupPage implements OnInit {
       return `${this.trimNumber(value / 1024 / 1024)} MB`;
     }
 
-    return `${Math.round(value)} bytes`;
+    return value === 0 ? '0 GB' : `${Math.round(value)} B`;
   }
 
   private trimNumber(value: number): string {
@@ -569,11 +555,11 @@ export class TopupPage implements OnInit {
 
   private formatMoney(amount: number, currency: string): string {
     if (Number.isNaN(amount)) {
-      return 'Price shown at checkout';
+      return this.translate.instant('PRICE_AT_CHECKOUT');
     }
 
     try {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat(this.translate.currentLang || 'en', {
         style: 'currency',
         currency,
       }).format(amount);
@@ -583,10 +569,6 @@ export class TopupPage implements OnInit {
   }
 
   private readErrorMessage(error: any): string {
-    return error?.error?.response_message
-      || error?.error?.message
-      || error?.error?.error
-      || error?.message
-      || 'Could not load this top-up link. It may be expired or invalid.';
+    return this.translate.instant('TOPUP_ERROR');
   }
 }

@@ -1,0 +1,33 @@
+<section class="esim-promo" aria-label="Stellar eSIM">
+  <div class="esim-brand">
+    <span class="esim-icon" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M11 4h11a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V8l4-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <rect x="11" y="14" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M16 14v10m-5-5h10" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+    </span>
+    <span>Stellar eSIM</span>
+  </div>
+  <h2>{{ 'ESIM_APP_TITLE' | translate }}</h2>
+  <p class="esim-description">{{ 'ESIM_APP_DESCRIPTION' | translate }}</p>
+  <ul class="esim-features">
+    <li><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>{{ 'ESIM_APP_BUY' | translate }}</li>
+    <li><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>{{ 'ESIM_APP_USAGE' | translate }}</li>
+    <li><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>{{ 'ESIM_APP_MANAGE' | translate }}</li>
+  </ul>
+  <div class="esim-downloads">
+    <a class="store-link" [href]="appStoreUrl" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'ESIM_APP_APP_STORE' | translate">
+      <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
+      <span><small>{{ 'ESIM_APP_DOWNLOAD' | translate }}</small><strong>App Store</strong></span>
+    </a>
+    <a class="store-link" [href]="googlePlayUrl" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'ESIM_APP_GOOGLE_PLAY' | translate">
+      <ion-icon name="logo-google-playstore" aria-hidden="true"></ion-icon>
+      <span><small>{{ 'ESIM_APP_GET' | translate }}</small><strong>Google Play</strong></span>
+    </a>
+  </div>
+  <div class="esim-footer">
+    <span>{{ 'ESIM_APP_PLATFORMS' | translate }}</span>
+    <a href="https://stellaresim.com/" target="_blank" rel="noopener noreferrer">stellaresim.com <span aria-hidden="true">↗</span></a>
+  </div>
+</section>

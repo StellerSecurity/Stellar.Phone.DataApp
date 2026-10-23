@@ -1254,3 +1254,6 @@ Thumbs.db
 
 # Markdown documentation stays local and must not be committed to GitHub.
 *.[mM][dD]
+
+# Local preview reuses existing tooling; never publish its adapters or build output.
+.local-preview/

@@ -7,14 +7,19 @@
     <div class="ambient ambient-top-right"></div>
     <div class="ambient ambient-left"></div>
 
-    <section class="hero-card">
+    <span class="loading-announcement" role="status" *ngIf="data === null">{{ 'LOADING_DATA' | translate }}</span>
+    <section class="hero-card" [attr.aria-busy]="isLoading">
       <div class="hero-header">
         <div class="brand-area">
-          <img class="brand-logo" src="assets/stellar-data-Logo.svg" alt="Stellar Data logo" />
+          <img class="brand-logo" src="assets/stellar-data-logo-dark.svg" alt="Stellar Data logo" />
 
-          <div class="meta-stack" *ngIf="formattedLastUpdated">
+          <div class="meta-stack" *ngIf="data !== null && formattedLastUpdated">
             <span class="meta-label">{{ UPDATED_LABEL }}</span>
             <span class="meta-value">{{ formattedLastUpdated }}</span>
+          </div>
+          <div class="meta-stack skeleton-meta" *ngIf="data === null" aria-hidden="true">
+            <div class="skeleton-block skeleton-label"></div>
+            <div class="skeleton-block skeleton-timestamp"></div>
           </div>
         </div>
 
@@ -38,11 +43,11 @@
 
       <div class="status-banner topup-processing" *ngIf="topupRefreshNotice">
         <div class="status-banner-copy">
-          <div class="status-banner-title">Top-up is being applied</div>
+          <div class="status-banner-title">{{ 'TOPUP_PROCESSING' | translate }}</div>
           <div class="status-banner-text">{{ topupRefreshText }}</div>
         </div>
 
-        <ion-button size="small" class="retry-button" (click)="retryLoad()">Refresh now</ion-button>
+        <ion-button size="small" class="retry-button" (click)="retryLoad()">{{ 'RETRY' | translate }}</ion-button>
       </div>
 
       <div class="warning-stack" *ngIf="isDataReady">
@@ -53,6 +58,26 @@
         <div class="warning-chip warning-chip-red" *ngIf="isExpiringSoon">
           {{ EXPIRES_SOON }}
         </div>
+      </div>
+
+      <div class="overview-skeleton" *ngIf="data === null" aria-hidden="true">
+        <div class="hero-body">
+          <div class="hero-copy">
+            <div class="skeleton-block skeleton-eyebrow"></div>
+            <div class="skeleton-block skeleton-value"></div>
+            <div class="skeleton-block skeleton-subtitle"></div>
+          </div>
+          <div class="ring-card skeleton-ring-card"><div class="skeleton-ring"></div></div>
+        </div>
+        <div class="data-delay-notice skeleton-notice"><div class="skeleton-block"></div></div>
+        <div class="stat-grid">
+          <div class="stat-card glass-card skeleton-stat" *ngFor="let item of [1, 2, 3, 4]">
+            <div class="skeleton-block skeleton-label"></div>
+            <div class="skeleton-block skeleton-stat-value"></div>
+            <div class="skeleton-block skeleton-caption"></div>
+          </div>
+        </div>
+        <div class="cta-row"><div class="skeleton-block skeleton-action"></div></div>
       </div>
 
       <div class="hero-body" *ngIf="data !== null">
@@ -102,7 +127,7 @@
               class="icon-button copy-button"
               type="button"
               (click)="copy()"
-              aria-label="Copy SIM ID"
+              [attr.aria-label]="'COPY_SIM' | translate"
             >
               <img
                 class="vector"
@@ -116,8 +141,8 @@
 
         <div class="stat-card glass-card">
           <div class="stat-label">{{ EXPIRES_SHORT }}</div>
-          <div class="stat-value">{{ data.expires_at }}</div>
-          <div class="stat-caption" *ngIf="daysUntilExpire > 0">{{ data.days_until_expire }} {{ DAYS_LEFT }}</div>
+          <div class="stat-value">{{ formatExpiry(data.expires_at) }}</div>
+          <div class="stat-caption" *ngIf="daysUntilExpire > 0">{{ daysUntilExpire }} {{ DAYS_LEFT }}</div>
         </div>
 
         <div class="stat-card glass-card">
@@ -139,7 +164,7 @@
           (click)="upgradePlan()"
           [disabled]="isTopupRedirecting"
         >
-          {{ isTopupRedirecting ? 'Preparing top-up...' : NEED_MORE_DATA }}
+          {{ isTopupRedirecting ? ('PREPARING_TOPUP' | translate) : NEED_MORE_DATA }}
         </button>
       </div>
     </section>
@@ -277,19 +302,13 @@
       </button>
     </section>
 
-    <div class="usage-skeleton" *ngIf="isLoading && data === null">
-      <div class="skeleton-hero"></div>
-      <div class="skeleton-grid">
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-      </div>
-      <div class="skeleton-button"></div>
-    </div>
+    <app-esim-promo></app-esim-promo>
+
   </div>
 </ion-content>
 
 <div class="modal-container" *ngIf="showModal" [ngClass]="{ 'slide-in-from-bottom': showModal }">
-  <button class="modal-backdrop" type="button" (click)="toggleModal(false)" aria-label="Close"></button>
+  <button class="modal-backdrop" type="button" (click)="toggleModal(false)" [attr.aria-label]="'CLOSE_LABEL' | translate"></button>
 
   <div class="modal-sheet">
     <div class="sheet-handle"></div>

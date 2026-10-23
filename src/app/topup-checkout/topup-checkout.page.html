@@ -1,26 +1,27 @@
 <ion-content [fullscreen]="true" class="topup-checkout-page">
   <div class="checkout-shell">
     <div class="brand-row">
-      <img src="assets/stellar-powered-logo.svg" alt="Stellar" />
+      <button type="button" class="stellar-back" [disabled]="paymentLoading || paymentLocked" (click)="backToTopup()"><ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>{{ 'BACK' | translate }}</button>
+      <img src="assets/stellar-security-logo.png" alt="Stellar Security" width="412" height="64" />
     </div>
 
     <section class="checkout-card">
-      <div class="eyebrow">Stellar eSIM top-up</div>
-      <h1>{{ paymentSucceeded ? 'Top-up payment received' : 'Complete your top-up payment' }}</h1>
+      <div class="eyebrow">{{ 'TOPUP_TITLE' | translate }}</div>
+      <h1>{{ (paymentSucceeded ? 'PAYMENT_CONFIRMED' : 'PAYMENT_TITLE') | translate }}</h1>
       <p class="intro" *ngIf="!paymentSucceeded">
-        Your top-up order has been created. Complete payment to apply the package to your eSIM.
+        {{ 'PAYMENT_INTRO' | translate }}
       </p>
       <p class="intro" *ngIf="paymentSucceeded">
-        Your payment is confirmed. We are applying the data top-up<span *ngIf="hasVpnTopup"> and adding the VPN days</span> now, then we will send you back to your data dashboard.
+        {{ (hasVpnTopup ? 'PAYMENT_SUCCESS_VPN' : 'PAYMENT_SUCCESS') | translate }}
       </p>
 
-      <div class="status-pill" [class.status-pending]="status === 'PENDING_PAYMENT'" [class.status-success]="paymentSucceeded">
-        {{ paymentSucceeded ? 'PAYMENT SUCCEEDED' : status }}
+      <div *ngIf="hasOrder" class="status-pill" [class.status-pending]="status === 'PENDING_PAYMENT'" [class.status-success]="paymentSucceeded">
+        {{ (paymentSucceeded ? 'PAYMENT_CONFIRMED' : 'PAYMENT_SECURE') | translate }}
       </div>
 
       <div class="order-summary" *ngIf="hasOrder">
         <div class="summary-row">
-          <span>Order</span>
+          <span>{{ 'ORDER' | translate }}</span>
           <button type="button" class="copy-button" (click)="copyOrderId()">{{ orderId }}</button>
         </div>
 
@@ -29,39 +30,28 @@
           <strong>{{ getOrderItemPrice(item) }}</strong>
         </div>
 
-        <div class="summary-row" *ngIf="packageCode">
-          <span>Package code</span>
-          <strong>{{ packageCode }}</strong>
-        </div>
-
-        <div class="summary-row" *ngIf="topupSessionId">
-          <span>Top-up session</span>
-          <strong>{{ topupSessionId }}</strong>
-        </div>
-
         <div class="summary-row total">
-          <span>Total</span>
+          <span>{{ 'TOTAL_NOW' | translate }}</span>
           <strong>{{ totalFormatted }}</strong>
         </div>
       </div>
 
-      <div class="warning-box" *ngIf="errorMessage && !paymentSucceeded">
+      <div role="alert" class="warning-box" *ngIf="errorMessage && !paymentSucceeded">
         {{ errorMessage }}
       </div>
 
       <div class="success-panel" *ngIf="paymentSucceeded">
         <div class="success-icon">✓</div>
-        <h2>Payment confirmed</h2>
+        <h2>{{ 'PAYMENT_CONFIRMED' | translate }}</h2>
         <div class="processing-line" *ngIf="topupProcessing">
           <span class="processing-dot"></span>
-          Processing top-up with the mobile network provider
+          {{ 'TOPUP_PROCESSING' | translate }}
         </div>
         <p>
-          Redirecting to your data dashboard in <strong>{{ redirectCountdown }}</strong> seconds.
-          The dashboard will force-refresh and then check again shortly, so the new data can appear as soon as the provider updates it.
+          {{ 'PAYMENT_REDIRECT' | translate:{seconds: redirectCountdown} }}
         </p>
         <ion-button expand="block" class="primary-button" (click)="goToDataNow()">
-          Go to data dashboard now
+          {{ 'GO_DASHBOARD' | translate }}
         </ion-button>
       </div>
 
@@ -69,17 +59,17 @@
         {{ paymentMessage }}
       </div>
 
-      <div class="payment-box" *ngIf="!paymentSucceeded">
-        <h2>Payment method</h2>
+      <div class="payment-box" *ngIf="!paymentSucceeded && hasOrder">
+        <h2>{{ 'PAYMENT_METHOD' | translate }}</h2>
         <p *ngIf="paymentProvider === 'stripe'">
-          Pay securely with Apple Pay, Google Pay, or card. The top-up is applied automatically after Stripe confirms the payment.
+          {{ 'PAYMENT_METHOD_HINT' | translate }}
         </p>
         <p *ngIf="paymentProvider === 'mollie'">
-          Continue to Mollie's secure checkout to complete your top-up payment.
+          {{ 'MOLLIE_HINT' | translate }}
         </p>
 
         <div class="payment-element-stage" *ngIf="paymentProvider === 'stripe'" [class.payment-element-stage-loading]="paymentElementLoading" [attr.aria-busy]="paymentElementLoading">
-          <div class="payment-element-skeleton" *ngIf="paymentElementLoading" role="status" aria-label="Loading secure payment form">
+          <div class="payment-element-skeleton" *ngIf="paymentElementLoading" role="status" [attr.aria-label]="'PAYMENT_LOADING' | translate">
             <span class="skeleton-line skeleton-label"></span>
             <span class="skeleton-field">
               <span class="skeleton-line skeleton-card-number"></span>
@@ -89,10 +79,10 @@
 
           <div class="payment-elements-live">
             <div class="express-checkout-shell" [class.express-checkout-shell-visible]="expressWalletsAvailable">
-              <div class="express-checkout-label" *ngIf="expressWalletsAvailable">Express checkout</div>
+              <div class="express-checkout-label" *ngIf="expressWalletsAvailable">{{ 'EXPRESS_CHECKOUT' | translate }}</div>
               <div id="stellar-topup-express-checkout" class="express-checkout-mount"></div>
               <div class="express-checkout-divider" *ngIf="expressWalletsAvailable">
-                <span>or pay by card</span>
+                <span>{{ 'PAY_BY_CARD' | translate }}</span>
               </div>
             </div>
 
@@ -101,20 +91,18 @@
         </div>
 
         <ion-button *ngIf="paymentProvider === 'stripe'" expand="block" class="primary-button" [disabled]="paymentElementLoading || !paymentReady || paymentLoading || paymentLocked" (click)="payWithCard()">
-          {{ paymentElementLoading ? 'Loading secure payment...' : (paymentLoading || paymentLocked ? 'Processing payment...' : 'Pay ' + totalFormatted) }}
+          <ion-spinner name="crescent" *ngIf="paymentLoading || paymentElementLoading" aria-hidden="true"></ion-spinner>{{ (paymentElementLoading ? 'PAYMENT_LOADING' : paymentLoading || paymentLocked ? 'PAYMENT_PROCESSING' : 'PAY_AMOUNT') | translate:{amount: totalFormatted} }}
         </ion-button>
 
         <ion-button *ngIf="paymentProvider === 'mollie'" expand="block" class="primary-button" [disabled]="!mollieReady || paymentLoading" (click)="payWithMollie()">
-          {{ paymentLoading ? 'Opening secure checkout...' : 'Continue with Mollie · ' + totalFormatted }}
+          {{ (paymentLoading ? 'PAYMENT_LOADING' : 'PAY_AMOUNT') | translate:{amount: totalFormatted} }}
         </ion-button>
 
-        <button type="button" class="config-link" *ngIf="!paymentReady && errorMessage === 'Stripe publishable key is missing.'" (click)="showPaymentConfigHelp()">
-          Payment configuration help
-        </button>
+
       </div>
 
-      <button type="button" class="secondary-link" *ngIf="!paymentSucceeded" (click)="backToTopup()">
-        Back to Stellar Data
+      <button type="button" class="secondary-link" *ngIf="!paymentSucceeded" [disabled]="paymentLoading || paymentLocked" (click)="backToTopup()">
+        {{ 'BACK' | translate }}
       </button>
     </section>
   </div>

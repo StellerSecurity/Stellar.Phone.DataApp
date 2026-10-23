@@ -20,8 +20,8 @@ export class AppComponent {
         StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {});
       }
 
-      StatusBar.setBackgroundColor({ color: '#2152D4' }).catch(() => {});
-      StatusBar.setStyle({ style: Style.Light }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: getComputedStyle(document.documentElement).getPropertyValue('--stellar-background').trim() || '#EDECF2' }).catch(() => {});
+      StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
 
       if (this._platform.is('android')) {
         this.setupAndroidKeyboardPaddingFallback();
