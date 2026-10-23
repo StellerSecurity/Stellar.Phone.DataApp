@@ -310,8 +310,9 @@
 <div class="modal-container" *ngIf="showModal" [ngClass]="{ 'slide-in-from-bottom': showModal }">
   <button class="modal-backdrop" type="button" (click)="toggleModal(false)" [attr.aria-label]="'CLOSE_LABEL' | translate"></button>
 
-  <div class="modal-sheet">
-    <div class="sheet-handle"></div>
+  <div class="modal-sheet" appSheetDismiss (sheetDismiss)="toggleModal(false)"
+    role="dialog" aria-modal="true" [attr.aria-label]="countriesHeadingText">
+    <button class="sheet-handle" data-sheet-handle type="button" [attr.aria-label]="CLOSE_LABEL"></button>
 
     <div class="modal-header">
       <div class="modal-heading">
@@ -359,8 +360,10 @@
     [attr.aria-label]="'AUTO_TOPUP_CLOSE' | translate"
   ></button>
 
-  <div class="modal-sheet auto-topup-sheet" role="dialog" aria-modal="true" [attr.aria-label]="autoTopupModalTitle">
-    <div class="sheet-handle"></div>
+  <div class="modal-sheet auto-topup-sheet" appSheetDismiss (sheetDismiss)="closeAutoTopupModal()"
+    [sheetDismissDisabled]="isAutoTopupUpdating" role="dialog" aria-modal="true" [attr.aria-label]="autoTopupModalTitle">
+    <button class="sheet-handle" data-sheet-handle type="button" [disabled]="isAutoTopupUpdating"
+      [attr.aria-label]="'AUTO_TOPUP_CLOSE' | translate"></button>
 
     <button
       class="auto-topup-modal-close"
