@@ -1,4 +1,5 @@
 import { EsimPromoComponent } from '../esim-promo/esim-promo.component';
+import { SheetDismissDirective } from '../shared/sheet-dismiss.directive';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +13,7 @@ import { Tab1Page } from './tab1.page';
   imports: [
     CommonModule,
     EsimPromoComponent,
+    SheetDismissDirective,
     FormsModule,
     IonicModule,
     TranslateModule,
